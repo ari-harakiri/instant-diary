@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Buddy Diary</title>
+<title>InstantDiary</title>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html {
@@ -153,7 +156,7 @@
   .bl-list { flex:1; overflow-y:auto; -webkit-overflow-scrolling: touch; }
   .bl-row { display:flex; align-items:center; gap:5px; padding:5px 6px; cursor:pointer; font-size:11px; min-height:30px; }
   .bl-row:active, .bl-row:hover { background:#d3e4f5; }
-  .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; box-shadow: inset 0 0 2px rgba(0,0,0,.4); }
+  .dot { display:inline-block; width:8px; height:8px; border-radius:50%; flex-shrink:0; box-shadow: inset 0 0 2px rgba(0,0,0,.4); vertical-align:middle; }
   .dot.online { background:#22c55e; }
   .dot.away { background:#facc15; }
   .dot.idle { background:#9ca3af; }
@@ -356,7 +359,7 @@
   <!-- CONNECTING -->
   <div id="connecting-wrap" style="display:none;">
     <div class="mascot" id="mascot-slot-2"></div>
-    <div style="margin-top:8px;">Connecting to Buddy Diary&hellip;</div>
+    <div style="margin-top:8px;">Connecting to InstantDiary&hellip;</div>
     <div class="progress-track"><div class="progress-fill"></div></div>
   </div>
 
@@ -371,6 +374,7 @@
         <div class="m-drop">
           <div id="menu-setstatus">Set Status&hellip;</div>
           <div id="menu-statuslog">Status Log&hellip;</div>
+          <div id="menu-cloudsync">Sync&hellip;</div>
           <div id="menu-signoff">Sign Off</div>
         </div>
       </div>
@@ -385,7 +389,7 @@
     <div class="win-body">
       <div class="bl-me">
         <b id="bl-me-name">Screen Name</b>
-        <span id="bl-me-sub">Online</span>
+        <span><span class="dot online" id="bl-me-dot"></span> <span id="bl-me-sub">Online</span></span>
         <span class="bl-status-edit" id="bl-status-edit">Set Status</span>
       </div>
       <div class="bl-list" id="bl-list"></div>
@@ -497,7 +501,116 @@
       .then(function(){
         saveInFlight = false;
         if(savePending){ savePending = false; return saveState(); }
+        if(cloudUser) scheduleCloudPush();
       });
+  }
+
+  // ---------------- cloud sync (Firebase: Google sign-in + Firestore) ----------------
+  var firebaseConfig = {
+    apiKey: "AIzaSyD2zxq7c33ff6CnLlNrVolPGtaqHRJhaa0",
+    authDomain: "instantdiary-14474.firebaseapp.com",
+    projectId: "instantdiary-14474",
+    storageBucket: "instantdiary-14474.firebasestorage.app",
+    messagingSenderId: "20644051614",
+    appId: "1:20644051614:web:50d2be0d77cbec02a7998f"
+  };
+  var cloudUser = null;
+  var cloudPushTimer = null;
+  var fbApp = null, auth = null, db = null;
+  try{
+    if(typeof firebase !== 'undefined'){
+      fbApp = firebase.initializeApp(firebaseConfig);
+      auth = firebase.auth();
+      db = firebase.firestore();
+      auth.onAuthStateChanged(function(user){ cloudUser = user; });
+    }
+  } catch(e){ /* Firebase not available (e.g. offline) — app still works locally */ }
+
+  function signInWithGoogle(){
+    if(!auth) return Promise.reject(new Error('Cloud sync is unavailable right now.'));
+    var provider = new firebase.auth.GoogleAuthProvider();
+    return auth.signInWithPopup(provider);
+  }
+  function signOutCloud(){
+    return auth ? auth.signOut() : Promise.resolve();
+  }
+  function scheduleCloudPush(){
+    clearTimeout(cloudPushTimer);
+    cloudPushTimer = setTimeout(function(){ pushToCloud().catch(function(){}); }, 3000);
+  }
+
+  // splits an entries array into chunks that stay comfortably under Firestore's 1MB doc limit
+  function chunkEntries(arr, maxBytes){
+    maxBytes = maxBytes || 700000;
+    var chunks = [], current = [], size = 2;
+    (arr || []).forEach(function(item){
+      var itemSize = JSON.stringify(item).length + 1;
+      if(current.length && size + itemSize > maxBytes){
+        chunks.push(current); current = []; size = 2;
+      }
+      current.push(item); size += itemSize;
+    });
+    chunks.push(current); // always at least one (possibly empty) chunk
+    return chunks;
+  }
+
+  function pushToCloud(){
+    if(!db || !cloudUser) return Promise.reject(new Error('Not signed in.'));
+    var uid = cloudUser.uid;
+    var meta = {
+      screenName: state.account ? state.account.screenName : '',
+      groups: state.groups,
+      buddies: state.buddies,
+      status: state.status,
+      statusLog: state.statusLog,
+      statusPresets: state.statusPresets,
+      chunkCounts: {},
+      updatedAt: Date.now()
+    };
+    var writes = [];
+    Object.keys(state.entries).forEach(function(buddyId){
+      var chunks = chunkEntries(state.entries[buddyId]);
+      meta.chunkCounts[buddyId] = chunks.length;
+      chunks.forEach(function(chunk, i){
+        writes.push(db.collection('users').doc(uid).collection('entries').doc(buddyId+'_'+i).set({ entries: chunk }));
+      });
+    });
+    writes.push(db.collection('users').doc(uid).collection('diary').doc('meta').set(meta));
+    return Promise.all(writes);
+  }
+
+  function pullFromCloud(){
+    if(!db || !cloudUser) return Promise.reject(new Error('Not signed in.'));
+    var uid = cloudUser.uid;
+    return db.collection('users').doc(uid).collection('diary').doc('meta').get().then(function(snap){
+      if(!snap.exists) return false;
+      var meta = snap.data() || {};
+      state.groups = meta.groups || state.groups;
+      state.buddies = meta.buddies || [];
+      state.status = meta.status || { label:'', html:'', ts:null };
+      state.statusLog = meta.statusLog || [];
+      state.statusPresets = meta.statusPresets || [];
+      if(state.account && meta.screenName) state.account.screenName = meta.screenName;
+      var chunkCounts = meta.chunkCounts || {};
+      var buddyIds = Object.keys(chunkCounts);
+      state.entries = {};
+      var fetches = buddyIds.map(function(buddyId){
+        var n = chunkCounts[buddyId];
+        var docFetches = [];
+        for(var i=0;i<n;i++){
+          docFetches.push(db.collection('users').doc(uid).collection('entries').doc(buddyId+'_'+i).get());
+        }
+        return Promise.all(docFetches).then(function(snaps){
+          var all = [];
+          snaps.forEach(function(s){ if(s.exists) all = all.concat((s.data()||{}).entries || []); });
+          state.entries[buddyId] = all;
+        });
+      });
+      return Promise.all(fetches).then(function(){
+        normalizeState();
+        return saveState().then(function(){ return true; });
+      });
+    });
   }
 
   // ---------------- sound ----------------
@@ -892,6 +1005,7 @@
   document.getElementById('menu-sendim').addEventListener('click', function(){ openNewMessageWindow(); });
   document.getElementById('menu-setstatus').addEventListener('click', openSetStatusWindow);
   document.getElementById('menu-statuslog').addEventListener('click', openStatusLogWindow);
+  document.getElementById('menu-cloudsync').addEventListener('click', openCloudSyncWindow);
   document.getElementById('menu-addcategory').addEventListener('click', openAddCategoryWindow);
   document.getElementById('bl-status-edit').addEventListener('click', openSetStatusWindow);
 
@@ -1376,7 +1490,7 @@
       '<div class="win-body nm-body">' +
         '<div class="nm-row"><label>To:</label><input type="text" id="nm-to" list="'+listId+'" placeholder="Name" value="'+(prefillName?escapeHtml(prefillName):'')+'">' +
         '<datalist id="'+listId+'">'+options+'</datalist></div>' +
-        richComposeHtml('nm-body', 'Write your entry...') +
+        richComposeHtml('nm-body', '') +
         '<div class="nm-send-row"><button class="btn" id="nm-send">Send</button></div>' +
       '</div>';
 
@@ -1604,6 +1718,70 @@
         '</ul>' +
       '</div>';
     createWindow({ title: 'Help', extraClass: 'help-win', bodyHtml: body, type: 'help' });
+  }
+
+  // ================= CLOUD SYNC WINDOW =================
+  function openCloudSyncWindow(){
+    var body;
+    if(!cloudUser){
+      body =
+        '<div class="win-body" style="font-size:12px; line-height:1.6;">' +
+          '<p>Sign in with Google to back up your diary to the cloud &mdash; so it survives even if this device\'s storage ever gets cleared.</p>' +
+          '<button class="btn" id="cs-signin">Sign in with Google</button>' +
+          '<div class="signon-error" id="cs-error"></div>' +
+        '</div>';
+    } else {
+      body =
+        '<div class="win-body" style="font-size:12px; line-height:1.6;">' +
+          '<p>Signed in as <b>' + escapeHtml(cloudUser.email || cloudUser.displayName || 'your Google account') + '</b></p>' +
+          '<div class="nm-send-row" style="gap:6px; justify-content:flex-start;">' +
+            '<button class="btn" id="cs-push">Push to Cloud</button>' +
+            '<button class="btn" id="cs-pull">Pull from Cloud</button>' +
+          '</div>' +
+          '<div class="signon-error" id="cs-status" style="color:#0850d0;"></div>' +
+          '<div class="nm-send-row" style="margin-top:14px;"><button class="btn" id="cs-signout">Sign Out of Google</button></div>' +
+        '</div>';
+    }
+    createWindow({
+      title: 'Sync',
+      extraClass: 'help-win',
+      bodyHtml: body,
+      type: 'cloudsync',
+      onMount: function(el, id){
+        if(!cloudUser){
+          el.querySelector('#cs-signin').addEventListener('click', function(){
+            signInWithGoogle().then(function(){
+              closeWindow(id);
+              openCloudSyncWindow();
+            }).catch(function(e){
+              el.querySelector('#cs-error').textContent = 'Sign-in failed: ' + (e && e.message ? e.message : e);
+            });
+          });
+        } else {
+          el.querySelector('#cs-push').addEventListener('click', function(){
+            el.querySelector('#cs-status').textContent = 'Pushing to cloud\u2026';
+            pushToCloud().then(function(){
+              el.querySelector('#cs-status').textContent = 'Backed up just now.';
+            }).catch(function(e){
+              el.querySelector('#cs-status').textContent = 'Push failed: ' + (e && e.message ? e.message : e);
+            });
+          });
+          el.querySelector('#cs-pull').addEventListener('click', function(){
+            el.querySelector('#cs-status').textContent = 'Pulling from cloud\u2026';
+            pullFromCloud().then(function(found){
+              el.querySelector('#cs-status').textContent = found ? 'Restored from your cloud backup.' : 'No cloud backup found yet.';
+              renderBuddyList();
+              refreshMyStatus();
+            }).catch(function(e){
+              el.querySelector('#cs-status').textContent = 'Pull failed: ' + (e && e.message ? e.message : e);
+            });
+          });
+          el.querySelector('#cs-signout').addEventListener('click', function(){
+            signOutCloud().then(function(){ closeWindow(id); });
+          });
+        }
+      }
+    });
   }
 
   // ================= CHANGE PASSWORD WINDOW =================
