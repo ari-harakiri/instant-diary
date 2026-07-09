@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Buddy Diary</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html {
+    -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+    touch-action: manipulation;
+  }
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+    background: #3a6ea5;
+    overflow: hidden;
+    position: fixed;
+    overscroll-behavior: none;
+    -webkit-user-select: none; user-select: none;
+  }
+  #desktop {
+    position: relative; width: 100%; height: 100vh; height: 100dvh;
+    overflow: hidden;
+    background: #bfe3fb;
+  }
+  #bg-scene { position:absolute; inset:0; z-index:0; overflow:hidden; }
+  #bg-scene svg { width:100%; height:100%; display:block; }
+
+  /* ---------- XP Luna window chrome ---------- */
+  .win {
+    position: absolute;
+    background: #ece9d8;
+    border: 1px solid #0054e3;
+    border-radius: 8px;
+    box-shadow: 2px 3px 12px rgba(0,0,0,.45);
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .titlebar {
+    background: linear-gradient(180deg,#3d95ff 0%,#0058e6 45%,#0850d0 55%,#1a63d8 100%);
+    color: #fff;
+    font-weight: bold;
+    font-size: 13px;
+    padding: 5px 4px 5px 9px;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: move;
+    letter-spacing: .2px;
+    text-shadow: 1px 1px 1px rgba(0,0,0,.5);
+  }
+  .titlebar .t-title { display:flex; align-items:center; gap:6px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+  .titlebar .t-btns { display:flex; gap:3px; }
+  .titlebar button.win-btn {
+    width: 21px; height: 19px;
+    border: 1px solid rgba(255,255,255,.5);
+    border-radius: 3px;
+    background: linear-gradient(180deg,#ff8a70,#e0301e 55%,#c11c0c);
+    font-size: 11px; line-height: 1; font-weight:bold;
+    color:#fff; cursor:pointer; padding:0;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,.5);
+  }
+  .titlebar button.win-btn:active { filter: brightness(0.85); }
+  .menubar {
+    background: #ece9d8; border-bottom: 1px solid #b0aca0;
+    display: flex; font-size: 11px; padding: 2px 2px;
+  }
+  .menubar .m-item { position: relative; padding: 4px 9px; cursor: pointer; border-radius:3px; }
+  .menubar .m-item:hover { background: #316ac5; color:#fff; }
+  .menubar .m-drop {
+    display: none; position: absolute; top: 100%; left: 0;
+    background: #fff; border: 1px solid #888; box-shadow: 2px 2px 8px rgba(0,0,0,.35);
+    min-width: 150px; z-index: 5; border-radius: 0 4px 4px 4px; overflow:hidden;
+  }
+  .menubar .m-item:hover .m-drop { display: block; }
+  .m-drop div { padding: 6px 12px; color: #000; white-space: nowrap; }
+  .m-drop div:hover { background: #316ac5; color:#fff; }
+  .win-body { flex: 1; overflow: auto; padding: 6px; background: #fff; -webkit-overflow-scrolling: touch; }
+  input[type=text], input[type=password], textarea {
+    font-family: Tahoma, Arial, sans-serif; font-size: 13px;
+    border: 1px solid #7f9db9; border-radius: 3px; padding: 5px 6px; background:#fff;
+  }
+  input[type=text]:focus, input[type=password]:focus, textarea:focus {
+    outline: none; border-color:#3d95ff; box-shadow:0 0 0 2px rgba(61,149,255,.3);
+  }
+  button.btn {
+    font-family: Tahoma, Arial, sans-serif; font-size: 12px; font-weight:600;
+    border: 1px solid #003c9c; border-radius: 4px;
+    background: linear-gradient(180deg,#fefefe,#e5f0fb 45%,#bcd8f6 55%,#9cc6f0);
+    padding: 6px 14px; cursor: pointer; color:#12336b;
+  }
+  button.btn:active { background: linear-gradient(180deg,#9cc6f0,#bcd8f6); }
+
+  /* ---------- mascot ---------- */
+  .mascot { display:inline-block; }
+  .mascot svg { display:block; margin:0 auto; }
+
+  /* ---------- sign-on screen ---------- */
+  #signon-wrap {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width: min(300px, 92vw);
+  }
+  #signon-wrap .win-body { background:#ece9d8; text-align:center; padding: 16px 18px; }
+  .brand-lockup { font-size:22px; font-weight:800; color:#0850d0; margin:6px 0 0; letter-spacing:.2px; }
+  .brand-lockup span { color:#3d95ff; font-weight:400; font-style:italic; }
+  #signon-wrap h1 { font-size: 13px; margin: 4px 0 2px; color:#555; font-weight:normal; }
+  #signon-wrap .sub { font-size: 11px; color:#555; margin-bottom: 12px; }
+  .field-row { text-align:left; margin-bottom: 8px; }
+  .field-row label { display:flex; align-items:center; gap:4px; font-size:11px; margin-bottom:2px; color:#222; }
+  .field-row input { width: 100%; }
+  .pw-saved { color:#777; font-style:italic; background:#f3f3ee; cursor:pointer; }
+  .check-row { text-align:left; font-size:11px; margin: 8px 0 12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; }
+  .check-row .ck { display:flex; align-items:center; gap:4px; }
+  .signon-error { color:#c0392b; font-size:11px; min-height:14px; margin-bottom:4px; }
+  .signon-bottom { display:flex; align-items:center; justify-content:space-between; margin-top:12px; }
+  .icon-btn { display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9.5px; color:#333;
+    border:1px solid #b0aca0; border-radius:5px; background:linear-gradient(180deg,#fefefe,#e5e1d3); padding:4px 8px; cursor:pointer; }
+  .icon-btn:active { background:linear-gradient(180deg,#e5e1d3,#cfcabb); }
+  .signon-go {
+    display:flex; align-items:center; gap:6px; font-weight:bold; font-size:13px; color:#12336b;
+    border:1px solid #003c9c; border-radius:5px; padding:6px 14px; cursor:pointer;
+    background: linear-gradient(180deg,#fefefe,#e5f0fb 45%,#bcd8f6 55%,#9cc6f0);
+  }
+  .signon-go:active { background: linear-gradient(180deg,#9cc6f0,#bcd8f6); }
+  .signon-version { font-size:9px; color:#999; margin-top:10px; text-align:right; }
+
+  #connecting-wrap {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width: min(300px, 92vw); text-align:center; padding: 20px;
+    background:#ece9d8; border: 1px solid #0054e3; border-radius: 8px;
+    box-shadow: 2px 3px 12px rgba(0,0,0,.45); font-size: 12px;
+  }
+  .progress-track { height: 16px; border: 1px solid #7f9db9; border-radius:3px; background:#fff; overflow:hidden; margin-top:10px; }
+  .progress-fill {
+    height:100%; width:40%;
+    background: repeating-linear-gradient(45deg,#0058e6,#0058e6 8px,#3d95ff 8px,#3d95ff 16px);
+    animation: slide 1.1s linear infinite;
+  }
+  @keyframes slide { from { transform: translateX(-40%); } to { transform: translateX(150%); } }
+
+  /* ---------- buddy list (mini) ---------- */
+  #buddylist-win { width: min(168px, 46vw); height: min(380px, 74vh); top: 16px; right: 16px; }
+  #buddylist-win .win-body { padding: 0; display:flex; flex-direction:column; }
+  .bl-me { padding: 5px 7px; font-size:10.5px; border-bottom:1px solid #ccc; background:#f5f5f0; }
+  .bl-me b { display:block; font-size:11.5px; }
+  .bl-status-edit { font-size:9px; color:#0850d0; text-decoration:underline; cursor:pointer; display:block; margin-top:2px; }
+  .status-log-row { padding:6px 4px; border-bottom:1px solid #eee; font-size:11.5px; }
+  .status-log-row .slr-ts { color:#888; font-size:10px; }
+  .status-log-row .slr-text { margin-top:2px; }
+  .nm-row select { flex:1; font-family:Tahoma,Arial,sans-serif; font-size:12px; border:1px solid #7f9db9; border-radius:3px; padding:5px 6px; background:#fff; }
+  .bl-group-header { font-size:10.5px; font-weight:bold; padding:3px 6px; color:#0850d0; cursor:pointer; background:#dce8f7; }
+  .bl-list { flex:1; overflow-y:auto; -webkit-overflow-scrolling: touch; }
+  .bl-row { display:flex; align-items:center; gap:5px; padding:5px 6px; cursor:pointer; font-size:11px; min-height:30px; }
+  .bl-row:active, .bl-row:hover { background:#d3e4f5; }
+  .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; box-shadow: inset 0 0 2px rgba(0,0,0,.4); }
+  .dot.online { background:#22c55e; }
+  .dot.away { background:#facc15; }
+  .dot.idle { background:#9ca3af; }
+  .bl-name-wrap { display:flex; flex-direction:column; overflow:hidden; }
+  .bl-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bl-sub { font-size:9px; color:#777; }
+  .bl-toolbar { display:flex; gap:3px; padding:4px; border-top:1px solid #ccc; background:#ece9d8; }
+  .bl-toolbar button { flex:1; font-size:10px; padding:5px 2px; }
+  .bl-empty { padding:12px 8px; font-size:10.5px; color:#777; text-align:center; }
+
+  /* ---------- IM window ---------- */
+  .im-win { width: min(320px, 92vw); height: min(420px, 76vh); }
+  .im-stats { font-size:10px; color:#666; padding:3px 8px; background:#f5f5f0; border-bottom:1px solid #ddd; text-align:right; }
+  .im-toolbar { display:flex; gap:3px; padding:4px 5px; background:#ece9d8; border-bottom:1px solid #ccc; }
+  .im-toolbar button { width:24px; height:22px; font-size:11px; border:1px solid #b0aca0; border-radius:3px; background:#fff; cursor:pointer; }
+  .im-log { flex:1; overflow-y:auto; background:#fff; padding:8px; font-size:12.5px; line-height:1.4; -webkit-overflow-scrolling: touch; }
+  .im-day-divider { text-align:center; color:#888; font-size:10px; margin:10px 0 6px; }
+  .im-entry { margin-bottom:8px; }
+  .im-entry .who { color:#0850d0; font-weight:bold; }
+  .im-entry .ts { color:#888; font-weight:normal; }
+  .im-entry .txt { white-space:pre-wrap; margin-left:0; }
+  .im-compose-row { border-top:1px solid #ccc; background:#fff; padding:5px; }
+  .rich-toolbar { display:flex; gap:4px; padding:4px 5px; background:#ece9d8; border-bottom:1px solid #ccc; align-items:center; flex-wrap:wrap; }
+  .rich-toolbar button[data-cmd] { width:24px; height:22px; font-size:11px; border:1px solid #b0aca0; border-radius:3px; background:#fff; cursor:pointer; }
+  .rich-size { height:22px; font-size:11px; border:1px solid #b0aca0; border-radius:3px; background:#fff; }
+  .rich-swatch { position:relative; width:24px; height:22px; border:1px solid #b0aca0; border-radius:3px; background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .rich-swatch span { font-size:12px; font-weight:bold; pointer-events:none; }
+  .rich-swatch.hl span { color:#ffd400; }
+  .rich-swatch.bg span { color:#8aa; }
+  .rich-swatch input[type=color] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+  .mi { padding:6px 12px; color:#000; white-space:nowrap; cursor:pointer; }
+  .mi:hover { background:#316ac5; color:#fff; }
+  .im-log img, .status-log-row img, .slr-text img { max-width:100%; border-radius:4px; }
+  .rich-compose img { cursor:pointer; }
+  .img-resize-menu {
+    position:fixed; z-index:99999; display:flex; gap:2px;
+    background:#222; border-radius:4px; padding:2px; box-shadow:0 2px 8px rgba(0,0,0,.45);
+  }
+  .img-resize-menu button {
+    width:22px; height:20px; font-size:10px; border:none; border-radius:2px;
+    background:#444; color:#fff; cursor:pointer;
+  }
+  .img-resize-menu button:hover { background:#0058e6; }
+  .rich-compose {
+    width:100%; min-height:44px; max-height:120px; overflow-y:auto;
+    border:1px solid #7f9db9; border-radius:3px; background:#fff;
+    padding:5px 6px; font-size:13px; line-height:1.4;
+  }
+  .rich-compose:focus { outline:none; border-color:#3d95ff; box-shadow:0 0 0 2px rgba(61,149,255,.3); }
+  .rich-compose:empty:before { content: attr(data-placeholder); color:#999; }
+  .who.prompt-who { color:#8a6d00; font-style:italic; }
+  .im-entry.prompt-entry .txt { color:#5b4900; font-style:italic; background:#fff8e1; padding:4px 6px; border-radius:4px; display:inline-block; }
+  .status-tag { font-size:9px; color:#0850d0; font-weight:bold; display:inline-block; margin-bottom:2px; }
+  .im-action-row { display:flex; align-items:center; gap:4px; padding:5px 6px; background:#ece9d8; border-top:1px solid #ccc; }
+  .action-btn { display:flex; flex-direction:column; align-items:center; gap:1px; font-size:9px; color:#333;
+    border:1px solid #b0aca0; border-radius:4px; background:#fff; padding:3px 7px; cursor:pointer; }
+  .action-btn:active { background:#e5e1d3; }
+  .send-btn-gold {
+    margin-left:auto; display:flex; align-items:center; gap:5px; font-weight:bold; font-size:12px; color:#4a2e00;
+    border:1px solid #a67c00; border-radius:5px; padding:7px 14px; cursor:pointer;
+    background: linear-gradient(180deg,#ffe28a,#ffbf3f 50%,#e69a00);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
+  }
+  .send-btn-gold:active { background: linear-gradient(180deg,#e69a00,#ffbf3f); }
+
+  /* ---------- new message / add buddy ---------- */
+  .nm-win { width: min(300px, 92vw); height: min(300px, 66vh); }
+  .nm-body { padding:10px; }
+  .nm-row { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+  .nm-row label { font-size:11px; width:36px; flex-shrink:0; }
+  .nm-row input { flex:1; }
+  .nm-body textarea { width:100%; height:110px; resize:none; }
+  .nm-send-row { display:flex; justify-content:flex-end; margin-top:8px; }
+
+  .addbuddy-win { width: min(250px, 90vw); height: min(140px, 40vh); }
+  .help-win { width: min(280px, 92vw); height: min(300px, 60vh); }
+  .setup-win { width: min(280px, 92vw); height: min(260px, 60vh); }
+  .status-win { width: min(300px, 92vw); height: min(420px, 80vh); }
+
+  /* ---------- taskbar (XP style) ---------- */
+  #taskbar {
+    position:absolute; bottom:0; left:0; right:0; height:34px;
+    background: linear-gradient(180deg,#2f7ee0,#1a4fc4 50%,#0d3aa8);
+    border-top:1px solid #5ba3f5;
+    display:flex; align-items:center; padding:0 4px; gap:4px; z-index:9999;
+    font-size:11px;
+  }
+  #taskbar .tb-item {
+    background: linear-gradient(180deg,#5ea0f0,#2f6fd8);
+    border: 1px solid #0d3aa8; border-radius:3px;
+    color:#fff; padding:5px 10px; cursor:pointer; max-width:120px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.4);
+  }
+  #taskbar .tb-item.active { background: linear-gradient(180deg,#1a4fc4,#0d3aa8); box-shadow: inset 0 1px 3px rgba(0,0,0,.5); }
+  #tb-clock {
+    margin-left:auto; background: linear-gradient(180deg,#1a4fc4,#0d3aa8);
+    border: 1px solid #0a2e85; border-radius:3px; color:#fff; padding:5px 9px;
+  }
+
+  ::-webkit-scrollbar { width: 12px; }
+  ::-webkit-scrollbar-track { background:#ece9d8; }
+  ::-webkit-scrollbar-thumb { background:#9cc6f0; border-radius:6px; }
+
+  /* ---------- mobile: popups float over the mini buddy list, draggable but screen-bound ---------- */
+  @media (max-width: 700px) {
+    .im-win, .nm-win, .addbuddy-win {
+      box-shadow: 0 6px 24px rgba(0,0,0,.55);
+    }
+    .bl-row { min-height: 40px; padding: 7px 8px; font-size:12px; }
+    .bl-name { font-size:12.5px; }
+    .bl-toolbar button { padding: 9px 4px; font-size:11.5px; }
+    #tb-items { max-width: 60vw; overflow-x:auto; }
+    #taskbar .tb-item { max-width: 90px; font-size:10px; padding:6px 8px; }
+    .rich-compose { min-height:38px; }
+    input[type=text], input[type=password], textarea { font-size:16px; }
+    .nm-row label, .field-row label { font-size:12px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="desktop">
+
+  <div id="bg-scene" aria-hidden="true">
+    <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2e7fe0"/>
+          <stop offset="45%" stop-color="#6fb3ef"/>
+          <stop offset="78%" stop-color="#bfe3fb"/>
+          <stop offset="100%" stop-color="#e6f5fc"/>
+        </linearGradient>
+        <linearGradient id="hillBack" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#5fa838"/>
+          <stop offset="100%" stop-color="#488a28"/>
+        </linearGradient>
+        <linearGradient id="hillFront" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#8fd150"/>
+          <stop offset="100%" stop-color="#69b93a"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="1600" height="900" fill="url(#sky)"/>
+
+      <g fill="#ffffff" opacity="0.92">
+        <g transform="translate(180,120)">
+          <ellipse cx="0" cy="0" rx="70" ry="26"/>
+          <ellipse cx="55" cy="8" rx="46" ry="20"/>
+          <ellipse cx="-55" cy="10" rx="42" ry="18"/>
+        </g>
+        <g transform="translate(620,80)">
+          <ellipse cx="0" cy="0" rx="55" ry="20"/>
+          <ellipse cx="45" cy="6" rx="36" ry="16"/>
+          <ellipse cx="-42" cy="8" rx="34" ry="14"/>
+        </g>
+        <g transform="translate(1180,150)">
+          <ellipse cx="0" cy="0" rx="80" ry="28"/>
+          <ellipse cx="65" cy="10" rx="50" ry="22"/>
+          <ellipse cx="-60" cy="12" rx="46" ry="18"/>
+        </g>
+        <g transform="translate(1420,70)" opacity="0.85">
+          <ellipse cx="0" cy="0" rx="46" ry="16"/>
+          <ellipse cx="34" cy="6" rx="28" ry="12"/>
+        </g>
+      </g>
+
+      <path d="M0,620 C220,540 380,600 560,560 C760,515 920,610 1120,565 C1300,525 1450,575 1600,555 L1600,900 L0,900 Z" fill="url(#hillBack)"/>
+      <path d="M0,760 C260,690 480,740 720,700 C960,660 1180,730 1600,690 L1600,900 L0,900 Z" fill="url(#hillFront)"/>
+    </svg>
+  </div>
+
+  <!-- SIGN ON -->
+  <div id="signon-wrap" class="win" style="display:none;">
+    <div class="titlebar"><span class="t-title"><span class="ttl-icon"></span><span>Sign On</span></span><span class="t-btns"><button class="win-btn">X</button></span></div>
+    <div class="win-body">
+      <div class="mascot" id="mascot-slot"></div>
+      <div class="brand-lockup">Instant<span>Diary</span></div>
+      <div class="signon-error" id="signon-error"></div>
+
+      <div class="field-row"><label id="sn-label"><span class="ttl-icon" style="width:14px;height:14px;"></span>ScreenName</label><input type="text" id="in-screenname" autocomplete="off"></div>
+      <div class="field-row"><label>Password</label><input type="password" id="in-password"></div>
+      <div class="field-row" id="confirm-row" style="display:none;"><label>Confirm Password</label><input type="password" id="in-password2"></div>
+
+      <div class="check-row">
+        <span class="ck"><input type="checkbox" id="in-savepw"><label for="in-savepw">Save password</label></span>
+        <span class="ck"><input type="checkbox" id="in-autologin"><label for="in-autologin">Auto-login</label></span>
+      </div>
+
+      <div class="signon-bottom">
+        <span style="display:flex; gap:6px;">
+          <span class="icon-btn" id="btn-help">?<span>Help</span></span>
+          <span class="icon-btn" id="btn-setup">&#9881;<span>Setup</span></span>
+        </span>
+        <span class="signon-go" id="signon-submit"><span id="signon-go-icon"></span><span id="signon-go-label">Sign On</span></span>
+      </div>
+      <div class="signon-version">Version 1.0</div>
+    </div>
+  </div>
+
+  <!-- CONNECTING -->
+  <div id="connecting-wrap" style="display:none;">
+    <div class="mascot" id="mascot-slot-2"></div>
+    <div style="margin-top:8px;">Connecting to Buddy Diary&hellip;</div>
+    <div class="progress-track"><div class="progress-fill"></div></div>
+  </div>
+
+  <!-- BUDDY LIST -->
+  <div id="buddylist-win" class="win" style="display:none;">
+    <div class="titlebar">
+      <span class="t-title"><span class="ttl-icon"></span><span id="bl-title-text">Buddy List</span></span>
+      <span class="t-btns"><button class="win-btn" id="bl-close">X</button></span>
+    </div>
+    <div class="menubar">
+      <div class="m-item">File
+        <div class="m-drop">
+          <div id="menu-setstatus">Set Status&hellip;</div>
+          <div id="menu-statuslog">Status Log&hellip;</div>
+          <div id="menu-signoff">Sign Off</div>
+        </div>
+      </div>
+      <div class="m-item">Buddies
+        <div class="m-drop">
+          <div id="menu-addbuddy">Add Buddy&hellip;</div>
+          <div id="menu-addcategory">Add Category&hellip;</div>
+          <div id="menu-sendim">Send Instant Message&hellip;</div>
+        </div>
+      </div>
+    </div>
+    <div class="win-body">
+      <div class="bl-me">
+        <b id="bl-me-name">Screen Name</b>
+        <span id="bl-me-sub">Online</span>
+        <span class="bl-status-edit" id="bl-status-edit">Set Status</span>
+      </div>
+      <div class="bl-list" id="bl-list"></div>
+      <div class="bl-toolbar">
+        <button class="btn" id="bl-addbuddy-btn">Add Buddy</button>
+        <button class="btn" id="bl-sendim-btn">Send IM</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="windows-layer"></div>
+
+  <div id="taskbar">
+    <div id="tb-items" style="display:flex; gap:4px;"></div>
+    <div id="tb-clock"></div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+
+  var STORAGE_KEY = 'buddy-diary-data-v1';
+
+  var state = {
+    account: null,          // { screenName, password }
+    savePassword: false,
+    autoLogin: false,
+    status: { label: '', html: '', ts: null },   // current status
+    statusLog: [],                    // history: { label, html, ts }
+    statusPresets: [],                // saved reusable statuses: { id, label, html }
+    groups: [ { id: 'default', name: 'Buddies' } ],
+    buddies: [],            // { id, name, addedAt, groupId }
+    entries: {}             // buddyId -> [ { id, html, ts, kind:'entry'|'prompt' } ]
+  };
+
+  function normalizeState(){
+    if(!Array.isArray(state.groups) || !state.groups.length){
+      state.groups = [{ id: 'default', name: 'Buddies' }];
+    }
+    if(!Array.isArray(state.buddies)) state.buddies = [];
+    state.buddies.forEach(function(b){ if(!b.groupId) b.groupId = 'default'; });
+    if(!state.status) state.status = { label: '', html: '', ts: null };
+    if(!Array.isArray(state.statusLog)) state.statusLog = [];
+    if(!Array.isArray(state.statusPresets)) state.statusPresets = [];
+    state.entries = state.entries || {};
+    Object.keys(state.entries).forEach(function(bid){
+      (state.entries[bid] || []).forEach(function(e){ if(!e.kind) e.kind = 'entry'; });
+    });
+  }
+
+  var openWindows = [];     // { id, type, buddyId, el, tbEl }
+  var zCounter = 100;
+  var winCounter = 0;
+
+  function isMobile(){
+    return window.matchMedia('(max-width: 700px)').matches;
+  }
+
+  // ---------------- persistence ----------------
+  function hasStorage(){
+    return typeof window.storage !== 'undefined' && window.storage &&
+      typeof window.storage.get === 'function' && typeof window.storage.set === 'function';
+  }
+
+  function loadState(){
+    return loadStateAttempt(4);
+  }
+  function loadStateAttempt(retriesLeft){
+    if(hasStorage()){
+      try{
+        return window.storage.get(STORAGE_KEY, false).then(function(res){
+          if(res && res.value){
+            try { state = JSON.parse(res.value); normalizeState(); } catch(e){}
+          }
+        }).catch(function(){ /* nothing saved yet */ });
+      } catch(e){
+        return Promise.resolve();
+      }
+    }
+    if(retriesLeft > 0){
+      return new Promise(function(resolve){
+        setTimeout(function(){ resolve(loadStateAttempt(retriesLeft - 1)); }, 200);
+      });
+    }
+    return Promise.resolve();
+  }
+
+  var saveInFlight = false, savePending = false;
+  function saveState(){
+    if(!hasStorage()) return Promise.resolve();
+    if(saveInFlight){ savePending = true; return Promise.resolve(); }
+    saveInFlight = true;
+    var payload = JSON.stringify(state);
+    var attempt;
+    try{
+      attempt = window.storage.set(STORAGE_KEY, payload, false);
+    } catch(e){
+      attempt = Promise.reject(e);
+    }
+    return attempt
+      .catch(function(){
+        // one quiet retry - transient hiccups shouldn't surface to the user
+        try{
+          return window.storage.set(STORAGE_KEY, payload, false).catch(function(){ /* give up quietly */ });
+        } catch(e){ /* give up quietly */ }
+      })
+      .then(function(){
+        saveInFlight = false;
+        if(savePending){ savePending = false; return saveState(); }
+      });
+  }
+
+  // ---------------- sound ----------------
+  function getCtx(){
+    if(!window._actx){
+      window._actx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return window._actx;
+  }
+  function playDing(){
+    try{
+      var ctx = getCtx(); var now = ctx.currentTime;
+      [[880,0],[1318.5,0.09]].forEach(function(pair){
+        var freq = pair[0], delay = pair[1];
+        var osc = ctx.createOscillator(); var gain = ctx.createGain();
+        osc.type = 'sine'; osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.0001, now+delay);
+        gain.gain.exponentialRampToValueAtTime(0.28, now+delay+0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now+delay+0.28);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now+delay); osc.stop(now+delay+0.3);
+      });
+    }catch(e){}
+  }
+  function playDoorCreak(){
+    try{
+      var ctx = getCtx(); var now = ctx.currentTime;
+      var osc = ctx.createOscillator(); var gain = ctx.createGain(); var filt = ctx.createBiquadFilter();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(90, now);
+      osc.frequency.exponentialRampToValueAtTime(230, now+0.5);
+      osc.frequency.exponentialRampToValueAtTime(120, now+0.95);
+      filt.type = 'bandpass'; filt.frequency.value = 320; filt.Q.value = 6;
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.18, now+0.12);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now+1.0);
+      osc.connect(filt).connect(gain).connect(ctx.destination);
+      osc.start(now); osc.stop(now+1.05);
+    }catch(e){}
+  }
+
+  // ---------------- mascot: yellow smiley on a blue square badge ----------------
+  function mascotSVG(size){
+    size = size || 54;
+    return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 64 64">' +
+      '<rect x="4" y="4" width="56" height="56" rx="10" fill="#0058e6"/>' +
+      '<circle cx="32" cy="32" r="20" fill="#ffcc33"/>' +
+      '<circle cx="25" cy="27" r="2.8" fill="#3a2b00"/>' +
+      '<circle cx="39" cy="27" r="2.8" fill="#3a2b00"/>' +
+      '<path d="M23 36 Q32 44.5 41 36" stroke="#3a2b00" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+      '</svg>';
+  }
+  document.getElementById('mascot-slot').innerHTML = mascotSVG(84);
+  document.getElementById('mascot-slot-2').innerHTML = mascotSVG(44);
+  document.querySelectorAll('.ttl-icon').forEach(function(el){ el.innerHTML = mascotSVG(15); });
+  document.getElementById('signon-go-icon').innerHTML = mascotSVG(16);
+
+  function iconSVG(name){
+    var stroke = 'stroke="#0850d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"';
+    if(name === 'bulb'){
+      return '<svg width="15" height="15" viewBox="0 0 24 24" '+stroke+'><path d="M9 18h6M10 22h4M12 2a6 6 0 00-3.5 10.9c.4.3.5.8.5 1.3V15h6v-.8c0-.5.1-1 .5-1.3A6 6 0 0012 2z"/></svg>';
+    }
+    if(name === 'clock'){
+      return '<svg width="15" height="15" viewBox="0 0 24 24" '+stroke+'><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>';
+    }
+    if(name === 'plus'){
+      return '<svg width="15" height="15" viewBox="0 0 24 24" '+stroke+'><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><path d="M19 8v6M16 11h6"/></svg>';
+    }
+    if(name === 'send'){
+      return '<svg width="15" height="15" viewBox="0 0 24 24" fill="#4a2e00"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg>';
+    }
+    if(name === 'calendar'){
+      return '<svg width="15" height="15" viewBox="0 0 24 24" '+stroke+'><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>';
+    }
+    if(name === 'photo'){
+      return '<svg width="15" height="15" viewBox="0 0 24 24" '+stroke+'><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg>';
+    }
+    return '';
+  }
+
+  // ---------------- helpers ----------------
+  function uid(){ return 'id' + Math.random().toString(36).slice(2) + Date.now().toString(36); }
+  function fmtTime(ts){
+    var d = new Date(ts);
+    var h = d.getHours(); var m = d.getMinutes();
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12; if(h === 0) h = 12;
+    return h + ':' + (m<10?'0':'') + m + ' ' + ampm;
+  }
+  function fmtDateShort(ts){
+    return new Date(ts).toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' });
+  }
+  function sameDay(a,b){
+    var da = new Date(a), db = new Date(b);
+    return da.getFullYear()===db.getFullYear() && da.getMonth()===db.getMonth() && da.getDate()===db.getDate();
+  }
+  function fmtDayDivider(ts){
+    var d = new Date(ts);
+    var today = new Date();
+    if(sameDay(ts, today.getTime())) return 'Today';
+    var yest = new Date(today); yest.setDate(today.getDate()-1);
+    if(sameDay(ts, yest.getTime())) return 'Yesterday';
+    return d.toLocaleDateString(undefined, { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+  }
+  function relTime(ts){
+    var diff = Date.now() - ts;
+    var mins = Math.floor(diff/60000);
+    if(mins < 1) return 'just now';
+    if(mins < 60) return mins + 'm ago';
+    var hrs = Math.floor(mins/60);
+    if(hrs < 24) return hrs + 'h ago';
+    var days = Math.floor(hrs/24);
+    if(days < 7) return days + 'd ago';
+    return new Date(ts).toLocaleDateString(undefined,{month:'short', day:'numeric'});
+  }
+  function lastEntryTs(buddyId){
+    var list = (state.entries[buddyId] || []).filter(function(e){ return e.kind !== 'prompt'; });
+    if(!list.length) return null;
+    return list[list.length-1].ts;
+  }
+  function statusFor(buddyId){
+    var ts = lastEntryTs(buddyId);
+    if(ts === null) return 'idle';
+    var days = (Date.now()-ts)/86400000;
+    if(sameDay(ts, Date.now())) return 'online';
+    if(days < 7) return 'away';
+    return 'idle';
+  }
+  function findBuddyByName(name){
+    var n = name.trim().toLowerCase();
+    for(var i=0;i<state.buddies.length;i++){
+      if(state.buddies[i].name.toLowerCase() === n) return state.buddies[i];
+    }
+    return null;
+  }
+  function ensureBuddy(name, groupId){
+    name = name.trim();
+    if(!name) return null;
+    var existing = findBuddyByName(name);
+    if(existing) return existing;
+    var b = { id: uid(), name: name, addedAt: Date.now(), groupId: groupId || 'default' };
+    state.buddies.push(b);
+    state.entries[b.id] = [];
+    return b;
+  }
+  function groupOptionsHtml(){
+    return state.groups.map(function(g){
+      return '<option value="'+escapeHtml(g.id)+'">'+escapeHtml(g.name)+'</option>';
+    }).join('');
+  }
+
+  // ================= SIGN ON =================
+  var signonMode = 'login'; // 'login' | 'create'
+  var pwFieldIsSavedPlaceholder = false;
+
+  function showSignon(){
+    document.getElementById('buddylist-win').style.display = 'none';
+    document.getElementById('connecting-wrap').style.display = 'none';
+    document.getElementById('signon-wrap').style.display = 'block';
+    document.getElementById('signon-error').textContent = '';
+    var pwInput = document.getElementById('in-password');
+
+    if(state.account){
+      signonMode = 'login';
+      document.getElementById('confirm-row').style.display = 'none';
+      document.getElementById('in-screenname').value = state.account.screenName;
+      document.getElementById('in-screenname').setAttribute('readonly','readonly');
+      document.getElementById('in-savepw').checked = !!state.savePassword;
+      document.getElementById('in-autologin').checked = !!state.autoLogin;
+      document.getElementById('signon-go-label').textContent = 'Sign On';
+
+      if(state.savePassword){
+        pwInput.value = 'Saved - click here to change';
+        pwInput.type = 'text';
+        pwInput.classList.add('pw-saved');
+        pwInput.readOnly = true;
+        pwFieldIsSavedPlaceholder = true;
+      } else {
+        pwInput.value = '';
+        pwInput.type = 'password';
+        pwInput.classList.remove('pw-saved');
+        pwInput.readOnly = false;
+        pwFieldIsSavedPlaceholder = false;
+      }
+    } else {
+      signonMode = 'create';
+      document.getElementById('confirm-row').style.display = 'block';
+      document.getElementById('in-screenname').value = '';
+      document.getElementById('in-screenname').removeAttribute('readonly');
+      pwInput.value = ''; pwInput.type = 'password'; pwInput.classList.remove('pw-saved'); pwInput.readOnly = false;
+      pwFieldIsSavedPlaceholder = false;
+      document.getElementById('in-password2').value = '';
+      document.getElementById('in-savepw').checked = false;
+      document.getElementById('in-autologin').checked = false;
+      document.getElementById('signon-go-label').textContent = 'Create Account';
+    }
+  }
+
+  document.getElementById('in-password').addEventListener('click', function(){
+    if(pwFieldIsSavedPlaceholder){
+      var pwInput = document.getElementById('in-password');
+      pwInput.value = '';
+      pwInput.type = 'password';
+      pwInput.classList.remove('pw-saved');
+      pwInput.readOnly = false;
+      pwFieldIsSavedPlaceholder = false;
+      pwInput.focus();
+    }
+  });
+
+  document.getElementById('signon-submit').addEventListener('click', function(){
+    var errEl = document.getElementById('signon-error');
+    errEl.textContent = '';
+    var name = document.getElementById('in-screenname').value.trim();
+    var pass = document.getElementById('in-password').value;
+    var savePw = document.getElementById('in-savepw').checked;
+    var autoLog = document.getElementById('in-autologin').checked;
+
+    if(signonMode === 'create'){
+      var pass2 = document.getElementById('in-password2').value;
+      if(!name){ errEl.textContent = 'Please enter a screen name.'; return; }
+      if(!pass){ errEl.textContent = 'Please enter a password.'; return; }
+      if(pass !== pass2){ errEl.textContent = 'Passwords do not match.'; return; }
+      state.account = { screenName: name, password: pass };
+      state.savePassword = savePw;
+      state.autoLogin = autoLog;
+      saveState().then(enterDesktop);
+    } else {
+      // if the field still shows the saved placeholder, the saved password is used as-is
+      if(!pwFieldIsSavedPlaceholder && pass !== state.account.password){
+        errEl.textContent = 'Incorrect password. Please try again.';
+        return;
+      }
+      state.savePassword = savePw;
+      state.autoLogin = autoLog;
+      saveState().then(enterDesktop);
+    }
+  });
+
+  document.getElementById('btn-help').addEventListener('click', function(){
+    openHelpWindow();
+  });
+  document.getElementById('btn-setup').addEventListener('click', function(){
+    if(!state.account){
+      document.getElementById('signon-error').textContent = 'Create an account first.';
+      return;
+    }
+    openChangePasswordWindow();
+  });
+
+  function enterDesktop(){
+    document.getElementById('signon-wrap').style.display = 'none';
+    document.getElementById('connecting-wrap').style.display = 'block';
+    setTimeout(function(){
+      playDoorCreak();
+    }, 700);
+    setTimeout(function(){
+      document.getElementById('connecting-wrap').style.display = 'none';
+      showBuddyList();
+    }, 1400);
+  }
+
+  // ================= BUDDY LIST =================
+  function showBuddyList(){
+    document.getElementById('buddylist-win').style.display = 'flex';
+    document.getElementById('bl-title-text').textContent = state.account.screenName;
+    document.getElementById('bl-me-name').textContent = state.account.screenName;
+    refreshMyStatus();
+    renderBuddyList();
+  }
+
+  function refreshMyStatus(){
+    var sub = document.getElementById('bl-me-sub');
+    if(state.status && state.status.html){
+      sub.innerHTML = state.status.html;
+    } else {
+      sub.textContent = 'Online';
+    }
+  }
+
+  function renderBuddyList(){
+    var listEl = document.getElementById('bl-list');
+    listEl.innerHTML = '';
+    if(!state.buddies.length){
+      listEl.innerHTML = '<div class="bl-empty">No buddies yet.<br>Add a buddy to start writing.</div>';
+      return;
+    }
+    var order = { online: 0, away: 1, idle: 2 };
+    state.groups.forEach(function(g){
+      var groupBuddies = state.buddies.filter(function(b){ return (b.groupId || 'default') === g.id; });
+      var onlineCount = groupBuddies.filter(function(b){ return statusFor(b.id) === 'online'; }).length;
+
+      var header = document.createElement('div');
+      header.className = 'bl-group-header';
+      header.textContent = g.name + ' (' + onlineCount + '/' + groupBuddies.length + ')';
+      listEl.appendChild(header);
+
+      if(!groupBuddies.length){
+        var empty = document.createElement('div');
+        empty.className = 'bl-empty';
+        empty.style.padding = '6px 8px';
+        empty.textContent = 'No buddies here yet.';
+        listEl.appendChild(empty);
+        return;
+      }
+
+      var sorted = groupBuddies.slice().sort(function(a,b){
+        var sa = statusFor(a.id), sb = statusFor(b.id);
+        if(order[sa] !== order[sb]) return order[sa]-order[sb];
+        return a.name.localeCompare(b.name);
+      });
+      sorted.forEach(function(b){
+        var st = statusFor(b.id);
+        var ts = lastEntryTs(b.id);
+        var row = document.createElement('div');
+        row.className = 'bl-row';
+        row.innerHTML =
+          '<span class="dot ' + st + '"></span>' +
+          '<span class="bl-name-wrap">' +
+            '<span class="bl-name">' + escapeHtml(b.name) + '</span>' +
+            '<span class="bl-sub">' + (ts ? relTime(ts) : 'new buddy') + '</span>' +
+          '</span>';
+        row.addEventListener('click', function(){ openIMWindow(b.id); });
+        row.addEventListener('dblclick', function(){ openIMWindow(b.id); });
+        listEl.appendChild(row);
+      });
+    });
+  }
+
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+    });
+  }
+
+  // conservative sanitizer for rich-text entries: only bold/italic/underline/line-break
+  // and color/background-color styling on spans survive; everything else is unwrapped or dropped.
+  function sanitizeHTML(html){
+    var container = document.createElement('div');
+    container.innerHTML = html;
+    var allowed = { B:1, I:1, U:1, SPAN:1, BR:1, DIV:1, FONT:1, IMG:1 };
+    (function clean(node){
+      Array.prototype.slice.call(node.childNodes).forEach(function(child){
+        if(child.nodeType === 1){
+          var tag = child.tagName;
+          if(!allowed[tag]){
+            while(child.firstChild) node.insertBefore(child.firstChild, child);
+            node.removeChild(child);
+            return;
+          }
+          if(tag === 'IMG'){
+            var src = child.getAttribute('src') || '';
+            var chosenWidth = child.style ? child.style.width : '';
+            while(child.attributes && child.attributes.length){ child.removeAttribute(child.attributes[0].name); }
+            if(/^data:image\//.test(src)){
+              child.setAttribute('src', src);
+              var imgStyle = 'max-width:100%;border-radius:4px;';
+              if(/^\d+px$/.test(chosenWidth)) imgStyle += 'width:' + chosenWidth + ';';
+              child.setAttribute('style', imgStyle);
+            } else {
+              node.removeChild(child);
+              return;
+            }
+            return; // no children to clean
+          }
+          var keepStyle = '';
+          if(tag === 'SPAN' && child.style){
+            var color = child.style.color, bg = child.style.backgroundColor;
+            if(color) keepStyle += 'color:' + color + ';';
+            if(bg) keepStyle += 'background-color:' + bg + ';';
+          }
+          var keepSize = (tag === 'FONT') ? child.getAttribute('size') : null;
+          while(child.attributes && child.attributes.length){
+            child.removeAttribute(child.attributes[0].name);
+          }
+          if(keepStyle) child.setAttribute('style', keepStyle);
+          if(keepSize) child.setAttribute('size', keepSize);
+          clean(child);
+        } else if(child.nodeType !== 3){
+          node.removeChild(child);
+        }
+      });
+    })(container);
+    return container.innerHTML;
+  }
+
+  document.getElementById('bl-close').addEventListener('click', signOff);
+  document.getElementById('menu-signoff').addEventListener('click', signOff);
+  document.getElementById('bl-addbuddy-btn').addEventListener('click', openAddBuddyWindow);
+  document.getElementById('menu-addbuddy').addEventListener('click', openAddBuddyWindow);
+  document.getElementById('bl-sendim-btn').addEventListener('click', function(){ openNewMessageWindow(); });
+  document.getElementById('menu-sendim').addEventListener('click', function(){ openNewMessageWindow(); });
+  document.getElementById('menu-setstatus').addEventListener('click', openSetStatusWindow);
+  document.getElementById('menu-statuslog').addEventListener('click', openStatusLogWindow);
+  document.getElementById('menu-addcategory').addEventListener('click', openAddCategoryWindow);
+  document.getElementById('bl-status-edit').addEventListener('click', openSetStatusWindow);
+
+  function signOff(){
+    openWindows.slice().forEach(function(w){ closeWindow(w.id); });
+    document.getElementById('buddylist-win').style.display = 'none';
+    showSignon();
+  }
+
+  // ================= GENERIC WINDOW SYSTEM =================
+  var TASKBAR_H = 34;
+
+  function clampToViewport(x, y, w, h){
+    var maxX = Math.max(0, window.innerWidth - w);
+    var maxY = Math.max(0, window.innerHeight - TASKBAR_H - h);
+    return { x: Math.min(Math.max(0, x), maxX), y: Math.min(Math.max(0, y), maxY) };
+  }
+
+  function createWindow(opts){
+    // opts: title, bodyHtml, onMount(el), extraClass, type, buddyId
+    var id = uid();
+    var el = document.createElement('div');
+    el.className = 'win ' + (opts.extraClass || '');
+    el.style.visibility = 'hidden';
+    el.style.zIndex = ++zCounter;
+
+    el.innerHTML =
+      '<div class="titlebar">' +
+        '<span class="t-title">' + mascotSVG(15) + '<span>' + escapeHtml(opts.title) + '</span></span>' +
+        '<span class="t-btns"><button class="win-btn close-btn">X</button></span>' +
+      '</div>' +
+      (opts.menuHtml || '') +
+      opts.bodyHtml;
+
+    document.getElementById('windows-layer').appendChild(el);
+
+    // position after layout so we know the real (CSS-driven) size
+    var w = el.offsetWidth, h = el.offsetHeight;
+    var pos;
+    if(isMobile()){
+      pos = clampToViewport((window.innerWidth - w) / 2, (window.innerHeight - TASKBAR_H - h) / 2, w, h);
+    } else {
+      winCounter++;
+      var offset = (winCounter % 8) * 22;
+      pos = clampToViewport(40 + offset, 40 + offset, w, h);
+    }
+    el.style.left = pos.x + 'px';
+    el.style.top = pos.y + 'px';
+    el.style.visibility = 'visible';
+
+    var record = { id: id, el: el, type: opts.type, buddyId: opts.buddyId };
+    openWindows.push(record);
+    addTaskbarItem(record, opts.title);
+
+    el.querySelector('.close-btn').addEventListener('click', function(){ closeWindow(id); });
+    el.addEventListener('mousedown', function(){ focusWindow(id); });
+    el.addEventListener('touchstart', function(){ focusWindow(id); }, { passive: true });
+    makeDraggable(el, el.querySelector('.titlebar'));
+    focusWindow(id);
+
+    if(opts.onMount) opts.onMount(el, id);
+    return { id: id, el: el };
+  }
+
+  function closeWindow(id){
+    var rec = openWindows.find(function(w){ return w.id === id; });
+    if(!rec) return;
+    rec.el.remove();
+    if(rec.tbEl) rec.tbEl.remove();
+    openWindows = openWindows.filter(function(w){ return w.id !== id; });
+  }
+
+  function focusWindow(id){
+    openWindows.forEach(function(w){
+      w.el.style.zIndex = (w.id === id) ? (++zCounter) : w.el.style.zIndex;
+    });
+    document.querySelectorAll('.tb-item').forEach(function(t){ t.classList.remove('active'); });
+    var rec = openWindows.find(function(w){ return w.id === id; });
+    if(rec && rec.tbEl) rec.tbEl.classList.add('active');
+  }
+
+  function addTaskbarItem(rec, label){
+    var tb = document.getElementById('tb-items');
+    var item = document.createElement('div');
+    item.className = 'tb-item';
+    item.textContent = label;
+    item.addEventListener('click', function(){ focusWindow(rec.id); });
+    tb.appendChild(item);
+    rec.tbEl = item;
+  }
+
+  function makeDraggable(winEl, handleEl){
+    var dragging = false, offX = 0, offY = 0;
+
+    function moveTo(clientX, clientY){
+      var x = clientX - offX, y = clientY - offY;
+      var clamped = clampToViewport(x, y, winEl.offsetWidth, winEl.offsetHeight);
+      winEl.style.left = clamped.x + 'px';
+      winEl.style.top = clamped.y + 'px';
+    }
+
+    // mouse (desktop / trackpad)
+    handleEl.addEventListener('mousedown', function(e){
+      dragging = true;
+      offX = e.clientX - winEl.offsetLeft;
+      offY = e.clientY - winEl.offsetTop;
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', function(e){
+      if(!dragging) return;
+      moveTo(e.clientX, e.clientY);
+    });
+    document.addEventListener('mouseup', function(){ dragging = false; });
+
+    // touch (mobile)
+    handleEl.addEventListener('touchstart', function(e){
+      var t = e.touches[0];
+      dragging = true;
+      offX = t.clientX - winEl.offsetLeft;
+      offY = t.clientY - winEl.offsetTop;
+    }, { passive: true });
+    handleEl.addEventListener('touchmove', function(e){
+      if(!dragging) return;
+      var t = e.touches[0];
+      moveTo(t.clientX, t.clientY);
+      e.preventDefault();
+    }, { passive: false });
+    handleEl.addEventListener('touchend', function(){ dragging = false; });
+  }
+
+  // ================= IM WINDOW =================
+  var WRITING_PROMPTS = [
+    "What made you smile today?",
+    "What's weighing on you right now?",
+    "Something you're proud of this week:",
+    "What do you need more of lately?",
+    "A small win from today:",
+    "What are you avoiding, and why?",
+    "Write to your future self about right now.",
+    "What's one thing you'd change about today?"
+  ];
+
+  // ---- rich-text compose box: contenteditable with formatting, size, colors, bg, photos, tags ----
+  function richComposeHtml(id, placeholder){
+    return '<div class="rich-toolbar">' +
+        '<button type="button" title="Bold" data-cmd="bold">B</button>' +
+        '<button type="button" title="Italic" data-cmd="italic"><i>I</i></button>' +
+        '<button type="button" title="Underline" data-cmd="underline"><u>U</u></button>' +
+        '<select class="rich-size" title="Text size">' +
+          '<option value="2">Small</option>' +
+          '<option value="3" selected>Normal</option>' +
+          '<option value="5">Large</option>' +
+          '<option value="6">Huge</option>' +
+        '</select>' +
+        '<label class="rich-swatch" title="Text color"><span>A</span><input type="color" data-cmd="foreColor" value="#000000"></label>' +
+        '<label class="rich-swatch hl" title="Highlight color"><span>&#9608;</span><input type="color" data-cmd="hiliteColor" value="#ffff00"></label>' +
+        '<label class="rich-swatch bg" title="Text box background"><span>&#9639;</span><input type="color" class="rich-bg-input" value="#ffffff"></label>' +
+      '</div>' +
+      '<div class="rich-compose" id="'+id+'" contenteditable="true" data-placeholder="'+escapeHtml(placeholder)+'"></div>';
+  }
+
+  // expands %name/%n, %t, %d when the user finishes a token (types a space).
+  // Operates on the text node at the caret so existing formatting/images are untouched.
+  function handleTokenExpansion(target){
+    var sel = window.getSelection();
+    if(!sel || !sel.rangeCount) return;
+    var node = sel.anchorNode;
+    if(!node || node.nodeType !== 3) return; // only within a text node
+    var text = node.nodeValue;
+    var caret = sel.anchorOffset;
+    var before = text.slice(0, caret);
+    var name = (state.account && state.account.screenName) || '';
+    var m = before.match(/%(name|n|t|d)\s$/i);
+    if(!m) return;
+    var token = m[0].trim().toLowerCase();
+    var val;
+    if(token === '%name' || token === '%n') val = name;
+    else if(token === '%t') val = fmtTime(Date.now());
+    else if(token === '%d') val = fmtDateShort(Date.now());
+    else return;
+    var start = caret - m[0].length;
+    node.nodeValue = text.slice(0, start) + val + ' ' + text.slice(caret);
+    var newCaret = start + val.length + 1;
+    var range = document.createRange();
+    range.setStart(node, Math.min(newCaret, node.nodeValue.length));
+    range.collapse(true);
+    sel.removeAllRanges(); sel.addRange(range);
+  }
+
+  function insertImageFile(target, file, savedRange){
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var img = new Image();
+      img.onload = function(){
+        var maxDim = 720; // stored resolution — larger than the default preview size
+        var w = img.width, h = img.height;
+        if(w > maxDim || h > maxDim){
+          if(w >= h){ h = Math.round(h * maxDim / w); w = maxDim; }
+          else { w = Math.round(w * maxDim / h); h = maxDim; }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.78);
+        target.focus();
+        if(savedRange){
+          var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(savedRange);
+        }
+        document.execCommand('insertHTML', false, '<img src="'+dataUrl+'" style="width:220px;max-width:100%;border-radius:4px;">');
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // click-to-resize: tap an inserted photo in a compose box to pick Small/Medium/Large
+  var activeResizeMenu = null;
+  function removeResizeMenu(){
+    if(activeResizeMenu){ activeResizeMenu.remove(); activeResizeMenu = null; }
+  }
+  function showResizeMenu(img){
+    removeResizeMenu();
+    var menu = document.createElement('div');
+    menu.className = 'img-resize-menu';
+    menu.innerHTML = '<button data-w="120">S</button><button data-w="220">M</button><button data-w="400">L</button>';
+    document.body.appendChild(menu);
+    var rect = img.getBoundingClientRect();
+    menu.style.left = Math.max(4, rect.left) + 'px';
+    menu.style.top = Math.max(4, rect.top - 28) + 'px';
+    menu.querySelectorAll('button').forEach(function(btn){
+      btn.addEventListener('mousedown', function(e){ e.preventDefault(); });
+      btn.addEventListener('click', function(){
+        img.style.width = btn.getAttribute('data-w') + 'px';
+        img.style.maxWidth = '100%';
+        removeResizeMenu();
+      });
+    });
+    activeResizeMenu = menu;
+    setTimeout(function(){
+      document.addEventListener('click', onceOutside);
+    }, 0);
+    function onceOutside(e){
+      if(!menu.contains(e.target) && e.target !== img){
+        removeResizeMenu();
+        document.removeEventListener('click', onceOutside);
+      }
+    }
+  }
+  function attachImageResize(target){
+    target.addEventListener('click', function(e){
+      if(e.target && e.target.tagName === 'IMG'){ showResizeMenu(e.target); }
+    });
+  }
+
+  function wireRichToolbar(scopeEl, targetId){
+    var target = scopeEl.querySelector('#'+targetId);
+    var savedRange = null;
+    function saveSelection(){
+      var sel = window.getSelection();
+      if(sel && sel.rangeCount > 0 && sel.anchorNode && target.contains(sel.anchorNode)){
+        savedRange = sel.getRangeAt(0).cloneRange();
+      }
+    }
+    function restore(){
+      target.focus();
+      if(savedRange){
+        var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(savedRange);
+      }
+    }
+    scopeEl.querySelectorAll('.rich-toolbar button[data-cmd]').forEach(function(btn){
+      btn.addEventListener('mousedown', function(e){ e.preventDefault(); saveSelection(); });
+      btn.addEventListener('click', function(){ restore(); document.execCommand(btn.getAttribute('data-cmd'), false, null); });
+    });
+    var sizeSel = scopeEl.querySelector('.rich-size');
+    if(sizeSel){
+      sizeSel.addEventListener('mousedown', saveSelection);
+      sizeSel.addEventListener('change', function(){ restore(); document.execCommand('fontSize', false, sizeSel.value); });
+    }
+    scopeEl.querySelectorAll('.rich-swatch input[data-cmd]').forEach(function(inp){
+      inp.addEventListener('mousedown', saveSelection);
+      inp.addEventListener('input', function(){
+        restore();
+        var cmd = inp.getAttribute('data-cmd');
+        try{ document.execCommand(cmd, false, inp.value); }
+        catch(e){ try{ document.execCommand('backColor', false, inp.value); } catch(e2){} }
+      });
+    });
+    var bgInput = scopeEl.querySelector('.rich-bg-input');
+    if(bgInput){
+      bgInput.addEventListener('input', function(){ target.style.background = bgInput.value; });
+    }
+    // live token expansion (fires after a token + space is typed)
+    target.addEventListener('keyup', function(e){
+      if(e.key === ' ' || e.code === 'Space' || e.key === 'Spacebar'){
+        handleTokenExpansion(target);
+      }
+    });
+    attachImageResize(target);
+    // expose a photo-insert hook for the Insert menu
+    target._insertPhoto = function(){
+      saveSelection();
+      var picker = document.createElement('input');
+      picker.type = 'file'; picker.accept = 'image/*';
+      picker.style.display = 'none';
+      document.body.appendChild(picker);
+      picker.addEventListener('change', function(){
+        if(picker.files && picker.files[0]) insertImageFile(target, picker.files[0], savedRange);
+        picker.remove();
+      });
+      picker.click();
+    };
+    target._saveSelection = saveSelection;
+    target._restore = restore;
+  }
+
+  function isRichEmpty(el){
+    if(el.querySelector && el.querySelector('img')) return false;
+    return el.textContent.replace(/\u200b/g,'').trim() === '';
+  }
+
+  function appendPlainText(el, text){
+    el.focus();
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    document.execCommand('insertText', false, text);
+  }
+
+  function openIMWindow(buddyId){
+    var existing = openWindows.find(function(w){ return w.type === 'im' && w.buddyId === buddyId; });
+    if(existing){ focusWindow(existing.id); return; }
+    var buddy = state.buddies.find(function(b){ return b.id === buddyId; });
+    if(!buddy) return;
+
+    var menu =
+      '<div class="menubar">' +
+        '<div class="m-item">File<div class="m-drop"><div class="mi-close">Close</div></div></div>' +
+        '<div class="m-item">Edit<div class="m-drop"><div class="mi-clear">Clear Draft</div></div></div>' +
+        '<div class="m-item">Insert<div class="m-drop">' +
+          '<div class="mi-photo">Photo&hellip;</div>' +
+          '<div class="mi-ts">Timestamp</div>' +
+          '<div class="mi-date">Date</div>' +
+          '<div class="mi-prompt">Writing Prompt</div>' +
+        '</div></div>' +
+        '<div class="m-item">Buddies<div class="m-drop"><div class="mi-addbuddy">Add Buddy&hellip;</div></div></div>' +
+      '</div>';
+
+    var inputId = 'input-'+buddyId;
+    var body =
+      '<div class="im-stats" id="stats-'+buddyId+'"></div>' +
+      '<div class="im-log" id="log-'+buddyId+'"></div>' +
+      '<div class="im-compose-row">' +
+        richComposeHtml(inputId, 'Type your entry...') +
+      '</div>' +
+      '<div class="im-action-row">' +
+        '<button class="action-btn" title="Send a writing prompt" id="prompt-'+buddyId+'">'+iconSVG('bulb')+'<span>Prompt</span></button>' +
+        '<button class="action-btn" title="Insert photo" id="photo-'+buddyId+'">'+iconSVG('photo')+'<span>Photo</span></button>' +
+        '<button class="action-btn" title="Add a buddy" id="addb-'+buddyId+'">'+iconSVG('plus')+'<span>Buddy</span></button>' +
+        '<button class="send-btn-gold" id="send-'+buddyId+'">'+iconSVG('send')+'<span>Send</span></button>' +
+      '</div>';
+
+    createWindow({
+      title: buddy.name,
+      extraClass: 'im-win',
+      menuHtml: menu,
+      bodyHtml: body,
+      type: 'im',
+      buddyId: buddyId,
+      onMount: function(el, id){
+        renderLog(buddyId);
+        renderStats(buddyId);
+        var input = el.querySelector('#'+inputId);
+        wireRichToolbar(el, inputId);
+
+        el.querySelector('#send-'+buddyId).addEventListener('click', function(){ sendFromIM(buddyId); });
+        input.addEventListener('keydown', function(e){
+          if(e.key === 'Enter' && !e.shiftKey && !isMobile()){
+            e.preventDefault();
+            sendFromIM(buddyId);
+          }
+        });
+
+        el.querySelector('#prompt-'+buddyId).addEventListener('click', function(){
+          insertPromptMessage(buddyId);
+        });
+        el.querySelector('#photo-'+buddyId).addEventListener('click', function(){
+          input._insertPhoto && input._insertPhoto();
+        });
+        el.querySelector('#addb-'+buddyId).addEventListener('click', openAddBuddyWindow);
+
+        el.querySelector('.mi-close').addEventListener('click', function(){ closeWindow(id); });
+        el.querySelector('.mi-clear').addEventListener('click', function(){ input.innerHTML = ''; input.focus(); });
+        el.querySelector('.mi-photo').addEventListener('click', function(){ input._insertPhoto && input._insertPhoto(); });
+        el.querySelector('.mi-ts').addEventListener('click', function(){ appendPlainText(input, (isRichEmpty(input)?'':' ') + fmtTime(Date.now()) + ' '); });
+        el.querySelector('.mi-date').addEventListener('click', function(){ appendPlainText(input, (isRichEmpty(input)?'':' ') + fmtDateShort(Date.now()) + ' '); });
+        el.querySelector('.mi-prompt').addEventListener('click', function(){ insertPromptMessage(buddyId); });
+        el.querySelector('.mi-addbuddy').addEventListener('click', openAddBuddyWindow);
+      }
+    });
+  }
+
+  function renderStats(buddyId){
+    var el = document.getElementById('stats-'+buddyId);
+    if(!el) return;
+    var count = (state.entries[buddyId] || []).filter(function(e){ return e.kind !== 'prompt'; }).length;
+    el.textContent = count + (count === 1 ? ' entry' : ' entries') + ' so far';
+  }
+
+  function renderLog(buddyId){
+    var el = document.getElementById('log-'+buddyId);
+    if(!el) return;
+    var list = state.entries[buddyId] || [];
+    var html = '';
+    var lastDay = null;
+    list.forEach(function(entry){
+      var divider = fmtDayDivider(entry.ts);
+      if(divider !== lastDay){
+        html += '<div class="im-day-divider">&mdash; ' + divider + ' &mdash;</div>';
+        lastDay = divider;
+      }
+      var isPrompt = entry.kind === 'prompt';
+      var sender = isPrompt ? 'Prompt' : escapeHtml(state.account.screenName);
+      var content = (entry.html !== undefined) ? entry.html : escapeHtml(entry.text || '');
+      var statusTag = entry.statusLabel !== undefined
+        ? ('<span class="status-tag">Status' + (entry.statusLabel ? ': ' + escapeHtml(entry.statusLabel) : '') + '</span><br>')
+        : '';
+      html += '<div class="im-entry' + (isPrompt ? ' prompt-entry' : '') + '">' +
+                '<span class="who' + (isPrompt ? ' prompt-who' : '') + '">' + sender + '</span> ' +
+                '<span class="ts">(' + fmtTime(entry.ts) + '):</span>' +
+                '<div class="txt">' + statusTag + content + '</div>' +
+              '</div>';
+    });
+    if(!list.length){
+      html = '<div class="im-day-divider">No entries yet &mdash; write the first one below.</div>';
+    }
+    el.innerHTML = html;
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function sendFromIM(buddyId){
+    var input = document.getElementById('input-'+buddyId);
+    if(!input) return;
+    if(isRichEmpty(input)) return;
+    var html = sanitizeHTML(input.innerHTML);
+    state.entries[buddyId] = state.entries[buddyId] || [];
+    state.entries[buddyId].push({ id: uid(), html: html, ts: Date.now(), kind: 'entry' });
+    saveState();
+    input.innerHTML = '';
+    renderLog(buddyId);
+    renderStats(buddyId);
+    renderBuddyList();
+    playDing();
+  }
+
+  function insertPromptMessage(buddyId){
+    var p = WRITING_PROMPTS[Math.floor(Math.random()*WRITING_PROMPTS.length)];
+    state.entries[buddyId] = state.entries[buddyId] || [];
+    state.entries[buddyId].push({ id: uid(), html: escapeHtml(p), ts: Date.now(), kind: 'prompt' });
+    saveState();
+    renderLog(buddyId);
+    renderStats(buddyId);
+  }
+
+  // ================= NEW MESSAGE WINDOW =================
+  function openNewMessageWindow(prefillName){
+    var listId = 'buddy-dl-' + uid();
+    var options = state.buddies.map(function(b){ return '<option value="'+escapeHtml(b.name)+'">'; }).join('');
+    var menu =
+      '<div class="menubar">' +
+        '<div class="m-item">File<div class="m-drop"><div class="mi-close">Close</div></div></div>' +
+        '<div class="m-item">Insert<div class="m-drop">' +
+          '<div class="mi-photo">Photo&hellip;</div>' +
+          '<div class="mi-ts">Timestamp</div>' +
+          '<div class="mi-date">Date</div>' +
+        '</div></div>' +
+      '</div>';
+    var body =
+      '<div class="win-body nm-body">' +
+        '<div class="nm-row"><label>To:</label><input type="text" id="nm-to" list="'+listId+'" placeholder="Name" value="'+(prefillName?escapeHtml(prefillName):'')+'">' +
+        '<datalist id="'+listId+'">'+options+'</datalist></div>' +
+        richComposeHtml('nm-body', 'Write your entry...') +
+        '<div class="nm-send-row"><button class="btn" id="nm-send">Send</button></div>' +
+      '</div>';
+
+    createWindow({
+      title: 'Send Instant Message',
+      extraClass: 'nm-win',
+      menuHtml: menu,
+      bodyHtml: body,
+      type: 'newmsg',
+      onMount: function(el, id){
+        wireRichToolbar(el, 'nm-body');
+        var composeEl = el.querySelector('#nm-body');
+        el.querySelector('.mi-close').addEventListener('click', function(){ closeWindow(id); });
+        el.querySelector('.mi-photo').addEventListener('click', function(){ composeEl._insertPhoto && composeEl._insertPhoto(); });
+        el.querySelector('.mi-ts').addEventListener('click', function(){ appendPlainText(composeEl, (isRichEmpty(composeEl)?'':' ') + fmtTime(Date.now()) + ' '); });
+        el.querySelector('.mi-date').addEventListener('click', function(){ appendPlainText(composeEl, (isRichEmpty(composeEl)?'':' ') + fmtDateShort(Date.now()) + ' '); });
+        el.querySelector('#nm-send').addEventListener('click', function(){
+          var toName = el.querySelector('#nm-to').value;
+          if(!toName.trim()){ el.querySelector('#nm-to').focus(); return; }
+          if(isRichEmpty(composeEl)) { composeEl.focus(); return; }
+          var buddy = ensureBuddy(toName);
+          var html = sanitizeHTML(composeEl.innerHTML);
+          state.entries[buddy.id] = state.entries[buddy.id] || [];
+          state.entries[buddy.id].push({ id: uid(), html: html, ts: Date.now(), kind: 'entry' });
+          saveState();
+          playDing();
+          renderBuddyList();
+          closeWindow(id);
+          openIMWindow(buddy.id);
+        });
+      }
+    });
+  }
+
+  // ================= ADD BUDDY WINDOW =================
+  function openAddBuddyWindow(){
+    var body =
+      '<div class="win-body nm-body">' +
+        '<div class="nm-row"><label>Name:</label><input type="text" id="ab-name" placeholder="Name"></div>' +
+        '<div class="nm-row"><label>Category:</label><select id="ab-group">'+groupOptionsHtml()+'<option value="__new__">+ New Category</option></select></div>' +
+        '<div class="nm-row" id="ab-newgroup-row" style="display:none;"><label>New:</label><input type="text" id="ab-newgroup-name" placeholder="Category name"></div>' +
+        '<div class="nm-send-row"><button class="btn" id="ab-add">Add Buddy</button></div>' +
+      '</div>';
+    createWindow({
+      title: 'Add Buddy',
+      extraClass: 'addbuddy-win',
+      bodyHtml: body,
+      type: 'addbuddy',
+      onMount: function(el, id){
+        var input = el.querySelector('#ab-name');
+        var groupSel = el.querySelector('#ab-group');
+        var newRow = el.querySelector('#ab-newgroup-row');
+        input.focus();
+        groupSel.addEventListener('change', function(){
+          newRow.style.display = (groupSel.value === '__new__') ? 'flex' : 'none';
+        });
+        function submit(){
+          var name = input.value.trim();
+          if(!name) return;
+          var groupId = groupSel.value;
+          if(groupId === '__new__'){
+            var newName = el.querySelector('#ab-newgroup-name').value.trim();
+            if(!newName){ el.querySelector('#ab-newgroup-name').focus(); return; }
+            var newGroup = { id: uid(), name: newName };
+            state.groups.push(newGroup);
+            groupId = newGroup.id;
+          }
+          ensureBuddy(name, groupId);
+          saveState();
+          renderBuddyList();
+          closeWindow(id);
+        }
+        el.querySelector('#ab-add').addEventListener('click', submit);
+        input.addEventListener('keydown', function(e){ if(e.key === 'Enter') submit(); });
+      }
+    });
+  }
+
+  // ================= ADD CATEGORY WINDOW =================
+  function openAddCategoryWindow(){
+    var body =
+      '<div class="win-body nm-body">' +
+        '<div class="nm-row"><label>Name:</label><input type="text" id="ac-name" placeholder="Category name"></div>' +
+        '<div class="nm-send-row"><button class="btn" id="ac-add">Create Category</button></div>' +
+      '</div>';
+    createWindow({
+      title: 'Add Category',
+      extraClass: 'addbuddy-win',
+      bodyHtml: body,
+      type: 'addcategory',
+      onMount: function(el, id){
+        var input = el.querySelector('#ac-name');
+        input.focus();
+        function submit(){
+          var name = input.value.trim();
+          if(!name) return;
+          state.groups.push({ id: uid(), name: name });
+          saveState();
+          renderBuddyList();
+          closeWindow(id);
+        }
+        el.querySelector('#ac-add').addEventListener('click', submit);
+        input.addEventListener('keydown', function(e){ if(e.key === 'Enter') submit(); });
+      }
+    });
+  }
+
+  // ================= STATUS WINDOWS =================
+  function openSetStatusWindow(){
+    var listId = 'status-presets-' + uid();
+    var buddyListId = 'status-buddies-' + uid();
+    var composeId = 'status-rich-' + uid();
+    var presetOptions = state.statusPresets.map(function(p){ return '<option value="'+escapeHtml(p.label)+'">'; }).join('');
+    var buddyOptions = state.buddies.map(function(b){ return '<option value="'+escapeHtml(b.name)+'">'; }).join('');
+    var menu =
+      '<div class="menubar">' +
+        '<div class="m-item">File<div class="m-drop"><div class="mi-close">Close</div></div></div>' +
+        '<div class="m-item">Insert<div class="m-drop">' +
+          '<div class="mi-photo">Photo&hellip;</div>' +
+          '<div class="mi-name">Buddy Name (%name)</div>' +
+          '<div class="mi-time">Time (%t)</div>' +
+          '<div class="mi-date">Date (%d)</div>' +
+        '</div></div>' +
+      '</div>';
+    var body =
+      '<div class="win-body nm-body">' +
+        '<div class="nm-row"><label>Status:</label><input type="text" id="status-label" list="'+listId+'" placeholder="e.g. Away">' +
+        '<datalist id="'+listId+'">'+presetOptions+'</datalist></div>' +
+        '<div class="nm-row"><label>Buddy:</label><input type="text" id="status-buddy" list="'+buddyListId+'" placeholder="Tag a buddy (optional)">' +
+        '<datalist id="'+buddyListId+'">'+buddyOptions+'</datalist></div>' +
+        richComposeHtml(composeId, "What's going on?") +
+        '<div class="check-row" style="margin-top:8px;"><span class="ck"><input type="checkbox" id="status-save-preset"><label for="status-save-preset">Save for later use</label></span></div>' +
+        '<div class="nm-send-row" style="gap:6px;">' +
+          '<button class="btn" id="status-clear">Clear Status</button>' +
+          '<button class="btn" id="status-save">Set Status</button>' +
+        '</div>' +
+      '</div>';
+    createWindow({
+      title: 'Set Status',
+      extraClass: 'status-win',
+      menuHtml: menu,
+      bodyHtml: body,
+      type: 'setstatus',
+      onMount: function(el, id){
+        var labelInput = el.querySelector('#status-label');
+        var buddyInput = el.querySelector('#status-buddy');
+        var composeEl = el.querySelector('#'+composeId);
+        wireRichToolbar(el, composeId);
+
+        if(state.status && state.status.html) composeEl.innerHTML = state.status.html;
+        if(state.status && state.status.label) labelInput.value = state.status.label;
+        labelInput.focus();
+
+        labelInput.addEventListener('input', function(){
+          var match = state.statusPresets.find(function(p){
+            return p.label.toLowerCase() === labelInput.value.trim().toLowerCase();
+          });
+          if(match) composeEl.innerHTML = match.html;
+        });
+
+        el.querySelector('.mi-close').addEventListener('click', function(){ closeWindow(id); });
+        el.querySelector('.mi-photo').addEventListener('click', function(){ composeEl._insertPhoto && composeEl._insertPhoto(); });
+        el.querySelector('.mi-name').addEventListener('click', function(){ appendPlainText(composeEl, ((state.account&&state.account.screenName)||'') + ' '); });
+        el.querySelector('.mi-time').addEventListener('click', function(){ appendPlainText(composeEl, (isRichEmpty(composeEl)?'':' ') + fmtTime(Date.now()) + ' '); });
+        el.querySelector('.mi-date').addEventListener('click', function(){ appendPlainText(composeEl, (isRichEmpty(composeEl)?'':' ') + fmtDateShort(Date.now()) + ' '); });
+
+        function applyStatus(label, html){
+          state.status = { label: label, html: html, ts: Date.now() };
+          state.statusLog.push({ label: label, html: html, ts: Date.now() });
+          if(el.querySelector('#status-save-preset').checked && label){
+            var existing = state.statusPresets.find(function(p){ return p.label.toLowerCase() === label.toLowerCase(); });
+            if(existing) existing.html = html;
+            else state.statusPresets.push({ id: uid(), label: label, html: html });
+          }
+          var taggedName = buddyInput.value.trim();
+          if(taggedName && html){
+            var buddy = ensureBuddy(taggedName);
+            state.entries[buddy.id] = state.entries[buddy.id] || [];
+            state.entries[buddy.id].push({ id: uid(), html: html, ts: Date.now(), kind: 'entry', statusLabel: label || null });
+            renderLog(buddy.id);
+            renderStats(buddy.id);
+          }
+          saveState();
+          refreshMyStatus();
+          renderBuddyList();
+          closeWindow(id);
+        }
+
+        el.querySelector('#status-save').addEventListener('click', function(){
+          var label = labelInput.value.trim();
+          var html = isRichEmpty(composeEl) ? '' : sanitizeHTML(composeEl.innerHTML);
+          applyStatus(label, html);
+        });
+        el.querySelector('#status-clear').addEventListener('click', function(){
+          applyStatus('', '');
+        });
+      }
+    });
+  }
+
+  function openStatusLogWindow(){
+    var log = state.statusLog.slice().reverse();
+    var rows = log.map(function(entry){
+      var label = entry.label ? ('<b>' + escapeHtml(entry.label) + '</b> &mdash; ') : '';
+      var content = entry.html ? entry.html : '<i>(back to Online)</i>';
+      return '<div class="status-log-row"><div class="slr-ts">' + fmtDayDivider(entry.ts) + ' &middot; ' + fmtTime(entry.ts) + '</div><div class="slr-text">' + label + content + '</div></div>';
+    }).join('');
+    var body = '<div class="win-body">' + (rows || '<div class="bl-empty">No status changes yet.</div>') + '</div>';
+    createWindow({ title: 'Status Log', extraClass: 'help-win', bodyHtml: body, type: 'statuslog' });
+  }
+
+  // ================= HELP WINDOW =================
+  function openHelpWindow(){
+    var body =
+      '<div class="win-body" style="font-size:12px; line-height:1.5;">' +
+        '<b>How InstantDiary works</b>' +
+        '<ul style="padding-left:18px; margin:8px 0;">' +
+          '<li>Each buddy in your list is someone (or something) you write to.</li>' +
+          '<li>Double-click a buddy, or use Send IM, to open it and write an entry.</li>' +
+          '<li>Group buddies into categories from the Buddies menu.</li>' +
+          '<li>The dot shows how recently you wrote there: green today, yellow this week, gray longer ago.</li>' +
+          '<li>Set a status message under File &rarr; Set Status; past ones are saved under Status Log.</li>' +
+          '<li>Drag any popup window around by its title bar.</li>' +
+          '<li>Everything saves automatically on this device.</li>' +
+        '</ul>' +
+      '</div>';
+    createWindow({ title: 'Help', extraClass: 'help-win', bodyHtml: body, type: 'help' });
+  }
+
+  // ================= CHANGE PASSWORD WINDOW =================
+  function openChangePasswordWindow(){
+    var body =
+      '<div class="win-body nm-body">' +
+        '<div class="field-row"><label>Current Password</label><input type="password" id="cp-current"></div>' +
+        '<div class="field-row"><label>New Password</label><input type="password" id="cp-new"></div>' +
+        '<div class="field-row"><label>Confirm New Password</label><input type="password" id="cp-confirm"></div>' +
+        '<div class="signon-error" id="cp-error"></div>' +
+        '<div class="nm-send-row"><button class="btn" id="cp-submit">Change Password</button></div>' +
+      '</div>';
+    createWindow({
+      title: 'Setup',
+      extraClass: 'setup-win',
+      bodyHtml: body,
+      type: 'setup',
+      onMount: function(el, id){
+        el.querySelector('#cp-submit').addEventListener('click', function(){
+          var errEl = el.querySelector('#cp-error');
+          var cur = el.querySelector('#cp-current').value;
+          var next = el.querySelector('#cp-new').value;
+          var confirm = el.querySelector('#cp-confirm').value;
+          if(cur !== state.account.password){ errEl.textContent = 'Current password is incorrect.'; return; }
+          if(!next){ errEl.textContent = 'Enter a new password.'; return; }
+          if(next !== confirm){ errEl.textContent = 'New passwords do not match.'; return; }
+          state.account.password = next;
+          saveState();
+          closeWindow(id);
+        });
+      }
+    });
+  }
+
+  // ================= TASKBAR CLOCK =================
+  function tickClock(){
+    var d = new Date();
+    document.getElementById('tb-clock').textContent = fmtTime(d.getTime());
+  }
+  setInterval(tickClock, 1000 * 15);
+
+  // ================= BOOT =================
+  loadState().then(function(){
+    normalizeState();
+    tickClock();
+    if(state.account && state.autoLogin){
+      enterDesktop();
+    } else {
+      showSignon();
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
