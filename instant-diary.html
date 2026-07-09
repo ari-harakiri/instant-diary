@@ -16,7 +16,7 @@
   html, body {
     margin: 0; padding: 0; width: 100%; height: 100%;
     font-family: Tahoma, "Segoe UI", Arial, sans-serif;
-    background: #3a6ea5;
+    background: #000;
     overflow: hidden;
     position: fixed;
     overscroll-behavior: none;
@@ -182,7 +182,9 @@
   .im-compose-row { border-top:1px solid #ccc; background:#fff; padding:5px; }
   .rich-toolbar { display:flex; gap:4px; padding:4px 5px; background:#ece9d8; border-bottom:1px solid #ccc; align-items:center; flex-wrap:wrap; }
   .rich-toolbar button[data-cmd] { width:24px; height:22px; font-size:11px; border:1px solid #b0aca0; border-radius:3px; background:#fff; cursor:pointer; }
+  .rich-toolbar button[data-cmd].active { background:#316ac5; color:#fff; border-color:#0850d0; }
   .rich-size { height:22px; font-size:11px; border:1px solid #b0aca0; border-radius:3px; background:#fff; }
+  .rich-font { height:22px; font-size:11px; border:1px solid #b0aca0; border-radius:3px; background:#fff; max-width:82px; }
   .rich-swatch { position:relative; width:24px; height:22px; border:1px solid #b0aca0; border-radius:3px; background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; overflow:hidden; }
   .rich-swatch span { font-size:12px; font-weight:bold; pointer-events:none; }
   .rich-swatch.hl span { color:#ffd400; }
@@ -1164,11 +1166,13 @@
             if(bg) keepStyle += 'background-color:' + bg + ';';
           }
           var keepSize = (tag === 'FONT') ? child.getAttribute('size') : null;
+          var keepFace = (tag === 'FONT') ? child.getAttribute('face') : null;
           while(child.attributes && child.attributes.length){
             child.removeAttribute(child.attributes[0].name);
           }
           if(keepStyle) child.setAttribute('style', keepStyle);
           if(keepSize) child.setAttribute('size', keepSize);
+          if(keepFace) child.setAttribute('face', keepFace);
           clean(child);
         } else if(child.nodeType !== 3){
           node.removeChild(child);
@@ -1216,7 +1220,7 @@
     el.innerHTML =
       '<div class="titlebar">' +
         '<span class="t-title">' + mascotSVG(15) + '<span>' + escapeHtml(opts.title) + '</span></span>' +
-        '<span class="t-btns"><button class="win-btn close-btn">X</button></span>' +
+        '<span class="t-btns"><button class="win-btn max-btn" title="Maximize">&#9723;</button><button class="win-btn close-btn">X</button></span>' +
       '</div>' +
       (opts.menuHtml || '') +
       opts.bodyHtml;
@@ -1237,11 +1241,15 @@
     el.style.top = pos.y + 'px';
     el.style.visibility = 'visible';
 
-    var record = { id: id, el: el, type: opts.type, buddyId: opts.buddyId };
+    var record = { id: id, el: el, type: opts.type, buddyId: opts.buddyId, maximized: false, prevRect: null };
     openWindows.push(record);
     addTaskbarItem(record, opts.title);
 
     el.querySelector('.close-btn').addEventListener('click', function(){ closeWindow(id); });
+    el.querySelector('.max-btn').addEventListener('click', function(e){
+      e.stopPropagation();
+      toggleMaximize(record);
+    });
     el.addEventListener('mousedown', function(){ focusWindow(id); });
     el.addEventListener('touchstart', function(){ focusWindow(id); }, { passive: true });
     makeDraggable(el, el.querySelector('.titlebar'));
@@ -1249,6 +1257,28 @@
 
     if(opts.onMount) opts.onMount(el, id);
     return { id: id, el: el };
+  }
+
+  function toggleMaximize(rec){
+    var el = rec.el;
+    var btn = el.querySelector('.max-btn');
+    if(!rec.maximized){
+      rec.prevRect = { left: el.style.left, top: el.style.top, width: el.style.width, height: el.style.height };
+      el.style.left = '4px';
+      el.style.top = '4px';
+      el.style.width = 'calc(100% - 8px)';
+      el.style.height = 'calc(100% - ' + (TASKBAR_H + 8) + 'px)';
+      rec.maximized = true;
+      if(btn) btn.title = 'Restore';
+    } else {
+      el.style.left = rec.prevRect.left;
+      el.style.top = rec.prevRect.top;
+      el.style.width = rec.prevRect.width;
+      el.style.height = rec.prevRect.height;
+      rec.maximized = false;
+      if(btn) btn.title = 'Maximize';
+    }
+    focusWindow(rec.id);
   }
 
   function closeWindow(id){
@@ -1335,6 +1365,15 @@
         '<button type="button" title="Bold" data-cmd="bold">B</button>' +
         '<button type="button" title="Italic" data-cmd="italic"><i>I</i></button>' +
         '<button type="button" title="Underline" data-cmd="underline"><u>U</u></button>' +
+        '<select class="rich-font" title="Font">' +
+          '<option value="Tahoma, Arial, sans-serif" selected>Tahoma</option>' +
+          '<option value="Arial, sans-serif">Arial</option>' +
+          '<option value="\'Times New Roman\', serif">Times</option>' +
+          '<option value="Georgia, serif">Georgia</option>' +
+          '<option value="\'Courier New\', monospace">Courier</option>' +
+          '<option value="\'Comic Sans MS\', cursive">Comic Sans</option>' +
+          '<option value="Verdana, sans-serif">Verdana</option>' +
+        '</select>' +
         '<select class="rich-size" title="Text size">' +
           '<option value="2">Small</option>' +
           '<option value="3" selected>Normal</option>' +
@@ -1348,7 +1387,7 @@
       '<div class="rich-compose" id="'+id+'" contenteditable="true" data-placeholder="'+escapeHtml(placeholder)+'"></div>';
   }
 
-  // expands %name/%n, %t, %d when the user finishes a token (types a space).
+  // expands %t, %d when the user finishes a token (types a space).
   // Operates on the text node at the caret so existing formatting/images are untouched.
   function handleTokenExpansion(target){
     var sel = window.getSelection();
@@ -1358,13 +1397,11 @@
     var text = node.nodeValue;
     var caret = sel.anchorOffset;
     var before = text.slice(0, caret);
-    var name = (state.account && state.account.screenName) || '';
-    var m = before.match(/%(name|n|t|d)\s$/i);
+    var m = before.match(/%(t|d)\s$/i);
     if(!m) return;
     var token = m[0].trim().toLowerCase();
     var val;
-    if(token === '%name' || token === '%n') val = name;
-    else if(token === '%t') val = fmtTime(Date.now());
+    if(token === '%t') val = fmtTime(Date.now());
     else if(token === '%d') val = fmtDateShort(Date.now());
     else return;
     var start = caret - m[0].length;
@@ -1455,12 +1492,49 @@
       target.focus();
       if(savedRange){
         var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(savedRange);
+        return;
       }
+      // no prior selection inside the box (e.g. it was empty and never
+      // focused yet, or focus was stolen by a native color/select picker) —
+      // place the caret INSIDE the deepest last node rather than just after
+      // it, so it stays nested within any existing color/size formatting
+      // instead of resetting to plain black text.
+      if(!target.firstChild){ target.appendChild(document.createTextNode('\u200b')); }
+      var node = target;
+      while(node.lastChild) node = node.lastChild;
+      var range = document.createRange();
+      if(node.nodeType === 3){
+        range.setStart(node, node.nodeValue.length);
+      } else {
+        range.selectNodeContents(node);
+      }
+      range.collapse(true);
+      var sel2 = window.getSelection();
+      sel2.removeAllRanges();
+      sel2.addRange(range);
+    }
+    function updateToolbarState(){
+      ['bold','italic','underline'].forEach(function(cmd){
+        var btn = scopeEl.querySelector('.rich-toolbar button[data-cmd="'+cmd+'"]');
+        if(!btn) return;
+        var isActive = false;
+        try{ isActive = document.queryCommandState(cmd); } catch(e){}
+        btn.classList.toggle('active', isActive);
+      });
     }
     scopeEl.querySelectorAll('.rich-toolbar button[data-cmd]').forEach(function(btn){
       btn.addEventListener('mousedown', function(e){ e.preventDefault(); saveSelection(); });
-      btn.addEventListener('click', function(){ restore(); document.execCommand(btn.getAttribute('data-cmd'), false, null); });
+      btn.addEventListener('click', function(){
+        restore();
+        document.execCommand(btn.getAttribute('data-cmd'), false, null);
+        updateToolbarState();
+      });
     });
+    var fontSel = scopeEl.querySelector('.rich-font');
+    if(fontSel){
+      fontSel.addEventListener('mousedown', saveSelection);
+      fontSel.addEventListener('change', function(){ restore(); document.execCommand('fontName', false, fontSel.value); });
+    }
     var sizeSel = scopeEl.querySelector('.rich-size');
     if(sizeSel){
       sizeSel.addEventListener('mousedown', saveSelection);
@@ -1473,16 +1547,42 @@
         var cmd = inp.getAttribute('data-cmd');
         try{ document.execCommand(cmd, false, inp.value); }
         catch(e){ try{ document.execCommand('backColor', false, inp.value); } catch(e2){} }
+        var swatch = inp.closest('.rich-swatch');
+        if(swatch){
+          if(swatch.classList.contains('hl') || swatch.classList.contains('bg')){
+            swatch.style.background = inp.value;
+          } else {
+            var span = swatch.querySelector('span');
+            if(span) span.style.color = inp.value;
+          }
+        }
       });
     });
     var bgInput = scopeEl.querySelector('.rich-bg-input');
     if(bgInput){
-      bgInput.addEventListener('input', function(){ target.style.background = bgInput.value; });
+      bgInput.addEventListener('input', function(){
+        target.style.background = bgInput.value;
+        var swatch = bgInput.closest('.rich-swatch');
+        if(swatch) swatch.style.background = bgInput.value;
+      });
     }
     // live token expansion (fires after a token + space is typed)
     target.addEventListener('keyup', function(e){
       if(e.key === ' ' || e.code === 'Space' || e.key === 'Spacebar'){
         handleTokenExpansion(target);
+      }
+      updateToolbarState();
+    });
+    target.addEventListener('mouseup', updateToolbarState);
+    target.addEventListener('click', updateToolbarState);
+    // continuously track the live selection while the box is focused, so
+    // controls that steal focus (native <select>, <input type=color>) still
+    // have the correct selection to apply formatting to — this is what was
+    // breaking the size dropdown.
+    document.addEventListener('selectionchange', function(){
+      if(document.activeElement === target){
+        updateToolbarState();
+        saveSelection();
       }
     });
     attachImageResize(target);
@@ -1531,7 +1631,6 @@
         '<div class="m-item">Edit<div class="m-drop"><div class="mi-clear">Clear Draft</div></div></div>' +
         '<div class="m-item">Insert<div class="m-drop">' +
           '<div class="mi-photo">Photo&hellip;</div>' +
-          '<div class="mi-name">My Name (%name)</div>' +
           '<div class="mi-ts">Timestamp (%t)</div>' +
           '<div class="mi-date">Date (%d)</div>' +
           '<div class="mi-prompt">Writing Prompt</div>' +
@@ -1552,7 +1651,7 @@
         '<button class="action-btn" title="Add a buddy" id="addb-'+buddyId+'">'+iconSVG('plus')+'<span>Buddy</span></button>' +
         '<button class="send-btn-gold" id="send-'+buddyId+'">'+iconSVG('send')+'<span>Send</span></button>' +
       '</div>' +
-      '<div class="pct-key">%name = my name &nbsp; %t = time &nbsp; %d = date</div>';
+      '<div class="pct-key">%t = time &nbsp; %d = date</div>';
 
     createWindow({
       title: buddy.name,
@@ -1586,7 +1685,6 @@
         el.querySelector('.mi-close').addEventListener('click', function(){ closeWindow(id); });
         el.querySelector('.mi-clear').addEventListener('click', function(){ input.innerHTML = ''; input.focus(); });
         el.querySelector('.mi-photo').addEventListener('click', function(){ input._insertPhoto && input._insertPhoto(); });
-        el.querySelector('.mi-name').addEventListener('click', function(){ appendPlainText(input, ((state.account&&state.account.screenName)||'') + ' '); });
         el.querySelector('.mi-ts').addEventListener('click', function(){ appendPlainText(input, (isRichEmpty(input)?'':' ') + fmtTime(Date.now()) + ' '); });
         el.querySelector('.mi-date').addEventListener('click', function(){ appendPlainText(input, (isRichEmpty(input)?'':' ') + fmtDateShort(Date.now()) + ' '); });
         el.querySelector('.mi-prompt').addEventListener('click', function(){ insertPromptMessage(buddyId); });
@@ -1666,7 +1764,6 @@
         '<div class="m-item">File<div class="m-drop"><div class="mi-close">Close</div></div></div>' +
         '<div class="m-item">Insert<div class="m-drop">' +
           '<div class="mi-photo">Photo&hellip;</div>' +
-          '<div class="mi-name">My Name (%name)</div>' +
           '<div class="mi-ts">Timestamp (%t)</div>' +
           '<div class="mi-date">Date (%d)</div>' +
         '</div></div>' +
@@ -1679,7 +1776,7 @@
         '</select></div>' +
         '<div class="nm-row" id="nm-newbuddy-row" style="display:none;"><label>New:</label><input type="text" id="nm-to-new" placeholder="Buddy name" value="'+(prefillName && !prefillMatch ? escapeHtml(prefillName) : '')+'"></div>' +
         richComposeHtml('nm-body', '') +
-        '<div class="pct-key">%name = my name &nbsp; %t = time &nbsp; %d = date</div>' +
+        '<div class="pct-key">%t = time &nbsp; %d = date</div>' +
         '<div class="nm-send-row"><button class="btn" id="nm-send">Send</button></div>' +
       '</div>';
 
@@ -1708,7 +1805,6 @@
 
         el.querySelector('.mi-close').addEventListener('click', function(){ closeWindow(id); });
         el.querySelector('.mi-photo').addEventListener('click', function(){ composeEl._insertPhoto && composeEl._insertPhoto(); });
-        el.querySelector('.mi-name').addEventListener('click', function(){ appendPlainText(composeEl, ((state.account&&state.account.screenName)||'') + ' '); });
         el.querySelector('.mi-ts').addEventListener('click', function(){ appendPlainText(composeEl, (isRichEmpty(composeEl)?'':' ') + fmtTime(Date.now()) + ' '); });
         el.querySelector('.mi-date').addEventListener('click', function(){ appendPlainText(composeEl, (isRichEmpty(composeEl)?'':' ') + fmtDateShort(Date.now()) + ' '); });
         el.querySelector('#nm-send').addEventListener('click', function(){
@@ -1819,7 +1915,6 @@
         '<div class="m-item">File<div class="m-drop"><div class="mi-close">Close</div></div></div>' +
         '<div class="m-item">Insert<div class="m-drop">' +
           '<div class="mi-photo">Photo&hellip;</div>' +
-          '<div class="mi-name">My Name (%name)</div>' +
           '<div class="mi-time">Time (%t)</div>' +
           '<div class="mi-date">Date (%d)</div>' +
         '</div></div>' +
@@ -1834,7 +1929,7 @@
         '</select></div>' +
         '<div class="nm-row" id="status-newbuddy-row" style="display:none;"><label>New:</label><input type="text" id="status-buddy-new" placeholder="Buddy name"></div>' +
         richComposeHtml(composeId, "What's going on?") +
-        '<div class="pct-key">%name = my name &nbsp; %t = time &nbsp; %d = date</div>' +
+        '<div class="pct-key">%t = time &nbsp; %d = date</div>' +
         '<div class="check-row" style="margin-top:8px;"><span class="ck"><input type="checkbox" id="status-save-preset"><label for="status-save-preset">Save for later use</label></span></div>' +
         '<div class="nm-send-row" style="gap:6px;">' +
           '<button class="btn" id="status-clear">Clear Status</button>' +
@@ -1872,7 +1967,6 @@
 
         el.querySelector('.mi-close').addEventListener('click', function(){ closeWindow(id); });
         el.querySelector('.mi-photo').addEventListener('click', function(){ composeEl._insertPhoto && composeEl._insertPhoto(); });
-        el.querySelector('.mi-name').addEventListener('click', function(){ appendPlainText(composeEl, ((state.account&&state.account.screenName)||'') + ' '); });
         el.querySelector('.mi-time').addEventListener('click', function(){ appendPlainText(composeEl, (isRichEmpty(composeEl)?'':' ') + fmtTime(Date.now()) + ' '); });
         el.querySelector('.mi-date').addEventListener('click', function(){ appendPlainText(composeEl, (isRichEmpty(composeEl)?'':' ') + fmtDateShort(Date.now()) + ' '); });
 
