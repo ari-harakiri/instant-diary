@@ -144,6 +144,8 @@
   .check-row { text-align:left; font-size:11px; margin: 8px 0 12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; }
   .check-row .ck { display:flex; align-items:center; gap:4px; }
   .signon-error { color:#c0392b; font-size:11px; min-height:14px; margin-bottom:4px; }
+  .forgot-row { text-align:right; margin:-4px 0 8px; }
+  .forgot-link { font-size:10.5px; color:#0850d0; text-decoration:underline; cursor:pointer; }
   .signon-bottom { display:flex; align-items:center; justify-content:space-between; margin-top:12px; }
   .icon-btn { display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9.5px; color:#333;
     border:1px solid #b0aca0; border-radius:5px; background:linear-gradient(180deg,#fefefe,#e5e1d3); padding:4px 8px; cursor:pointer; }
@@ -402,6 +404,12 @@
           <ellipse cx="45" cy="6" rx="36" ry="16"/>
           <ellipse cx="-42" cy="8" rx="34" ry="14"/>
         </g>
+        <g transform="translate(870,200)" opacity="0.88">
+          <ellipse cx="0" cy="0" rx="62" ry="22"/>
+          <ellipse cx="50" cy="8" rx="40" ry="17"/>
+          <ellipse cx="-48" cy="10" rx="36" ry="15"/>
+          <ellipse cx="10" cy="-12" rx="30" ry="14"/>
+        </g>
         <g transform="translate(1180,150)">
           <ellipse cx="0" cy="0" rx="80" ry="28"/>
           <ellipse cx="65" cy="10" rx="50" ry="22"/>
@@ -434,6 +442,8 @@
         <span class="ck"><input type="checkbox" id="in-savepw"><label for="in-savepw">Save password</label></span>
         <span class="ck"><input type="checkbox" id="in-autologin"><label for="in-autologin">Auto-login</label></span>
       </div>
+
+      <div class="forgot-row" id="forgot-row"><span class="forgot-link" id="forgot-link">Forgot Password?</span></div>
 
       <div class="signon-bottom">
         <span style="display:flex; gap:6px;">
@@ -474,8 +484,9 @@
       <div class="m-item">Options
         <div class="m-drop">
           <div id="menu-addbuddy">Add Buddy&hellip;</div>
+          <div id="menu-editbuddy">Edit Buddy&hellip;</div>
           <div id="menu-addcategory">Add Category&hellip;</div>
-          <div id="menu-renamecategory">Rename Category&hellip;</div>
+          <div id="menu-renamecategory">Edit Category&hellip;</div>
           <div id="menu-sendim">Send Instant Message&hellip;</div>
         </div>
       </div>
@@ -608,13 +619,15 @@
     applyBackground();
     saveState();
   });
-  document.getElementById('sm-bgcolor').addEventListener('click', function(){
+  document.getElementById('sm-bgcolor').addEventListener('click', function(e){
+    e.stopPropagation();
     document.getElementById('start-menu').classList.remove('open');
     bgColorInput.value = (state.background && state.background.color) || '#3a6ea5';
-    bgColorInput.click();
+    setTimeout(function(){ bgColorInput.click(); }, 50);
   });
 
-  document.getElementById('sm-bgphoto').addEventListener('click', function(){
+  document.getElementById('sm-bgphoto').addEventListener('click', function(e){
+    e.stopPropagation();
     document.getElementById('start-menu').classList.remove('open');
     var input = document.createElement('input');
     input.type = 'file'; input.accept = 'image/*'; input.style.display = 'none';
@@ -648,7 +661,8 @@
     input.click();
   });
 
-  document.getElementById('sm-bgdefault').addEventListener('click', function(){
+  document.getElementById('sm-bgdefault').addEventListener('click', function(e){
+    e.stopPropagation();
     document.getElementById('start-menu').classList.remove('open');
     state.background = { color: '', image: '' };
     applyBackground();
@@ -720,10 +734,6 @@
     }
     return null;
   }
-  function hasStorage(){
-    return !!getLocalStore();
-  }
-
   function loadState(){
     return loadStateAttempt(4);
   }
@@ -976,6 +986,39 @@
 
   // ---------------- helpers ----------------
   function uid(){ return 'id' + Math.random().toString(36).slice(2) + Date.now().toString(36); }
+
+  // Simple in-app info/alert — replaces alert() calls (blocked in some sandboxes).
+  function openInfoWindow(message){
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999999;display:flex;align-items:center;justify-content:center;';
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#ece9d8;border:2px solid #0054e3;border-radius:6px;padding:18px 20px;max-width:260px;width:90%;font-size:13px;box-shadow:0 4px 18px rgba(0,0,0,.5);';
+    box.innerHTML = '<div style="margin-bottom:14px;">'+escapeHtml(message)+'</div>' +
+      '<div style="text-align:right;"><button class="btn" id="ai-ok">OK</button></div>';
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    function close(){ document.body.removeChild(overlay); }
+    box.querySelector('#ai-ok').addEventListener('click', close);
+    overlay.addEventListener('click', function(e){ if(e.target===overlay) close(); });
+  }
+  // cb(true) fires if confirmed, cb(false) if cancelled.
+  function appConfirm(message, cb){
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999999;display:flex;align-items:center;justify-content:center;';
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#ece9d8;border:2px solid #0054e3;border-radius:6px;padding:18px 20px;max-width:280px;width:90%;font-size:13px;box-shadow:0 4px 18px rgba(0,0,0,.5);';
+    box.innerHTML = '<div style="margin-bottom:14px;">'+escapeHtml(message)+'</div>' +
+      '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
+        '<button class="btn" id="ac-cancel">Cancel</button>' +
+        '<button class="btn" id="ac-ok" style="background:#c0392b;color:#fff;border-color:#a93226;">Delete</button>' +
+      '</div>';
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    function done(result){ document.body.removeChild(overlay); cb(result); }
+    box.querySelector('#ac-ok').addEventListener('click', function(){ done(true); });
+    box.querySelector('#ac-cancel').addEventListener('click', function(){ done(false); });
+    overlay.addEventListener('click', function(e){ if(e.target === overlay) done(false); });
+  }
   function fmtTime(ts){
     var d = new Date(ts);
     var h = d.getHours(); var m = d.getMinutes();
@@ -1049,6 +1092,66 @@
   var signonMode = 'login'; // 'login' | 'create'
   var pwFieldIsSavedPlaceholder = false;
 
+  // Fixed recovery hint/code (not per-account) — simple reset path since this
+  // app is only ever used by one person and isn't a public-facing service.
+  var RECOVERY_HINT = "What's the alarm?";
+  var RECOVERY_CODE = '4176';
+
+  function openForgotPasswordWindow(){
+    var body =
+      '<div class="win-body nm-body">' +
+        '<div id="fp-step1">' +
+          '<div class="field-row"><label>' + escapeHtml(RECOVERY_HINT) + '</label><input type="text" id="fp-code" placeholder="Recovery code"></div>' +
+          '<div class="signon-error" id="fp-error"></div>' +
+          '<div class="nm-send-row"><button class="btn" id="fp-check">Submit</button></div>' +
+        '</div>' +
+        '<div id="fp-step2" style="display:none;">' +
+          '<div class="field-row"><label>New Password</label><input type="password" id="fp-newpw"></div>' +
+          '<div class="field-row"><label>Confirm New Password</label><input type="password" id="fp-newpw2"></div>' +
+          '<div class="signon-error" id="fp-error2"></div>' +
+          '<div class="nm-send-row"><button class="btn" id="fp-save">Reset Password</button></div>' +
+        '</div>' +
+      '</div>';
+    createWindow({
+      title: 'Forgot Password',
+      extraClass: 'setup-win',
+      bodyHtml: body,
+      type: 'forgotpw',
+      onMount: function(el, id){
+        var codeInput = el.querySelector('#fp-code');
+        codeInput.focus();
+        el.querySelector('#fp-check').addEventListener('click', function(){
+          var errEl = el.querySelector('#fp-error');
+          if(codeInput.value.trim() !== RECOVERY_CODE){
+            errEl.textContent = 'Incorrect recovery code.';
+            return;
+          }
+          el.querySelector('#fp-step1').style.display = 'none';
+          el.querySelector('#fp-step2').style.display = 'block';
+          el.querySelector('#fp-newpw').focus();
+        });
+        codeInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') el.querySelector('#fp-check').click(); });
+
+        el.querySelector('#fp-save').addEventListener('click', function(){
+          var errEl2 = el.querySelector('#fp-error2');
+          var pw1 = el.querySelector('#fp-newpw').value;
+          var pw2 = el.querySelector('#fp-newpw2').value;
+          if(!pw1.trim()){ errEl2.textContent = 'Password can\'t be empty.'; return; }
+          if(pw1 !== pw2){ errEl2.textContent = 'Passwords do not match.'; return; }
+          state.account.password = pw1;
+          state.savePassword = false;
+          saveState();
+          closeWindow(id);
+          showSignon();
+          var signonErr = document.getElementById('signon-error');
+          signonErr.style.color = '#2a7d2a';
+          signonErr.textContent = 'Password reset. You can sign in now.';
+          setTimeout(function(){ signonErr.style.color = ''; }, 4000);
+        });
+      }
+    });
+  }
+
   function showSignon(){
     document.getElementById('buddylist-win').style.display = 'none';
     document.getElementById('connecting-wrap').style.display = 'none';
@@ -1059,6 +1162,7 @@
     if(state.account){
       signonMode = 'login';
       document.getElementById('confirm-row').style.display = 'none';
+      document.getElementById('forgot-row').style.display = 'block';
       document.getElementById('in-screenname').value = state.account.screenName;
       document.getElementById('in-screenname').setAttribute('readonly','readonly');
       document.getElementById('in-savepw').checked = !!state.savePassword;
@@ -1081,6 +1185,7 @@
     } else {
       signonMode = 'create';
       document.getElementById('confirm-row').style.display = 'block';
+      document.getElementById('forgot-row').style.display = 'none';
       document.getElementById('in-screenname').value = '';
       document.getElementById('in-screenname').removeAttribute('readonly');
       pwInput.value = ''; pwInput.type = 'password'; pwInput.classList.remove('pw-saved'); pwInput.readOnly = false;
@@ -1131,6 +1236,14 @@
       state.autoLogin = autoLog;
       saveState().then(enterDesktop);
     }
+  });
+
+  document.getElementById('forgot-link').addEventListener('click', function(){
+    if(!state.account){
+      document.getElementById('signon-error').textContent = 'Create an account first.';
+      return;
+    }
+    openForgotPasswordWindow();
   });
 
   document.getElementById('btn-help').addEventListener('click', function(){
@@ -1233,7 +1346,6 @@
             '<span class="bl-sub">' + (ts ? relTime(ts) : 'new buddy') + '</span>' +
           '</span>';
         row.addEventListener('click', function(){ openIMWindow(b.id); });
-        row.addEventListener('dblclick', function(){ openIMWindow(b.id); });
         listEl.appendChild(row);
       });
     });
@@ -1326,6 +1438,7 @@
   document.getElementById('menu-viewprofile').addEventListener('click', openViewProfileWindow);
   document.getElementById('menu-addcategory').addEventListener('click', openAddCategoryWindow);
   document.getElementById('menu-renamecategory').addEventListener('click', openRenameCategoryWindow);
+  document.getElementById('menu-editbuddy').addEventListener('click', openEditBuddyWindow);
   document.getElementById('bl-status-edit').addEventListener('click', openSetStatusWindow);
 
   function signOff(){
@@ -1519,7 +1632,6 @@
         '</select>' +
         '<label class="rich-swatch" title="Text color"><span>A</span><input type="color" data-cmd="foreColor" value="#000000"></label>' +
         '<label class="rich-swatch hl" title="Highlight selected text"><span>&#9608;</span><input type="color" data-cmd="hiliteColor" value="#ffff00"></label>' +
-        '<label class="rich-swatch bg" title="Whole box background"><span>&#9639;</span><input type="color" class="rich-bg-input" value="#ffffff"></label>' +
       '</div>' +
       '<div class="rich-compose" id="'+id+'" contenteditable="true" data-placeholder="'+escapeHtml(placeholder)+'"></div>';
   }
@@ -1624,7 +1736,7 @@
 
   function startVoiceRecording(target, anchorEl){
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === 'undefined'){
-      alert('Voice recording isn\'t supported in this browser.');
+      openInfoWindow('Voice recording isn\'t supported in this browser.');
       return;
     }
     navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream){
@@ -1640,7 +1752,7 @@
       var chunks = [];
       var recorder;
       try{ recorder = new MediaRecorder(stream); }
-      catch(e){ alert('Could not start recording.'); stream.getTracks().forEach(function(t){ t.stop(); }); widget.remove(); return; }
+      catch(e){ openInfoWindow('Could not start recording.'); stream.getTracks().forEach(function(t){ t.stop(); }); widget.remove(); return; }
       recorder.ondataavailable = function(e){ if(e.data && e.data.size > 0) chunks.push(e.data); };
 
       var startedAt = Date.now();
@@ -1670,7 +1782,7 @@
       widget.querySelector('.vr-cancel').addEventListener('click', function(){ cancelled = true; recorder.stop(); });
       recorder.start();
     }).catch(function(err){
-      alert('Could not access the microphone: ' + (err && err.message ? err.message : err));
+      openInfoWindow('Could not access the microphone: ' + (err && err.message ? err.message : err));
     });
   }
 
@@ -1773,14 +1885,6 @@
         }
       });
     });
-    var bgInput = scopeEl.querySelector('.rich-bg-input');
-    if(bgInput){
-      bgInput.addEventListener('input', function(){
-        target.style.background = bgInput.value;
-        var swatch = bgInput.closest('.rich-swatch');
-        if(swatch) swatch.style.background = bgInput.value;
-      });
-    }
     // live token expansion (fires after a token + space is typed)
     target.addEventListener('keyup', function(e){
       if(e.key === ' ' || e.code === 'Space' || e.key === 'Spacebar'){
@@ -1819,7 +1923,7 @@
   }
 
   function isRichEmpty(el){
-    if(el.querySelector && el.querySelector('img')) return false;
+    if(el.querySelector && (el.querySelector('img') || el.querySelector('audio'))) return false;
     return el.textContent.replace(/\u200b/g,'').trim() === '';
   }
 
@@ -1918,14 +2022,15 @@
           if(action === 'edit'){
             startEdit(entry);
           } else if(action === 'delete'){
-            if(window.confirm('Delete this entry? This can\'t be undone.')){
+            appConfirm('Delete this entry? This can\'t be undone.', function(confirmed){
+              if(!confirmed) return;
               state.entries[buddyId] = list.filter(function(x){ return x.id !== entryId; });
               if(editingEntryId === entryId) cancelEdit();
               saveState();
               renderLog(buddyId);
               renderStats(buddyId);
               renderBuddyList();
-            }
+            });
           }
         });
 
@@ -2009,6 +2114,7 @@
         ? ('<span class="status-tag">Status' + (entry.statusLabel ? ': ' + escapeHtml(entry.statusLabel) : '') + '</span><br>')
         : '';
       var editedTag = entry.editedAt ? ' <span class="edited-tag">(edited)</span>' : '';
+      var txtStyle = entry.bg ? (' style="background:' + escapeHtml(entry.bg) + '; padding:4px 6px; border-radius:4px;"') : '';
       html += '<div class="im-entry' + (isPrompt ? ' prompt-entry' : '') + '" data-entry-id="' + entry.id + '">' +
                 '<span class="who' + (isPrompt ? ' prompt-who' : '') + '">' + sender + '</span> ' +
                 '<span class="ts">(' + fmtTime(entry.ts) + '):' + editedTag + '</span>' +
@@ -2016,7 +2122,7 @@
                   '<span class="entry-action" data-action="edit">' + iconSVG('pencil') + '</span>' +
                   '<span class="entry-action" data-action="delete">' + iconSVG('trash') + '</span>' +
                 '</span>' +
-                '<div class="txt">' + statusTag + content + '</div>' +
+                '<div class="txt"' + txtStyle + '>' + statusTag + content + '</div>' +
               '</div>';
     });
     if(!list.length){
@@ -2031,8 +2137,9 @@
     if(!input) return;
     if(isRichEmpty(input)) return;
     var html = sanitizeHTML(input.innerHTML);
+    var entry = { id: uid(), html: html, ts: Date.now(), kind: 'entry', author: state.account.screenName };
     state.entries[buddyId] = state.entries[buddyId] || [];
-    state.entries[buddyId].push({ id: uid(), html: html, ts: Date.now(), kind: 'entry', author: state.account.screenName });
+    state.entries[buddyId].push(entry);
     saveState();
     input.innerHTML = '';
     renderLog(buddyId);
@@ -2202,26 +2309,33 @@
     });
   }
 
-  // ================= RENAME CATEGORY WINDOW =================
+  // ================= EDIT CATEGORY WINDOW =================
   function openRenameCategoryWindow(){
     var options = state.groups.map(function(g){ return '<option value="'+escapeHtml(g.id)+'">'+escapeHtml(g.name)+'</option>'; }).join('');
     var body =
       '<div class="win-body nm-body">' +
         '<div class="nm-row"><label>Category:</label><select id="rc-select">'+options+'</select></div>' +
-        '<div class="nm-row"><label>New Name:</label><input type="text" id="rc-name"></div>' +
-        '<div class="nm-send-row"><button class="btn" id="rc-save">Rename</button></div>' +
+        '<div class="nm-row"><label>Name:</label><input type="text" id="rc-name"></div>' +
+        '<div class="nm-send-row" style="gap:8px;">' +
+          '<button class="btn" id="rc-delete" style="color:#c0392b;border-color:#c0392b;">Delete Category</button>' +
+          '<button class="btn" id="rc-save">Save</button>' +
+        '</div>' +
       '</div>';
     createWindow({
-      title: 'Rename Category',
+      title: 'Edit Category',
       extraClass: 'addbuddy-win',
       bodyHtml: body,
       type: 'renamecategory',
       onMount: function(el, id){
         var select = el.querySelector('#rc-select');
         var input = el.querySelector('#rc-name');
+        var deleteBtn = el.querySelector('#rc-delete');
         function loadCurrentName(){
           var group = state.groups.find(function(g){ return g.id === select.value; });
           input.value = group ? group.name : '';
+          // can't delete the default Buddies category
+          deleteBtn.disabled = (select.value === 'default');
+          deleteBtn.style.opacity = (select.value === 'default') ? '0.4' : '1';
         }
         loadCurrentName();
         select.addEventListener('change', loadCurrentName);
@@ -2236,6 +2350,81 @@
         }
         el.querySelector('#rc-save').addEventListener('click', submit);
         input.addEventListener('keydown', function(e){ if(e.key === 'Enter') submit(); });
+        deleteBtn.addEventListener('click', function(){
+          if(select.value === 'default') return;
+          var group = state.groups.find(function(g){ return g.id === select.value; });
+          if(!group) return;
+          appConfirm('Delete category "' + group.name + '"? Its buddies will move to "Buddies".', function(confirmed){
+            if(!confirmed) return;
+            state.buddies.forEach(function(b){
+              if(b.groupId === group.id) b.groupId = 'default';
+            });
+            state.groups = state.groups.filter(function(g){ return g.id !== group.id; });
+            saveState();
+            renderBuddyList();
+            closeWindow(id);
+          });
+        });
+      }
+    });
+  }
+
+  // ================= EDIT BUDDY WINDOW =================
+  function openEditBuddyWindow(){
+    if(!state.buddies.length){
+      openInfoWindow('No buddies to edit yet.');
+      return;
+    }
+    var buddyOptions = state.buddies.map(function(b){ return '<option value="'+escapeHtml(b.id)+'">'+escapeHtml(b.name)+'</option>'; }).join('');
+    var groupOptions = state.groups.map(function(g){ return '<option value="'+escapeHtml(g.id)+'">'+escapeHtml(g.name)+'</option>'; }).join('');
+    var body =
+      '<div class="win-body nm-body">' +
+        '<div class="nm-row"><label>Buddy:</label><select id="eb-select">'+buddyOptions+'</select></div>' +
+        '<div class="nm-row"><label>Name:</label><input type="text" id="eb-name"></div>' +
+        '<div class="nm-row"><label>Category:</label><select id="eb-group">'+groupOptions+'</select></div>' +
+        '<div class="nm-send-row" style="gap:8px;">' +
+          '<button class="btn" id="eb-delete" style="color:#c0392b;border-color:#c0392b;">Delete Buddy</button>' +
+          '<button class="btn" id="eb-save">Save</button>' +
+        '</div>' +
+      '</div>';
+    createWindow({
+      title: 'Edit Buddy',
+      extraClass: 'addbuddy-win',
+      bodyHtml: body,
+      type: 'editbuddy',
+      onMount: function(el, id){
+        var select = el.querySelector('#eb-select');
+        var nameInput = el.querySelector('#eb-name');
+        var groupSelect = el.querySelector('#eb-group');
+        function loadCurrent(){
+          var b = state.buddies.find(function(x){ return x.id === select.value; });
+          if(!b) return;
+          nameInput.value = b.name;
+          groupSelect.value = b.groupId || 'default';
+        }
+        loadCurrent();
+        select.addEventListener('change', loadCurrent);
+        function submit(){
+          var newName = nameInput.value.trim();
+          if(!newName) return;
+          var b = state.buddies.find(function(x){ return x.id === select.value; });
+          if(b){ b.name = newName; b.groupId = groupSelect.value; }
+          saveState(); renderBuddyList(); closeWindow(id);
+        }
+        el.querySelector('#eb-save').addEventListener('click', submit);
+        nameInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') submit(); });
+        el.querySelector('#eb-delete').addEventListener('click', function(){
+          var b = state.buddies.find(function(x){ return x.id === select.value; });
+          if(!b) return;
+          appConfirm('Delete "' + b.name + '" and all their entries? This can\'t be undone.', function(confirmed){
+            if(!confirmed) return;
+            state.buddies = state.buddies.filter(function(x){ return x.id !== b.id; });
+            delete state.entries[b.id];
+            var openW = openWindows.find(function(w){ return w.type === 'im' && w.buddyId === b.id; });
+            if(openW) closeWindow(openW.id);
+            saveState(); renderBuddyList(); closeWindow(id);
+          });
+        });
       }
     });
   }
