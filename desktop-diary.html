@@ -108,6 +108,10 @@
   .menubar .m-item.open .m-drop { display: block; }
   .m-drop div { padding: 6px 12px; color: #000; white-space: nowrap; }
   .m-drop div:hover { background: #316ac5; color:#fff; }
+  .m-drop div.mi-active { font-weight: bold; }
+  .m-drop div.mi-active::after { content: ' \2713'; }
+  .locked-content { filter:blur(4px); transition:filter 0.2s; cursor:pointer; user-select:none; }
+  .locked-content.revealed { filter:none; }
   .win-body { flex: 1; overflow: auto; padding: 6px; background: #fff; -webkit-overflow-scrolling: touch; }
   input[type=text], input[type=password], textarea {
     font-family: Tahoma, Arial, sans-serif; font-size: 13px;
@@ -183,6 +187,9 @@
   .bl-me-info { display:flex; flex-direction:column; min-width:0; }
   .bl-me b { display:block; font-size:11.5px; }
   .bl-status-edit { font-size:9px; color:#0850d0; text-decoration:underline; cursor:pointer; display:block; margin-top:2px; }
+  .draft-links { text-align:center; font-size:10px; margin-top:4px; color:#888; }
+  .draft-links span { color:#0850d0; text-decoration:underline; cursor:pointer; }
+  .draft-recipient { font-size:10px; color:#0850d0; margin-top:1px; }
   .status-log-row { padding:8px 4px; border-bottom:1px solid #eee; font-size:11.5px; }
   .slr-ts { color:#999; font-size:10px; margin-bottom:3px; display:flex; align-items:center; justify-content:space-between; }
   .sl-actions { display:flex; gap:8px; }
@@ -237,24 +244,20 @@
   .im-entry .ts { color:#888; font-weight:normal; }
   .im-entry .txt { white-space:pre-wrap; margin-left:0; }
   .im-entry { position:relative; }
-  .edited-tag { font-style:italic; color:#aaa; }
   .entry-actions { float:right; display:flex; gap:8px; }
   .entry-action { cursor:pointer; padding:2px; display:inline-flex; }
   .editing-banner { background:#fff3cd; border-top:1px solid #e0c060; padding:5px 8px; font-size:11px; color:#6b5300; }
   .lock-toggle { font-size:11px; cursor:pointer; user-select:none; }
   .lock-toggle input { cursor:pointer; }
-  .lock-icon { font-size:10px; }
-  .locked-content { filter:blur(4px); transition:filter 0.2s; cursor:pointer; user-select:none; }
-  .locked-content.revealed { filter:none; }
   .edit-cancel { color:#0850d0; text-decoration:underline; cursor:pointer; }
   .im-compose-row { border-top:1px solid #ccc; background:#fff; padding:5px; }
-  .rich-toolbar { display:flex; gap:4px; padding:4px 5px; background:#ece9d8; border-bottom:1px solid #ccc; align-items:center; flex-wrap:wrap; }
-  .rich-toolbar button[data-cmd] { width:24px; height:22px; font-size:11px; border:1px solid #b0aca0; border-radius:3px; background:#fff; cursor:pointer; }
+  .rich-toolbar { display:flex; gap:3px; padding:3px 4px; background:#ece9d8; border-bottom:1px solid #ccc; align-items:center; flex-wrap:nowrap; overflow:hidden; }
+  .rich-toolbar button[data-cmd] { width:20px; height:19px; min-width:20px; font-size:10px; border:1px solid #b0aca0; border-radius:3px; background:#fff; cursor:pointer; padding:0; flex-shrink:0; }
   .rich-toolbar button[data-cmd].active { background:#316ac5; color:#fff; border-color:#0850d0; }
-  .rich-size { height:22px; font-size:11px; border:1px solid #b0aca0; border-radius:3px; background:#fff; }
-  .rich-font { height:22px; font-size:11px; border:1px solid #b0aca0; border-radius:3px; background:#fff; max-width:82px; }
-  .rich-swatch { position:relative; width:24px; height:22px; border:1px solid #b0aca0; border-radius:3px; background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; overflow:hidden; }
-  .rich-swatch span { font-size:12px; font-weight:bold; pointer-events:none; }
+  .rich-size { height:19px; font-size:9px; border:1px solid #b0aca0; border-radius:3px; background:#fff; max-width:52px; flex-shrink:1; min-width:0; }
+  .rich-font { height:19px; font-size:9px; border:1px solid #b0aca0; border-radius:3px; background:#fff; max-width:60px; flex-shrink:1; min-width:0; }
+  .rich-swatch { position:relative; width:20px; height:19px; min-width:20px; border:1px solid #b0aca0; border-radius:3px; background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0; }
+  .rich-swatch span { font-size:11px; font-weight:bold; pointer-events:none; }
   .rich-swatch.hl span { color:#ffd400; }
   .rich-swatch.bg span { color:#8aa; }
   .rich-swatch input[type=color] { position:absolute; inset:0; opacity:0; cursor:pointer; }
@@ -350,7 +353,6 @@
   .help-win { width: min(300px, 92vw); height: min(420px, 78vh); }
   .help-section-title { font-weight:bold; color:#0850d0; margin:6px 0 4px; }
   .help-platform { font-weight:bold; margin:4px 0 2px; color:#333; }
-  .moodlog-win { width: min(320px, 92vw); height: min(460px, 78vh); }
   .profile-win { width: min(340px, 94vw); height: min(500px, 82vh); }
   .blog-win { width: min(340px, 94vw); height: min(520px, 84vh); }
   .blog-posts-list { padding:8px 0; }
@@ -536,21 +538,22 @@
     <div class="menubar">
       <div class="m-item">File
         <div class="m-drop">
-          <div id="menu-cloudsync">Sync&hellip;</div>
-          <div id="menu-account">Account Settings&hellip;</div>
+          <div id="menu-cloudsync">Sync</div>
+          <div id="menu-account">Account Settings</div>
           <div id="menu-signoff">Sign Off</div>
         </div>
       </div>
       <div class="m-item">View
         <div class="m-drop">
-          <div id="menu-viewprofile">Blog&hellip;</div>
-          <div id="menu-logs">Logs&hellip;</div>
+          <div id="menu-viewprofile">Blog</div>
+          <div id="menu-logs">Log</div>
         </div>
       </div>
       <div class="m-item">Edit
         <div class="m-drop">
-          <div id="menu-editprofile">Profile&hellip;</div>
-          <div id="menu-buddies">Buddies&hellip;</div>
+          <div id="menu-editprofile">Profile</div>
+          <div id="menu-buddies">Buddies</div>
+          <div id="menu-alldrafts">Drafts</div>
         </div>
       </div>
     </div>
@@ -582,7 +585,7 @@
     <div id="tb-start"><span class="ttl-icon" id="tb-start-icon"></span><span>Start</span></div>
     <div id="start-menu">
       <div class="sm-item" id="sm-stickynote">New Sticky Note</div>
-      <div class="sm-item" id="sm-bgedit">Edit Background&hellip;</div>
+      <div class="sm-item" id="sm-bgedit">Edit Background</div>
     </div>
     <div id="tb-items" style="display:flex; gap:4px;"></div>
     <div id="tb-clock"></div>
@@ -619,7 +622,8 @@ try {
     customMoodColors: {},   // mood name -> hex color override
     groups: [ { id: 'default', name: 'Buddies' } ],
     buddies: [],            // { id, name, addedAt, groupId }
-    entries: {}             // buddyId -> [ { id, html, ts, kind:'entry'|'prompt' } ]
+    entries: {},            // buddyId -> [ { id, html, ts, kind:'entry'|'prompt' } ]
+    drafts: {}              // buddyId -> [ { id, html, ts }, ... ] saved draft log
   };
 
   function normalizeState(){
@@ -650,9 +654,21 @@ try {
     Object.keys(state.entries).forEach(function(bid){
       (state.entries[bid] || []).forEach(function(e){ if(!e.kind) e.kind = 'entry'; });
     });
+    if(!state.drafts || typeof state.drafts !== 'object') state.drafts = {};
+    Object.keys(state.drafts).forEach(function(bid){
+      var d = state.drafts[bid];
+      if(d && !Array.isArray(d)){
+        // migrate old single-draft-per-buddy format into a one-item log
+        state.drafts[bid] = d.html ? [{ id: uid(), html: d.html, ts: d.ts || Date.now() }] : [];
+      }
+      if(!Array.isArray(state.drafts[bid])) state.drafts[bid] = [];
+      state.drafts[bid].forEach(function(entry){ if(!entry.id) entry.id = uid(); });
+    });
   }
 
   var openWindows = [];     // { id, type, buddyId, el, tbEl }
+  var logFilterByBuddy = {};       // buddyId -> 'photo'|'voice'|'prompt'|null
+  var searchQueryByBuddy = {};     // buddyId -> string
   var zCounter = 100;
   var winCounter = 0;
 
@@ -1223,6 +1239,7 @@ try {
       statusLog: state.statusLog,
       statusPresets: state.statusPresets,
       moodLog: state.moodLog,
+      drafts: state.drafts,
       profile: state.profile,
       blogPosts: state.blogPosts,
       bgColor: (state.background && state.background.color) || '',
@@ -1256,6 +1273,7 @@ try {
       state.statusLog = meta.statusLog || [];
       state.statusPresets = meta.statusPresets || [];
       state.moodLog = meta.moodLog || [];
+      state.drafts = meta.drafts || {};
       state.profile = meta.profile || { pic:'', html:'' };
       if(Array.isArray(meta.blogPosts)) state.blogPosts = meta.blogPosts;
       if(meta.bgColor) state.background = { color: meta.bgColor, image: (state.background && state.background.image) || '' };
@@ -1927,6 +1945,7 @@ try {
   document.getElementById('menu-signoff').addEventListener('click', signOff);
   document.getElementById('bl-addbuddy-btn').addEventListener('click', openBuddiesWindow);
   document.getElementById('menu-buddies').addEventListener('click', openBuddiesWindow);
+  document.getElementById('menu-alldrafts').addEventListener('click', openAllDraftsWindow);
   document.getElementById('bl-sendim-btn').addEventListener('click', function(){ openNewMessageWindow(); });
   document.getElementById('menu-logs').addEventListener('click', function(){ openLogsWindow('status'); });
   document.getElementById('menu-cloudsync').addEventListener('click', openCloudSyncWindow);
@@ -2446,16 +2465,22 @@ try {
 
     var menu =
       '<div class="menubar">' +
-        '<div class="m-item">File<div class="m-drop"><div class="mi-close">Close</div></div></div>' +
-        '<div class="m-item">Edit<div class="m-drop"><div class="mi-clear">Clear Draft</div></div></div>' +
-        '<div class="m-item">Insert<div class="m-drop">' +
-          '<div class="mi-photo">Photo&hellip;</div>' +
-          '<div class="mi-voice">Voice Note&hellip;</div>' +
+        '<div class="m-item">File<div class="m-drop">' +
+          '<div class="mi-search">Search&hellip;</div>' +
+          '<div class="mi-export">Export</div>' +
+          '<div class="mi-close">Close</div>' +
+        '</div></div>' +
+        '<div class="m-item">View<div class="m-drop">' +
+          '<div class="mi-filter-photo">Photos</div>' +
+          '<div class="mi-filter-voice">Voice Notes</div>' +
+          '<div class="mi-filter-prompt">Writing Prompts</div>' +
+        '</div></div>' +
+        '<div class="m-item">Edit<div class="m-drop">' +
+          '<div class="mi-clear">Clear Draft</div>' +
+          '<div class="mi-editdraft">Drafts</div>' +
           '<div class="mi-ts">Timestamp (%t)</div>' +
           '<div class="mi-date">Date (%d)</div>' +
-          '<div class="mi-prompt">Writing Prompt</div>' +
         '</div></div>' +
-        '<div class="m-item">Buddies<div class="m-drop"><div class="mi-addbuddy">Add Buddy&hellip;</div></div></div>' +
       '</div>';
 
     var inputId = 'input-'+buddyId;
@@ -2470,9 +2495,9 @@ try {
         '<button class="action-btn" title="Send a writing prompt" id="prompt-'+buddyId+'">'+iconSVG('bulb')+'<span>Prompt</span></button>' +
         '<button class="action-btn" title="Insert photo" id="photo-'+buddyId+'">'+iconSVG('photo')+'<span>Photo</span></button>' +
         '<button class="action-btn" title="Record a voice note" id="voice-'+buddyId+'">'+iconSVG('mic')+'<span>Voice</span></button>' +
-        '<button class="action-btn" title="Add a buddy" id="addb-'+buddyId+'">'+iconSVG('plus')+'<span>Buddy</span></button>' +
         '<button class="send-btn-gold" id="send-'+buddyId+'">'+iconSVG('send')+'<span id="send-label-'+buddyId+'">Send</span></button>' +
       '</div>' +
+      '<div class="draft-links" style="text-align:right;padding-right:8px;"><span class="draft-save-link-'+buddyId+'">Save Draft</span></div>' +
       '<div class="pct-key">%t = time &nbsp; %d = date</div>';
 
     createWindow({
@@ -2535,17 +2560,28 @@ try {
           if(!entry) return;
           var action = actionEl.getAttribute('data-action');
           if(action === 'edit'){
-            startEdit(entry);
+            if(entry.locked){
+              appPasscodePrompt(function(ok){ if(ok) startEdit(entry); });
+            } else {
+              startEdit(entry);
+            }
           } else if(action === 'delete'){
-            appConfirm('Delete this entry? This can\'t be undone.', function(confirmed){
-              if(!confirmed) return;
-              state.entries[buddyId] = list.filter(function(x){ return x.id !== entryId; });
-              if(editingEntryId === entryId) cancelEdit();
-              saveState();
-              renderLog(buddyId);
-              renderStats(buddyId);
-              renderBuddyList();
-            });
+            function doDelete(){
+              appConfirm('Delete this entry? This can\'t be undone.', function(confirmed){
+                if(!confirmed) return;
+                state.entries[buddyId] = list.filter(function(x){ return x.id !== entryId; });
+                if(editingEntryId === entryId) cancelEdit();
+                saveState();
+                renderLog(buddyId);
+                renderStats(buddyId);
+                renderBuddyList();
+              });
+            }
+            if(entry.locked){
+              appPasscodePrompt(function(ok){ if(ok) doDelete(); });
+            } else {
+              doDelete();
+            }
           }
         });
 
@@ -2590,16 +2626,42 @@ try {
         el.querySelector('#voice-'+buddyId).addEventListener('click', function(){
           startVoiceRecording(input, el.querySelector('#voice-'+buddyId));
         });
-        el.querySelector('#addb-'+buddyId).addEventListener('click', openBuddiesWindow);
 
         el.querySelector('.mi-close').addEventListener('click', function(){ closeWindow(id); });
+
+        el.querySelector('.mi-search').addEventListener('click', function(){
+          appTextPrompt('Search this conversation (blank to clear)', searchQueryByBuddy[buddyId] || '', function(q){
+            if(q === null) return;
+            searchQueryByBuddy[buddyId] = q.trim();
+            renderLog(buddyId);
+          });
+        });
+        el.querySelector('.mi-export').addEventListener('click', function(){
+          exportConversation(buddyId, buddy.name);
+        });
+
+        el.querySelector('.mi-filter-photo').addEventListener('click', function(){ toggleFilterForBuddy(buddyId, 'photo', el); });
+        el.querySelector('.mi-filter-voice').addEventListener('click', function(){ toggleFilterForBuddy(buddyId, 'voice', el); });
+        el.querySelector('.mi-filter-prompt').addEventListener('click', function(){ toggleFilterForBuddy(buddyId, 'prompt', el); });
+
+        el.querySelector('.mi-editdraft').addEventListener('click', function(){
+          openDraftsListWindowFor(buddyId, buddy.name, function(html){
+            if(editingEntryId) cancelEdit();
+            input.innerHTML = html;
+            input.focus();
+          }, buddy.name);
+        });
         el.querySelector('.mi-clear').addEventListener('click', function(){ cancelEdit(); });
-        el.querySelector('.mi-photo').addEventListener('click', function(){ input._insertPhoto && input._insertPhoto(); });
-        el.querySelector('.mi-voice').addEventListener('click', function(){ startVoiceRecording(input, el.querySelector('.mi-voice')); });
         el.querySelector('.mi-ts').addEventListener('click', function(){ appendPlainText(input, (isRichEmpty(input)?'':' ') + fmtTime(Date.now()) + ' '); });
         el.querySelector('.mi-date').addEventListener('click', function(){ appendPlainText(input, (isRichEmpty(input)?'':' ') + fmtDateShort(Date.now()) + ' '); });
-        el.querySelector('.mi-prompt').addEventListener('click', function(){ insertPromptMessage(buddyId); });
-        el.querySelector('.mi-addbuddy').addEventListener('click', openBuddiesWindow);
+
+        el.querySelector('.draft-save-link-'+buddyId).addEventListener('click', function(){
+          if(isRichEmpty(input)){ openInfoWindow('Nothing to save \u2014 the compose box is empty.'); return; }
+          saveDraftFor(buddyId, sanitizeHTML(input.innerHTML));
+          openInfoWindow('Draft saved. Use View \u2192 Drafts to see everything you\'ve saved.');
+        });
+
+        refreshLogMenuLabels(buddyId, el);
       }
     });
   }
@@ -2611,10 +2673,273 @@ try {
     el.textContent = count + (count === 1 ? ' entry' : ' entries') + ' so far';
   }
 
+  function refreshLogMenuLabels(buddyId, el){
+    if(!el) return;
+    var filter = logFilterByBuddy[buddyId] || null;
+    ['photo','voice','prompt'].forEach(function(type){
+      var item = el.querySelector('.mi-filter-'+type);
+      if(item) item.classList.toggle('mi-active', filter === type);
+    });
+  }
+
+  function toggleFilterForBuddy(buddyId, type, el){
+    logFilterByBuddy[buddyId] = (logFilterByBuddy[buddyId] === type) ? null : type;
+    refreshLogMenuLabels(buddyId, el);
+    renderLog(buddyId);
+  }
+
+  function stripHtmlTags(html){
+    var div = document.createElement('div');
+    div.innerHTML = html || '';
+    return div.textContent || '';
+  }
+
+  // Generic draft log, usable by any rich-text compose box (IM entries, new messages,
+  // status edits, blog posts). `key` is a buddyId or a fixed scope like '__blog__'.
+  function saveDraftFor(key, html, recipient){
+    if(!html || !stripHtmlTags(html).trim()) return false;
+    state.drafts[key] = state.drafts[key] || [];
+    var draft = { id: uid(), html: html, ts: Date.now() };
+    if(recipient) draft.recipient = recipient;
+    state.drafts[key].push(draft);
+    saveState();
+    return true;
+  }
+
+  function openDraftsListWindowFor(key, scopeLabel, onLoad, impliedRecipient){
+    function buildRows(){
+      var list = (state.drafts[key] || []).slice().sort(function(a,b){ return b.ts - a.ts; });
+      if(!list.length) return '<div class="bl-empty">No saved drafts yet.</div>';
+      return list.map(function(d){
+        var preview = stripHtmlTags(d.html).trim();
+        if(preview.length > 80) preview = preview.slice(0, 80) + '\u2026';
+        var recipient = impliedRecipient || d.recipient || null;
+        var recipientHtml = recipient ? '<div class="draft-recipient">To: ' + escapeHtml(recipient) + '</div>' : '';
+        return '<div class="status-log-row" data-draft-id="'+escapeHtml(d.id)+'">' +
+          '<div class="slr-ts">' + fmtDayDivider(d.ts) + ' &middot; ' + fmtTime(d.ts) +
+            '<span class="sl-actions"><span class="sl-edit" title="Load">&#9998;</span><span class="sl-del" title="Delete">&#10005;</span></span>' +
+          '</div>' +
+          recipientHtml +
+          '<div class="sl-status-label">' + (escapeHtml(preview) || '<i>(empty)</i>') + '</div>' +
+        '</div>';
+      }).join('');
+    }
+    createWindow({
+      title: 'Drafts' + (scopeLabel ? ' \u2014 ' + scopeLabel : ''),
+      extraClass: 'help-win',
+      bodyHtml: '<div class="win-body" id="drafts-body-wrap">' + buildRows() + '</div>',
+      type: 'drafts',
+      onMount: function(dEl, dId){
+        function wireDraftActions(){
+          dEl.querySelectorAll('.sl-edit').forEach(function(btn){
+            btn.onclick = function(){
+              var row = btn.closest('[data-draft-id]');
+              var draftId = row && row.getAttribute('data-draft-id');
+              var draft = (state.drafts[key] || []).find(function(d){ return d.id === draftId; });
+              if(!draft) return;
+              onLoad(draft.html);
+              closeWindow(dId);
+            };
+          });
+          dEl.querySelectorAll('.sl-del').forEach(function(btn){
+            btn.onclick = function(){
+              var row = btn.closest('[data-draft-id]');
+              var draftId = row && row.getAttribute('data-draft-id');
+              appConfirm('Delete this saved draft?', function(confirmed){
+                if(!confirmed) return;
+                state.drafts[key] = (state.drafts[key] || []).filter(function(d){ return d.id !== draftId; });
+                saveState();
+                dEl.querySelector('#drafts-body-wrap').innerHTML = buildRows();
+                wireDraftActions();
+              });
+            };
+          });
+        }
+        wireDraftActions();
+      }
+    });
+  }
+
+  // ================= ALL DRAFTS WINDOW (grouped by type: status, blog, messages) =================
+  function openAllDraftsWindow(){
+    function rowsFor(key, impliedRecipient){
+      var list = (state.drafts[key] || []).slice().sort(function(a,b){ return b.ts - a.ts; });
+      return list.map(function(d){
+        var preview = stripHtmlTags(d.html).trim();
+        if(preview.length > 70) preview = preview.slice(0, 70) + '\u2026';
+        var recipient = impliedRecipient || d.recipient || null;
+        var recipientHtml = recipient ? '<div class="draft-recipient">To: ' + escapeHtml(recipient) + '</div>' : '';
+        return '<div class="status-log-row" data-draft-key="'+escapeHtml(key)+'" data-draft-id="'+escapeHtml(d.id)+'">' +
+          '<div class="slr-ts">' + fmtDayDivider(d.ts) + ' &middot; ' + fmtTime(d.ts) +
+            '<span class="sl-actions"><span class="sl-edit" title="Load">&#9998;</span><span class="sl-del" title="Delete">&#10005;</span></span>' +
+          '</div>' +
+          recipientHtml +
+          '<div class="sl-status-label">' + (escapeHtml(preview) || '<i>(empty)</i>') + '</div>' +
+        '</div>';
+      }).join('');
+    }
+    function sectionHeader(label){
+      return '<div style="font-weight:bold;padding:6px 8px 2px;border-bottom:1px solid #ccc;margin-top:6px;">' + escapeHtml(label) + '</div>';
+    }
+    function subHeader(label){
+      return '<div style="font-size:11px;color:#555;padding:4px 8px 0;">' + escapeHtml(label) + '</div>';
+    }
+    function buildBody(){
+      var blogRows = rowsFor('__blog__');
+      var msgHtml = '';
+      var nmRows = rowsFor('__newmessage__');
+      if(nmRows) msgHtml += subHeader('New Message') + nmRows;
+      state.buddies.forEach(function(b){
+        var rows = rowsFor(b.id, b.name);
+        if(rows) msgHtml += subHeader(b.name) + rows;
+      });
+      var html = '';
+      html += sectionHeader('Posts') + (blogRows || '<div class="bl-empty">No post drafts.</div>');
+      html += sectionHeader('Messages') + (msgHtml || '<div class="bl-empty">No message drafts.</div>');
+      return html;
+    }
+    createWindow({
+      title: 'Drafts',
+      extraClass: 'help-win',
+      bodyHtml: '<div class="win-body" id="alldrafts-body-wrap">' + buildBody() + '</div>',
+      type: 'alldrafts',
+      onMount: function(el, id){
+        function wireActions(){
+          el.querySelectorAll('.sl-edit').forEach(function(btn){
+            btn.onclick = function(){
+              var row = btn.closest('[data-draft-id]');
+              var key = row && row.getAttribute('data-draft-key');
+              var draftId = row && row.getAttribute('data-draft-id');
+              var draft = (state.drafts[key] || []).find(function(d){ return d.id === draftId; });
+              if(!draft) return;
+              closeWindow(id);
+              if(key === '__status__'){
+                openEditStatusEntryWindow(null, null, draft.html);
+              } else if(key === '__blog__'){
+                openBlogPostEditor(null, null, draft.html);
+              } else if(key === '__newmessage__'){
+                openNewMessageWindow();
+                var composeEl = document.getElementById('nm-body');
+                if(composeEl) composeEl.innerHTML = draft.html;
+              } else {
+                openIMWindow(key);
+                var input = document.getElementById('input-'+key);
+                if(input) input.innerHTML = draft.html;
+              }
+            };
+          });
+          el.querySelectorAll('.sl-del').forEach(function(btn){
+            btn.onclick = function(){
+              var row = btn.closest('[data-draft-id]');
+              var key = row && row.getAttribute('data-draft-key');
+              var draftId = row && row.getAttribute('data-draft-id');
+              appConfirm('Delete this saved draft?', function(confirmed){
+                if(!confirmed) return;
+                state.drafts[key] = (state.drafts[key] || []).filter(function(d){ return d.id !== draftId; });
+                saveState();
+                el.querySelector('#alldrafts-body-wrap').innerHTML = buildBody();
+                wireActions();
+              });
+            };
+          });
+        }
+        wireActions();
+      }
+    });
+  }
+
+  function entryMatchesTypeFilter(entry, filter){
+    if(!filter) return true;
+    var content = (entry.html !== undefined) ? entry.html : (entry.text || '');
+    if(filter === 'photo') return /<img/i.test(content);
+    if(filter === 'voice') return /<audio/i.test(content);
+    if(filter === 'prompt') return entry.kind === 'prompt';
+    return true;
+  }
+
+  function entryMatchesSearch(entry, query){
+    if(!query) return true;
+    var content = (entry.html !== undefined) ? entry.html : (entry.text || '');
+    var haystack = stripHtmlTags(content).toLowerCase() + ' ' + (entry.statusLabel || '').toLowerCase();
+    return haystack.indexOf(query.toLowerCase()) !== -1;
+  }
+
+  function exportConversation(buddyId, buddyName){
+    var fullList = state.entries[buddyId] || [];
+    var lockedCount = fullList.filter(function(e){ return e.locked; }).length;
+
+    function proceed(includeLocked){
+      var list = fullList.filter(function(e){ return includeLocked || !e.locked; });
+      if(!list.length){ openInfoWindow('Nothing to export yet.'); return; }
+      generateConversationPDF(list, buddyName);
+    }
+
+    if(lockedCount > 0){
+      appConfirm('This conversation has ' + lockedCount + ' locked ' + (lockedCount === 1 ? 'entry' : 'entries') + '. Include ' + (lockedCount === 1 ? 'it' : 'them') + ' in the export?', function(includeYes){
+        if(includeYes){
+          appPasscodePrompt(function(ok){ proceed(!!ok); });
+        } else {
+          proceed(false);
+        }
+      });
+    } else {
+      proceed(false);
+    }
+  }
+
+  function generateConversationPDF(list, buddyName){
+    var entriesHtml = list.map(function(e){
+      var sender = e.kind === 'prompt' ? 'Prompt' : (e.author || state.account.screenName);
+      var content = (e.html !== undefined) ? e.html : escapeHtml(e.text || '');
+      return '<div style="margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #ddd;">' +
+        '<div style="font-size:11px;color:#666;margin-bottom:4px;"><b>' + escapeHtml(sender) + '</b> &middot; ' + fmtDayDivider(e.ts) + ' ' + fmtTime(e.ts) + '</div>' +
+        '<div style="font-size:14px;line-height:1.5;">' + content + '</div>' +
+      '</div>';
+    }).join('');
+
+    var printHtml =
+      '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + escapeHtml(buddyName) + ' Export</title>' +
+      '<style>' +
+        'body{font-family:Georgia,serif;padding:24px;color:#222;}' +
+        'h1{font-size:20px;margin:0 0 2px;}' +
+        '.meta{font-size:11px;color:#888;margin-bottom:20px;}' +
+        'img{max-width:100%;}' +
+        '@media print{ body{padding:0;} }' +
+      '</style>' +
+      '</head><body>' +
+        '<h1>' + escapeHtml(buddyName) + '</h1>' +
+        '<div class="meta">Exported ' + escapeHtml(new Date().toLocaleString()) + '</div>' +
+        entriesHtml +
+      '</body></html>';
+
+    var iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+    document.body.appendChild(iframe);
+    var doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(printHtml);
+    doc.close();
+
+    function cleanup(){ if(iframe.parentNode) iframe.parentNode.removeChild(iframe); }
+    iframe.onload = function(){
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    };
+    try{ iframe.contentWindow.addEventListener('afterprint', cleanup); }catch(e){}
+    setTimeout(cleanup, 60000);
+  }
+
   function renderLog(buddyId){
     var el = document.getElementById('log-'+buddyId);
     if(!el) return;
-    var list = state.entries[buddyId] || [];
+    var fullList = state.entries[buddyId] || [];
+    var typeFilter = logFilterByBuddy[buddyId] || null;
+    var query = searchQueryByBuddy[buddyId] || '';
+    var list = fullList.filter(function(e){
+      if(!entryMatchesTypeFilter(e, typeFilter)) return false;
+      if(!entryMatchesSearch(e, query)) return false;
+      return true;
+    });
     var html = '';
     var lastDay = null;
     list.forEach(function(entry){
@@ -2630,11 +2955,9 @@ try {
         ? ('<span class="status-tag">Status' + (entry.statusLabel ? ': ' + escapeHtml(entry.statusLabel) : '') + '</span><br>')
         : '';
       var txtStyle = entry.bg ? (' style="background:' + escapeHtml(entry.bg) + '; padding:4px 6px; border-radius:4px;"') : '';
-      var lockedClass = entry.locked ? ' entry-locked' : '';
-      var lockIcon = entry.locked ? '<span class="lock-icon">🔒</span>' : '';
-      html += '<div class="im-entry' + (isPrompt ? ' prompt-entry' : '') + lockedClass + '" data-entry-id="' + entry.id + '">' +
+      html += '<div class="im-entry' + (isPrompt ? ' prompt-entry' : '') + '" data-entry-id="' + entry.id + '">' +
                 '<span class="who' + (isPrompt ? ' prompt-who' : '') + '">' + sender + '</span> ' +
-                '<span class="ts">(' + fmtTime(entry.ts) + '): ' + lockIcon + '</span>' +
+                '<span class="ts">(' + fmtTime(entry.ts) + '):</span> ' +
                 '<span class="entry-actions">' +
                   '<span class="entry-action" data-action="edit">' + iconSVG('pencil') + '</span>' +
                   '<span class="entry-action" data-action="delete">' + iconSVG('trash') + '</span>' +
@@ -2680,16 +3003,6 @@ try {
   function openNewMessageWindow(prefillName){
     var buddyOptions = state.buddies.map(function(b){ return '<option value="'+escapeHtml(b.id)+'">'+escapeHtml(b.name)+'</option>'; }).join('');
     var prefillMatch = prefillName ? findBuddyByName(prefillName) : null;
-    var menu =
-      '<div class="menubar">' +
-        '<div class="m-item">File<div class="m-drop"><div class="mi-close">Close</div></div></div>' +
-        '<div class="m-item">Insert<div class="m-drop">' +
-          '<div class="mi-photo">Photo&hellip;</div>' +
-          '<div class="mi-voice">Voice Note&hellip;</div>' +
-          '<div class="mi-ts">Timestamp (%t)</div>' +
-          '<div class="mi-date">Date (%d)</div>' +
-        '</div></div>' +
-      '</div>';
     var body =
       '<div class="win-body nm-body">' +
         '<div class="nm-row"><label>To:</label><select id="nm-to-select">' +
@@ -2698,14 +3011,20 @@ try {
         '</select></div>' +
         '<div class="nm-row" id="nm-newbuddy-row" style="display:none;"><label>New:</label><input type="text" id="nm-to-new" placeholder="Name" value="'+(prefillName && !prefillMatch ? escapeHtml(prefillName) : '')+'"></div>' +
         richComposeHtml('nm-body', '') +
-        '<div class="pct-key">%t = time &nbsp; %d = date</div>' +
+        '<div class="im-action-row" style="justify-content:flex-start;">' +
+          '<button class="action-btn" title="Insert photo" id="nm-photo-btn">'+iconSVG('photo')+'<span>Photo</span></button>' +
+          '<button class="action-btn" title="Record a voice note" id="nm-voice-btn">'+iconSVG('mic')+'<span>Voice</span></button>' +
+        '</div>' +
+        '<div class="pct-key" style="display:flex;justify-content:space-between;align-items:center;">' +
+          '<span><span class="nm-ins-ts" style="cursor:pointer;text-decoration:underline;">%t = time</span> &nbsp; <span class="nm-ins-date" style="cursor:pointer;text-decoration:underline;">%d = date</span></span>' +
+          '<span class="draft-save-link" style="color:#0850d0;text-decoration:underline;cursor:pointer;">Save Draft</span>' +
+        '</div>' +
         '<div class="nm-send-row"><button class="btn" id="nm-send">Send</button></div>' +
       '</div>';
 
     createWindow({
       title: 'Send Message',
       extraClass: 'nm-win',
-      menuHtml: menu,
       bodyHtml: body,
       type: 'newmsg',
       onMount: function(el, id){
@@ -2726,11 +3045,10 @@ try {
           newRow.style.display = (toSelect.value === '__new__') ? 'flex' : 'none';
         });
 
-        el.querySelector('.mi-close').addEventListener('click', function(){ closeWindow(id); });
-        el.querySelector('.mi-photo').addEventListener('click', function(){ composeEl._insertPhoto && composeEl._insertPhoto(); });
-        el.querySelector('.mi-voice').addEventListener('click', function(){ startVoiceRecording(composeEl, el.querySelector('.mi-voice')); });
-        el.querySelector('.mi-ts').addEventListener('click', function(){ appendPlainText(composeEl, (isRichEmpty(composeEl)?'':' ') + fmtTime(Date.now()) + ' '); });
-        el.querySelector('.mi-date').addEventListener('click', function(){ appendPlainText(composeEl, (isRichEmpty(composeEl)?'':' ') + fmtDateShort(Date.now()) + ' '); });
+        el.querySelector('#nm-photo-btn').addEventListener('click', function(){ composeEl._insertPhoto && composeEl._insertPhoto(); });
+        el.querySelector('#nm-voice-btn').addEventListener('click', function(){ startVoiceRecording(composeEl, el.querySelector('#nm-voice-btn')); });
+        el.querySelector('.nm-ins-ts').addEventListener('click', function(){ appendPlainText(composeEl, (isRichEmpty(composeEl)?'':' ') + fmtTime(Date.now()) + ' '); });
+        el.querySelector('.nm-ins-date').addEventListener('click', function(){ appendPlainText(composeEl, (isRichEmpty(composeEl)?'':' ') + fmtDateShort(Date.now()) + ' '); });
         el.querySelector('#nm-send').addEventListener('click', function(){
           var buddy = null;
           if(toSelect.value === '__new__'){
@@ -2750,6 +3068,19 @@ try {
           renderBuddyList();
           closeWindow(id);
           openIMWindow(buddy.id);
+        });
+
+        el.querySelector('.draft-save-link').addEventListener('click', function(){
+          if(isRichEmpty(composeEl)){ openInfoWindow('Nothing to save \u2014 the compose box is empty.'); return; }
+          var recipientName = null;
+          if(toSelect.value === '__new__'){
+            recipientName = newInput.value.trim() || null;
+          } else if(toSelect.value){
+            var b = state.buddies.find(function(x){ return x.id === toSelect.value; });
+            recipientName = b ? b.name : null;
+          }
+          saveDraftFor('__newmessage__', sanitizeHTML(composeEl.innerHTML), recipientName);
+          openInfoWindow('Draft saved. Find it later under Edit \u2192 Drafts on the Buddy List.');
         });
       }
     });
@@ -2876,6 +3207,9 @@ try {
             if(!confirmed) return;
             state.buddies = state.buddies.filter(function(x){ return x.id !== b.id; });
             delete state.entries[b.id];
+            delete state.drafts[b.id];
+            delete logFilterByBuddy[b.id];
+            delete searchQueryByBuddy[b.id];
             var openW = openWindows.find(function(w){ return w.type === 'im' && w.buddyId === b.id; });
             if(openW) closeWindow(openW.id);
             saveState(); renderBuddyList(); closeWindow(id);
@@ -2991,6 +3325,7 @@ try {
         function applyStatus(label, closeAfter){
           var currentMood = moodText.value.trim();
           var currentColor = moodColorInput.value;
+          var previousMood = (state.status && state.status.mood) || '';
           // save custom mood color if it's a new mood or color changed
           if(currentMood){
             if(!state.customMoods.includes(currentMood) && !MOOD_COLORS[currentMood]){
@@ -3002,7 +3337,9 @@ try {
           if(label || currentMood){
             state.statusLog.push({ id: uid(), label: label, html: '', ts: Date.now(), author: state.account.screenName, mood: currentMood });
           }
-          if(currentMood){
+          // only add a Mood Log entry when the mood actually changed from what it was before —
+          // re-saving a status with the same mood (e.g. just editing the label) shouldn't log again
+          if(currentMood && currentMood !== previousMood){
             state.moodLog.push({ mood: currentMood, ts: Date.now(), author: state.account.screenName });
           }
           var taggedBuddy = null;
@@ -3027,7 +3364,11 @@ try {
         el.querySelector('#status-save').addEventListener('click', function(){ applyStatus(labelInput.value.trim(), true); });
         labelInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') applyStatus(labelInput.value.trim(), true); });
         el.querySelector('#status-clear').addEventListener('click', function(){
-          applyStatus('', false);
+          // clearing is not "setting a mood" — wipe the status directly without touching Mood Log/Status Log
+          state.status = { label: '', html: '', ts: Date.now(), mood: '' };
+          saveState();
+          refreshMyStatus();
+          renderBuddyList();
           labelInput.value = ''; moodText.value = ''; moodColorInput.value = '#5a8fd6';
           updateIndicator('', '#ddd'); moodPreset.value = '';
           buddySelect.value = ''; newRow.style.display = 'none';
@@ -3137,7 +3478,7 @@ try {
         '<div id="logs-content"></div>' +
       '</div>';
     createWindow({
-      title: 'Logs',
+      title: 'Log',
       extraClass: 'help-win',
       bodyHtml: body,
       type: 'logs',
@@ -3193,16 +3534,20 @@ try {
     });
   }
 
-  function openEditStatusEntryWindow(entry, onSave){
+  function openEditStatusEntryWindow(entry, onSave, initialHtml){
+    var isNewEntry = !entry;
+    entry = entry || { id: uid(), label: '', html: '', ts: Date.now(), author: state.account.screenName };
+    if(isNewEntry && initialHtml) entry.html = initialHtml;
     var composeId = 'sl-edit-compose-' + uid();
     var body =
       '<div class="win-body nm-body">' +
         '<div class="nm-row"><label>Status:</label><input type="text" id="sl-edit-label" value="'+escapeHtml(entry.label||'')+'"></div>' +
         richComposeHtml(composeId, 'Tell me more...') +
         '<div class="nm-send-row"><button class="btn" id="sl-edit-save">Save</button></div>' +
+        '<div class="draft-links"><span class="draft-save-link">Save Draft</span> &nbsp;|&nbsp; <span class="draft-view-link">Drafts</span></div>' +
       '</div>';
     createWindow({
-      title: 'Edit Status',
+      title: isNewEntry ? 'New Status Entry' : 'Edit Status',
       extraClass: 'status-win',
       bodyHtml: body,
       type: 'editstatus',
@@ -3213,10 +3558,26 @@ try {
         el.querySelector('#sl-edit-save').addEventListener('click', function(){
           entry.label = el.querySelector('#sl-edit-label').value.trim();
           entry.html = isRichEmpty(compose) ? '' : sanitizeHTML(compose.innerHTML);
+          if(isNewEntry){
+            state.statusLog = state.statusLog || [];
+            state.statusLog.push(entry);
+            isNewEntry = false;
+          }
           saveState();
           refreshMyStatus();
           if(onSave) onSave();
           closeWindow(id);
+        });
+        el.querySelector('.draft-save-link').addEventListener('click', function(){
+          if(isRichEmpty(compose)){ openInfoWindow('Nothing to save \u2014 the compose box is empty.'); return; }
+          saveDraftFor('__status__', sanitizeHTML(compose.innerHTML));
+          openInfoWindow('Draft saved.');
+        });
+        el.querySelector('.draft-view-link').addEventListener('click', function(){
+          openDraftsListWindowFor('__status__', 'Status', function(html){
+            compose.innerHTML = html;
+            compose.focus();
+          });
         });
       }
     });
@@ -3328,7 +3689,6 @@ try {
             inner =
               '<div style="font-size:12px;line-height:1.6;padding:12px;">' +
                 '<p>Signed in as <b>' + escapeHtml(displayName) + '</b></p>' +
-                '<p style="font-size:10px;color:#888;word-break:break-all;">UID: ' + escapeHtml(cloudUser.uid) + '</p>' +
                 '<div class="nm-send-row" style="gap:6px;justify-content:flex-start;">' +
                   '<button class="btn" id="cs-push">Push to Cloud</button>' +
                   '<button class="btn" id="cs-pull">Pull from Cloud</button>' +
@@ -3357,7 +3717,7 @@ try {
               el.querySelector('#cs-status').textContent = 'Pulling…';
               el.querySelector('#cs-status').style.color = '#0850d0';
               pullFromCloud().then(function(found){
-                el.querySelector('#cs-status').textContent = found ? 'Restored from cloud.' : 'No backup found. Confirm same Google account on both devices (check UID matches above).';
+                el.querySelector('#cs-status').textContent = found ? 'Restored from cloud.' : 'No backup found. Confirm you\'re signed into the same Google account on both devices.';
                 if(state.account){
                   document.getElementById('bl-title-text').textContent = state.account.screenName;
                   document.getElementById('bl-me-name').textContent = state.account.screenName;
@@ -3521,7 +3881,7 @@ try {
         '<div class="vp-header">' + picHtml + '<div class="vp-name">' + name + '</div></div>' +
         (header ? '<div class="vp-section">' + header + '</div>' : '') +
         (aboutMe ? '<div class="vp-section">' + aboutMe + '</div>' : '') +
-        '<div class="vp-newpost-row" style="padding:0 4px 8px;"><button class="btn" id="vp-newpost-btn">+ New Post</button></div>' +
+        '<div class="vp-newpost-row" style="padding:16px 4px 12px;text-align:center;"><button class="btn" id="vp-newpost-btn">+ New Post</button></div>' +
         '<div class="blog-posts-list">' + postsHtml + '</div>' +
       '</div>';
     }
@@ -3577,7 +3937,7 @@ try {
   }
 
   // ================= BLOG POST EDITOR =================
-  function openBlogPostEditor(existingPost, onSave){
+  function openBlogPostEditor(existingPost, onSave, initialHtml){
     var composeId = 'blog-compose-' + uid();
     var isEdit = !!existingPost;
     var body =
@@ -3587,6 +3947,7 @@ try {
         '<div class="nm-send-row" style="margin-top:8px;">' +
           '<button class="btn" id="bp-save">'+(isEdit?'Save Changes':'Publish Post')+'</button>' +
         '</div>' +
+        '<div class="draft-links"><span class="draft-save-link">Save Draft</span> &nbsp;|&nbsp; <span class="draft-view-link">Drafts</span></div>' +
       '</div>';
     createWindow({
       title: isEdit ? 'Edit Post' : 'New Post',
@@ -3598,6 +3959,7 @@ try {
         var composeEl = el.querySelector('#'+composeId);
         var titleInput = el.querySelector('#bp-title');
         if(existingPost && existingPost.html) composeEl.innerHTML = existingPost.html;
+        else if(!isEdit && initialHtml) composeEl.innerHTML = initialHtml;
         titleInput.focus();
         el.querySelector('#bp-save').addEventListener('click', function(){
           var title = titleInput.value.trim() || 'Untitled';
@@ -3614,6 +3976,17 @@ try {
           saveState();
           if(onSave) onSave();
           closeWindow(id);
+        });
+        el.querySelector('.draft-save-link').addEventListener('click', function(){
+          if(isRichEmpty(composeEl)){ openInfoWindow('Nothing to save \u2014 the compose box is empty.'); return; }
+          saveDraftFor('__blog__', sanitizeHTML(composeEl.innerHTML));
+          openInfoWindow('Draft saved.');
+        });
+        el.querySelector('.draft-view-link').addEventListener('click', function(){
+          openDraftsListWindowFor('__blog__', 'Blog', function(html){
+            composeEl.innerHTML = html;
+            composeEl.focus();
+          });
         });
       }
     });
