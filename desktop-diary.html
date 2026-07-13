@@ -123,7 +123,8 @@
     .m-drop div:hover { background: #316ac5; color:#fff; }
   }
   .locked-content { filter:blur(4px); transition:filter 0.2s; cursor:pointer; user-select:none; }
-  .locked-content.revealed { filter:none; }
+  .locked-content:not(.revealed) { max-height:1.35em; overflow:hidden; white-space:nowrap; }
+  .locked-content.revealed { filter:none; max-height:none; white-space:pre-wrap; }
   .win-body { flex: 1; overflow: auto; padding: 6px; background: #fff; -webkit-overflow-scrolling: touch; }
   /* Safari/WebKit renders <input type=color> with its own padded, rounded swatch by
      default, so our color pickers looked like small ovals instead of filling the box
@@ -781,7 +782,7 @@
       
       <div class="signon-error" id="signon-error"></div>
 
-      <div class="field-row" id="screenname-row"><label id="sn-label" for="in-screenname"><span class="ttl-icon" style="width:14px;height:14px;"></span>Screen Name</label><input type="text" id="in-screenname" autocomplete="off"></div>
+      <div class="field-row" id="screenname-row"><label id="sn-label" for="in-screenname"><span class="ttl-icon" style="width:14px;height:14px;"></span>Screen Name</label><input type="text" id="in-screenname" autocomplete="nickname"></div>
       <div class="field-row"><label for="in-email">Email</label><input type="email" id="in-email" autocomplete="email"></div>
       <div class="field-row"><label for="in-password">Password</label><input type="password" id="in-password"></div>
       <div class="field-row" id="confirm-row" style="display:none;"><label for="in-password2">Confirm Password</label><input type="password" id="in-password2"></div>
@@ -2648,7 +2649,7 @@ try {
       document.getElementById('confirm-row').style.display = signonMode==='connect'?'block':'none';
       document.getElementById('forgot-row').style.display = signonMode==='login'?'block':'none';
       document.getElementById('in-screenname').value = state.account.screenName;
-      document.getElementById('in-screenname').setAttribute('readonly','readonly');
+      document.getElementById('in-screenname').readOnly = signonMode === 'login';
       emailInput.value = state.account.email||'';
       emailInput.readOnly = signonMode==='login';
       document.getElementById('in-savepw').checked = !!state.savePassword;
@@ -2676,7 +2677,7 @@ try {
       document.getElementById('confirm-row').style.display = 'block';
       document.getElementById('forgot-row').style.display = 'none';
       document.getElementById('in-screenname').value = '';
-      document.getElementById('in-screenname').removeAttribute('readonly');
+      document.getElementById('in-screenname').readOnly = false;
       emailInput.value = '';
       emailInput.readOnly = false;
       pwInput.value = ''; pwInput.type = 'password'; pwInput.classList.remove('pw-saved'); pwInput.readOnly = false;
@@ -2700,8 +2701,8 @@ try {
     document.getElementById('account-mode-note').style.display=signonMode==='createfresh'?'block':'none';
     document.getElementById('signon-error').textContent='';
     document.getElementById('in-email').value='';document.getElementById('in-email').readOnly=false;
-    if(signonMode==='createfresh'){document.getElementById('in-screenname').value='';document.getElementById('in-screenname').removeAttribute('readonly');}
-    else if(signonMode==='connect')document.getElementById('in-screenname').setAttribute('readonly','readonly');
+    if(signonMode==='createfresh')document.getElementById('in-screenname').value='';
+    document.getElementById('in-screenname').readOnly=!creating;
     pwInput.value='';pwInput.type='password';pwInput.readOnly=false;pwInput.classList.remove('pw-saved');pwFieldIsSavedPlaceholder=false;
     document.getElementById('in-password2').value='';
     (signonMode==='login'||signonMode==='connect'?document.getElementById('in-email'):document.getElementById('in-screenname')).focus();
@@ -5509,7 +5510,7 @@ try {
           '<div class="blog-post-header">' +
             '<div>' +
               '<div class="blog-post-title">' + escapeHtml(post.title||'Untitled') + '</div>' +
-              '<div class="blog-post-date">' + fmtDayDivider(post.ts) + (post.editedAt ? ' <span style="color:#aaa;font-style:italic;"></span>' : '') + '</div>' +
+              '<div class="blog-post-date">' + fmtDayDivider(post.ts) + '</div>' +
             '</div>' +
           '</div>' +
           '<div class="blog-post-body">' + (post.html || '') + '</div>' +
@@ -5564,7 +5565,7 @@ try {
     function refreshProfile(){var p=openWindows.find(function(w){return w.type==='viewprofile';});if(p&&p.el&&p.el._refreshProfile)p.el._refreshProfile();}
     function buildEntriesBody(){
       var entries=(state.blogPosts||[]).slice().sort(function(a,b){return b.ts-a.ts;});
-      var rows=entries.length?entries.map(function(entry){return '<article class="blog-post" data-entry-id="'+escapeHtml(entry.id)+'"><div class="blog-post-header"><div><div class="blog-post-title">'+escapeHtml(entry.title||'Untitled')+'</div><div class="blog-post-date">'+fmtDayDivider(entry.ts)+(entry.editedAt?' <span style="font-style:italic"></span>':'')+' · <b style="color:'+(entry.shared?'#257a35':'#777')+'">'+(entry.shared?'Shared on Profile':'Private')+'</b></div></div></div><div class="blog-post-body">'+(entry.html||'')+'</div><div style="display:flex;justify-content:flex-end;gap:6px;margin-top:10px"><button class="btn de-share">'+(entry.shared?'Remove from Profile':'Share to Profile')+'</button><button class="btn de-edit">Edit</button><button class="btn de-delete">Delete</button></div></article>';}).join(''):'<div class="vp-empty">No private diary entries yet. Use New Post on your profile to write one.</div>';
+      var rows=entries.length?entries.map(function(entry){return '<article class="blog-post" data-entry-id="'+escapeHtml(entry.id)+'"><div class="blog-post-header"><div><div class="blog-post-title">'+escapeHtml(entry.title||'Untitled')+'</div><div class="blog-post-date">'+fmtDayDivider(entry.ts)+' · <b style="color:'+(entry.shared?'#257a35':'#777')+'">'+(entry.shared?'Shared on Profile':'Private')+'</b></div></div></div><div class="blog-post-body">'+(entry.html||'')+'</div><div style="display:flex;justify-content:flex-end;gap:6px;margin-top:10px"><button class="btn de-share">'+(entry.shared?'Remove from Profile':'Share to Profile')+'</button><button class="btn de-edit">Edit</button><button class="btn de-delete">Delete</button></div></article>';}).join(''):'<div class="vp-empty">No private diary entries yet. Use New Post on your profile to write one.</div>';
       return '<div class="win-body vp-body"><div style="padding:12px;border-bottom:1px solid #ccc;background:#f5f5f5"><b>Private Diary Entries</b><div style="font-size:10px;color:#666;margin-top:3px">Entries remain private unless you choose Share to Profile.</div></div><div class="blog-posts-list">'+rows+'</div></div>';
     }
     createWindow({title:'Diary Entries',extraClass:'profile-win',bodyHtml:buildEntriesBody(),type:'diaryentries',onMount:function(el){
