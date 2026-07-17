@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudoku</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  :root{
+    --grass:#10b72a;--grass-dark:#06891b;--navy:#152e72;--navy-dark:#081a4c;
+    --purple:#6333a8;--paper:#fff1ce;--paper-dark:#e9d09b;--gold:#f9b51b;
+    --blue:#1475c9;--blue-dark:#06477f;--green:#15952c;--red:#d43124;
+    --ink:#17130d;--highlight:#d8c4f3;--error:#ffb5b2;--cell-size:38px;
+  }
+  html,body{width:100%;min-height:100%;margin:0}
+  html{background:var(--grass)}
+  body{
+    overflow:hidden;background:
+      radial-gradient(circle at 20% 20%,rgba(255,255,255,.14) 0 1px,transparent 2px) 0 0/10px 10px,
+      linear-gradient(135deg,var(--grass),#08a81f);
+    display:flex;align-items:center;justify-content:center;color:var(--ink);font-family:Tahoma,Verdana,Arial,sans-serif;font-weight:700;
+  }
+  button{font:inherit}
+  .game-host{width:min(100%,690px);min-height:100%;margin:auto;padding:7px 9px 11px}
+  .brand{
+    display:flex;align-items:center;justify-content:center;height:117px;margin:0 auto 5px;
+  }
+  .brand-sign{
+    width:265px;height:115px;background:url('sudoku-title-transparent.png') center/contain no-repeat;
+    filter:drop-shadow(4px 5px 0 rgba(0,0,0,.42));image-rendering:pixelated;
+  }
+  .main{display:grid;grid-template-columns:auto 235px;align-items:start;justify-content:center;gap:8px 12px}
+  .left{display:flex;min-width:0;flex-direction:column;gap:7px}
+  .sudoku-grid{
+    display:grid;grid-template-columns:repeat(3,auto);gap:4px;padding:4px;background:var(--navy);
+    border:2px solid var(--ink);box-shadow:5px 5px 0 rgba(0,0,0,.55);
+  }
+  .box{display:grid;grid-template-columns:repeat(3,var(--cell-size));grid-template-rows:repeat(3,var(--cell-size));gap:1px;background:#6a624e}
+  .cell{
+    display:flex;align-items:center;justify-content:center;width:var(--cell-size);height:var(--cell-size);padding:0;
+    border:0;background:var(--paper);color:var(--ink);cursor:pointer;font:900 23px/1 'Courier New',monospace;
+    user-select:none;transition:background .08s,box-shadow .08s;
+  }
+  .cell:hover:not(.given){background:#fff8e7}
+  .cell:focus-visible{position:relative;z-index:2;outline:4px solid var(--gold);outline-offset:-4px}
+  .cell.given{color:#111;cursor:default}
+  .cell.player{background:#f5dfe8;color:var(--navy)}
+  .cell.has-notes{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:2px;color:var(--navy);font-family:Tahoma,Arial,sans-serif}
+  .candidate{display:flex;align-items:center;justify-content:center;font-size:9px;line-height:1}
+  .cell.peer{background:var(--highlight)}
+  .cell.same-num{background:#bda3e3;color:var(--navy)}
+  .cell.selected{position:relative;z-index:1;background:#fff8e7!important;box-shadow:inset 0 0 0 4px var(--gold)}
+  .cell.error{background:var(--error)!important;color:#9c0e08!important}
+  .status{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:8px 10px;border:3px solid var(--navy);
+    background:var(--paper);box-shadow:4px 4px 0 rgba(0,0,0,.5);font-size:11px;text-align:center;
+  }
+  .status span{white-space:nowrap}.status>span{display:flex;align-items:center;justify-content:center;gap:3px}.status b{color:var(--navy)}
+  .status-bulb{display:inline-block;width:19px;height:19px;background:url('sudoku-hint-bulb-transparent.png') center/contain no-repeat;image-rendering:pixelated}
+  .right{display:flex;width:200px;flex-direction:column;gap:6px}
+  .panel,.notepad{
+    border:3px solid var(--navy);background:var(--paper);box-shadow:4px 4px 0 rgba(0,0,0,.52);padding:6px;
+  }
+  .panel-title{
+    margin:-6px -6px 6px;padding:5px 7px;border-bottom:3px solid var(--navy);background:var(--purple);
+    color:#fff;font:900 13px/1.1 'Courier New',monospace;letter-spacing:1px;text-align:center;text-shadow:1px 1px 0 #111;
+  }
+  .number-grid{display:grid;grid-template-columns:repeat(3,48px);justify-content:center;gap:6px}
+  .number-btn{
+    min-height:48px;border:2px solid var(--ink);border-radius:3px;background:linear-gradient(#258de0,var(--blue));
+    box-shadow:3px 3px 0 var(--blue-dark);color:#fff;cursor:pointer;font:900 25px/1 'Courier New',monospace;
+    text-shadow:2px 2px 0 var(--navy-dark);
+  }
+  .number-btn{
+    min-height:48px;background-color:var(--blue);background-image:url('sudoku/sudoku-gameplay.jpg');
+    background-repeat:no-repeat;background-size:1094px 875px;color:transparent;text-shadow:none;image-rendering:pixelated;
+  }
+  .number-btn[data-number="1"]{background-position:-455px -236px}.number-btn[data-number="2"]{background-position:-509px -236px}.number-btn[data-number="3"]{background-position:-563px -236px}
+  .number-btn[data-number="4"]{background-position:-455px -291px}.number-btn[data-number="5"]{background-position:-509px -291px}.number-btn[data-number="6"]{background-position:-563px -291px}
+  .number-btn[data-number="7"]{background-position:-455px -346px}.number-btn[data-number="8"]{background-position:-509px -346px}.number-btn[data-number="9"]{background-position:-563px -346px}
+  .number-btn:hover{filter:brightness(1.12)}
+  .number-btn.selected{border-color:#fff3a1;box-shadow:0 0 0 4px var(--gold),4px 4px 0 #7b4700}
+  .erase{width:100%;min-height:38px;margin-top:7px;border:2px solid var(--ink);background:#ddd;color:#222;box-shadow:3px 3px 0 #777;cursor:pointer;font-size:13px}
+  .control-grid{display:grid;grid-template-columns:repeat(2,84px);justify-content:center;gap:7px}
+  .control-btn,.start-btn{
+    display:flex;align-items:center;justify-content:center;min-height:42px;border:2px solid var(--ink);box-shadow:3px 3px 0 rgba(0,0,0,.45);cursor:pointer;color:#fff;font-size:12px;
+  }
+  .control-btn{background:var(--blue)}
+  .control-btn.hint{background:var(--green)}
+  .control-btn.pause{background:#e5aa17;color:#1e1808}
+  .control-btn.sprite-button{
+    min-height:42px;border:2px solid var(--ink);background-image:none;color:#fff;text-shadow:1px 1px 0 rgba(0,0,0,.65);image-rendering:pixelated;
+  }
+  .control-btn.pause.sprite-button{background:linear-gradient(#ffd43d,#e5aa17);color:#221805;text-shadow:none}
+  .control-btn.check.sprite-button{background:linear-gradient(#268bd7,var(--blue))}
+  .control-btn.notes::before{width:28px;height:36px;background:url('sudoku-pencil-transparent.png') center/contain no-repeat;content:"";image-rendering:pixelated}
+  .control-btn.notes.active{background:linear-gradient(#ffd43d,#e5aa17);color:#221805;text-shadow:none;box-shadow:inset 0 0 0 2px #fff3a1,3px 3px 0 rgba(0,0,0,.45)}
+  .control-btn.hint.sprite-button{position:relative;padding-left:26px;background:linear-gradient(#2bbb48,var(--green))}
+  .control-btn.hint.sprite-button::before{position:absolute;left:5px;top:8px;width:23px;height:23px;background:url('sudoku-hint-bulb-transparent.png') center/contain no-repeat;content:"";image-rendering:pixelated}
+  .control-btn.new-game{position:relative;padding-left:34px;background:linear-gradient(#7750be,var(--purple));overflow:hidden}
+  .control-btn.new-game::before{
+    position:absolute;left:6px;top:6px;width:29px;height:29px;background:url('sudoku-new-star-transparent.png') center/contain no-repeat;
+    content:"";image-rendering:pixelated;
+  }
+  .notepad{position:relative;padding-top:12px}
+  .difficulty-panel{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr 132px;align-items:center;gap:10px;padding:10px 10px 7px}
+  .difficulty-panel .difficulty-title{margin:0;white-space:nowrap}
+  .difficulty-panel .difficulty-list{grid-template-columns:repeat(4,1fr);gap:5px 8px}
+  .difficulty-panel .difficulty-row{border-bottom:0}
+  .difficulty-panel .start-btn{margin:0}
+  .setup-screen{display:flex;align-items:center;justify-content:center;width:100%;min-height:400px;padding:10px}
+  .setup-screen .difficulty-panel{display:block;width:min(350px,100%);min-height:375px;padding:32px 34px 25px}
+  .setup-screen .difficulty-title{margin:5px 0 12px;padding-bottom:12px;border-bottom:3px solid #c69bd9;font-size:21px}
+  .setup-screen .difficulty-list{grid-template-columns:1fr;gap:0}
+  .setup-screen .difficulty-row{padding:9px 10px;border-bottom:1px solid #cbb990;font-size:16px}
+  .setup-screen .radio{width:20px;height:20px;flex-basis:20px}.setup-screen .radio.on::after{width:11px;height:11px}
+  .setup-screen .start-btn{min-height:58px;margin-top:22px;font-size:18px}
+  body.setup-mode .main{display:none}
+  body.play-mode .setup-screen{display:none}
+  .rings{position:absolute;top:-10px;left:12px;right:12px;display:flex;justify-content:space-around}
+  .ring{width:9px;height:18px;border:3px solid var(--purple);border-radius:4px;background:#8e62d0;box-shadow:2px 2px 0 #2e1457}
+  .difficulty-title{margin:3px 0 5px;color:var(--purple);font:900 14px/1 'Courier New',monospace;text-align:center}
+  .difficulty-list{display:grid;grid-template-columns:1fr 1fr;gap:2px 5px}
+  .difficulty-row{display:flex;align-items:center;gap:6px;padding:3px 2px;border-bottom:1px solid #cbb990;cursor:pointer;font-size:12px}
+  .radio{display:grid;width:15px;height:15px;flex:0 0 15px;place-items:center;border:2px solid #333;border-radius:50%;background:#eee}
+  .radio.on::after{width:7px;height:7px;border-radius:50%;background:var(--green);content:""}
+  .start-btn{width:100%;min-height:31px;margin-top:6px;background:linear-gradient(#28b842,var(--green));font-size:12px}
+  button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(0,0,0,.5)!important}
+  .overlay{display:none;position:fixed;inset:0;z-index:20;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.64)}
+  .overlay.open{display:flex}
+  .dialog{width:min(290px,92vw);border:3px solid #111;background:var(--paper);box-shadow:6px 6px 0 rgba(0,0,0,.55);padding:0;text-align:center}
+  .dialog-titlebar{display:flex;align-items:center;justify-content:space-between;padding:7px 8px;border-bottom:3px solid #111;background:var(--purple);color:#fff;font:900 20px/1 'Courier New',monospace;text-shadow:2px 2px 0 #241040}
+  .dialog-close{display:grid;width:24px;height:24px;padding:0;place-items:center;border:2px solid #111;background:#eee;color:#111;font:bold 18px/1 Arial;box-shadow:2px 2px 0 #111;cursor:pointer}
+  .dialog-content{padding:18px 20px 22px}.dialog-message{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:12px;font:900 18px/1.25 'Courier New',monospace;text-align:left}
+  .dialog-art{display:block;flex:0 0 auto;background-image:url('sudoku/sudoku-gameplay.jpg');background-repeat:no-repeat;image-rendering:pixelated}
+  .hourglass-art{width:58px;height:76px;background-size:1402px 1122px;background-position:-65px -750px}
+  .trophy-art{width:154px;height:126px;margin:0 auto 4px;background-size:1402px 1122px;background-position:-564px -720px}
+  .dialog p{margin:8px 0 14px;font:900 16px/1.5 'Courier New',monospace;text-align:left}.dialog-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+  .dialog-actions.vertical{flex-direction:column}.dialog-actions button{min-width:150px;padding:11px;border:2px solid #111;color:#fff;background:var(--green);box-shadow:3px 3px 0 #111;cursor:pointer;font-size:15px}
+  .dialog-actions .red{background:var(--red)}.dialog-actions .blue{background:var(--blue)}
+  @media(max-width:560px){
+    :root{--cell-size:clamp(31px,9.6vw,45px)}
+    .game-host{padding-inline:8px}.brand{height:59px}.brand-sign{width:164px;height:59px;background-position:center;background-size:contain}
+    .main{display:flex;flex-direction:column;align-items:center}.right{width:min(100%,470px);display:grid;grid-template-columns:1fr 1fr}.difficulty-panel{width:100%;grid-template-columns:1fr}.difficulty-panel .difficulty-list{grid-template-columns:1fr 1fr}.difficulty-panel .start-btn{width:100%}
+    .left{width:auto}.status{font-size:11px}
+  }
+  @media(max-width:430px){.right{display:flex;width:100%}.status{font-size:10px;padding-inline:5px}}
+</style>
+</head>
+<body class="setup-mode">
+<main class="game-host">
+  <header class="brand">
+    <div class="brand-sign" role="img" aria-label="Sudoku"></div>
+  </header>
+  <div class="main">
+    <section class="left" aria-label="Sudoku board">
+      <div class="sudoku-grid" id="grid"></div>
+      <div class="status" aria-live="polite">
+        <span>⏱ <b id="timer">00:00</b></span>
+        <span>✕ <b><span id="mistakes">0</span>/3</b></span>
+        <span><i class="status-bulb" aria-hidden="true"></i><b id="hints-left">3</b></span>
+      </div>
+    </section>
+    <aside class="right">
+      <section class="panel">
+        <div class="panel-title">NUMBER SELECT</div>
+        <div class="number-grid" id="number-grid"></div>
+        <button class="erase" type="button" id="erase-btn">ERASE</button>
+      </section>
+      <section class="panel">
+        <div class="panel-title">GAME CONTROLS</div>
+        <div class="control-grid">
+          <button class="control-btn new-game" type="button" id="new-btn">NEW</button>
+          <button class="control-btn pause sprite-button" type="button" id="pause-btn" aria-label="Pause">PAUSE</button>
+          <button class="control-btn hint sprite-button" type="button" id="hint-btn" aria-label="Give hint">HINT</button>
+          <button class="control-btn check notes sprite-button" type="button" id="notes-btn" aria-label="Turn pencil mode on" aria-pressed="false"></button>
+        </div>
+      </section>
+    </aside>
+  </div>
+  <section class="setup-screen" aria-label="Sudoku game setup">
+    <section class="notepad difficulty-panel">
+      <div class="rings" id="rings"></div>
+      <div class="difficulty-title">DIFFICULTY</div>
+      <div class="difficulty-list" id="difficulty-list"></div>
+      <button class="start-btn" type="button" id="start-btn">START GAME</button>
+    </section>
+  </section>
+</main>
+
+<div class="overlay" id="win-dialog"><div class="dialog"><div class="dialog-titlebar"><span>YOU WIN!</span><button class="dialog-close" type="button" data-action="setup" aria-label="Close">×</button></div><div class="dialog-content"><span class="dialog-art trophy-art" aria-hidden="true"></span><p>TIME: <b id="win-time">—</b><br>MISTAKES: <b id="win-mistakes">—</b></p><div class="dialog-actions"><button type="button" data-action="setup">OK</button></div></div></div></div>
+<div class="overlay" id="pause-dialog"><div class="dialog"><div class="dialog-titlebar"><span>GAME PAUSED</span><button class="dialog-close" type="button" data-action="resume" aria-label="Resume game">×</button></div><div class="dialog-content"><div class="dialog-message"><span class="dialog-art hourglass-art" aria-hidden="true"></span><span>GAME IS<br>PAUSED</span></div><div class="dialog-actions vertical"><button type="button" data-action="resume">RESUME</button><button class="blue" type="button" data-action="restart">RESTART</button><button class="red" type="button" data-action="quit">QUIT</button></div></div></div></div>
+<div class="overlay" id="over-dialog"><div class="dialog"><span class="dialog-icon">✕</span><h2>GAME OVER</h2><p>Three mistakes. Ready to try another puzzle?</p><div class="dialog-actions"><button type="button" data-action="play-again">TRY AGAIN</button></div></div></div>
+
+<script>
+  'use strict';
+  const difficulties=[{key:'EASY',remove:34},{key:'MEDIUM',remove:44},{key:'HARD',remove:51},{key:'EXPERT',remove:57}];
+  let solution=[],board=[],given=[],notes=[],selectedCell=null,selectedNumber=null,mistakes=0,hints=3,seconds=0,timer=null,paused=false,active=false,difficulty='EASY',pencilMode=false;
+  const $=id=>document.getElementById(id);
+  const shuffle=values=>{const copy=[...values];for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]];}return copy;};
+  const formatTime=value=>`${String(Math.floor(value/60)).padStart(2,'0')}:${String(value%60).padStart(2,'0')}`;
+  const openDialog=id=>$(id).classList.add('open');
+  const closeDialog=id=>$(id).classList.remove('open');
+  function fitGameToView(){
+    const host=document.querySelector('.game-host');
+    document.body.style.paddingTop='0';
+    host.style.zoom='1';
+    const naturalWidth=host.offsetWidth,naturalHeight=host.offsetHeight;
+    const scale=Math.min(1,(window.innerWidth-12)/naturalWidth,(window.innerHeight-12)/naturalHeight);
+    host.style.zoom=String(Math.max(.1,scale));
+    document.body.style.paddingTop=Math.max(0,Math.floor((window.innerHeight-host.getBoundingClientRect().height)/2))+'px';
+  }
+  function isValid(grid,row,col,number){for(let i=0;i<9;i++)if(grid[row][i]===number||grid[i][col]===number)return false;const boxRow=row-row%3,boxCol=col-col%3;for(let r=boxRow;r<boxRow+3;r++)for(let c=boxCol;c<boxCol+3;c++)if(grid[r][c]===number)return false;return true;}
+  function fillGrid(grid){for(let row=0;row<9;row++)for(let col=0;col<9;col++)if(!grid[row][col]){for(const number of shuffle([1,2,3,4,5,6,7,8,9])){if(isValid(grid,row,col,number)){grid[row][col]=number;if(fillGrid(grid))return true;grid[row][col]=0;}}return false;}return true;}
+  function makePuzzle(){const solved=Array.from({length:9},()=>Array(9).fill(0));fillGrid(solved);const puzzle=solved.map(row=>[...row]);const cells=shuffle([...Array(81).keys()]);const remove=difficulties.find(item=>item.key===difficulty).remove;for(let i=0;i<remove;i++)puzzle[Math.floor(cells[i]/9)][cells[i]%9]=0;return{solved,puzzle};}
+  function buildBoard(){const grid=$('grid');grid.innerHTML='';for(let boxIndex=0;boxIndex<9;boxIndex++){const box=document.createElement('div');box.className='box';for(let position=0;position<9;position++){const row=Math.floor(boxIndex/3)*3+Math.floor(position/3),col=(boxIndex%3)*3+(position%3);const cell=document.createElement('button');cell.type='button';cell.className='cell';cell.dataset.row=row;cell.dataset.col=col;cell.setAttribute('aria-label',`Row ${row+1}, column ${col+1}`);cell.addEventListener('click',()=>selectCell(row,col));box.appendChild(cell);}grid.appendChild(box);}}
+  function buildNumbers(){const host=$('number-grid');for(let number=1;number<=9;number++){const button=document.createElement('button');button.type='button';button.className='number-btn';button.textContent=number;button.dataset.number=number;button.addEventListener('click',()=>selectNumber(number));host.appendChild(button);}}
+  function buildDifficulty(){const rings=$('rings');for(let i=0;i<8;i++){const ring=document.createElement('i');ring.className='ring';rings.appendChild(ring);}const list=$('difficulty-list');difficulties.forEach(item=>{const row=document.createElement('div');row.className='difficulty-row';row.tabIndex=0;row.dataset.difficulty=item.key;row.innerHTML=`<span class="radio${item.key===difficulty?' on':''}"></span><span>${item.key}</span>`;const choose=()=>{difficulty=item.key;document.querySelectorAll('.difficulty-row .radio').forEach(dot=>dot.classList.remove('on'));row.querySelector('.radio').classList.add('on');};row.addEventListener('click',choose);row.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();choose();}});list.appendChild(row);});}
+  function render(){document.querySelectorAll('.cell').forEach(cell=>{const row=Number(cell.dataset.row),col=Number(cell.dataset.col),value=board[row][col],cellNotes=notes[row]&&notes[row][col];cell.textContent='';cell.className='cell';if(value){cell.textContent=value;}else if(cellNotes&&cellNotes.size){cell.classList.add('has-notes');for(let number=1;number<=9;number++){const mark=document.createElement('span');mark.className='candidate';mark.textContent=cellNotes.has(number)?number:'';cell.appendChild(mark);}}const noteLabel=!value&&cellNotes&&cellNotes.size?`, pencil notes ${[...cellNotes].sort().join(', ')}`:'';cell.setAttribute('aria-label',`Row ${row+1}, column ${col+1}${value?`, ${value}`:', empty'}${noteLabel}`);if(given[row][col])cell.classList.add('given');else if(value){cell.classList.add('player');if(value!==solution[row][col])cell.classList.add('error');}});highlight();updateStatus();}
+  function highlight(){document.querySelectorAll('.cell').forEach(cell=>cell.classList.remove('peer','same-num','selected'));if(!selectedCell)return;const [selectedRow,selectedCol]=selectedCell,selectedValue=board[selectedRow][selectedCol];document.querySelectorAll('.cell').forEach(cell=>{const row=Number(cell.dataset.row),col=Number(cell.dataset.col);if(row===selectedRow&&col===selectedCol)cell.classList.add('selected');else{const peer=row===selectedRow||col===selectedCol||(Math.floor(row/3)===Math.floor(selectedRow/3)&&Math.floor(col/3)===Math.floor(selectedCol/3));if(selectedValue&&board[row][col]===selectedValue)cell.classList.add('same-num');else if(peer)cell.classList.add('peer');}});}
+  function updateStatus(){$('timer').textContent=formatTime(seconds);$('mistakes').textContent=mistakes;$('hints-left').textContent=hints;}
+  function showSetup(){active=false;paused=false;stopTimer();closeDialog('win-dialog');closeDialog('pause-dialog');closeDialog('over-dialog');document.body.classList.remove('play-mode');document.body.classList.add('setup-mode');requestAnimationFrame(fitGameToView);}
+  function startGame(){stopTimer();seconds=0;mistakes=0;hints=3;paused=false;active=true;pencilMode=false;selectedCell=null;selectedNumber=null;closeDialog('win-dialog');closeDialog('pause-dialog');closeDialog('over-dialog');document.body.classList.remove('setup-mode');document.body.classList.add('play-mode');document.querySelectorAll('.number-btn').forEach(button=>button.classList.remove('selected'));const puzzle=makePuzzle();solution=puzzle.solved;board=puzzle.puzzle.map(row=>[...row]);given=puzzle.puzzle.map(row=>row.map(Boolean));notes=Array.from({length:9},()=>Array.from({length:9},()=>new Set()));updatePencilButton();buildBoard();render();startTimer();requestAnimationFrame(fitGameToView);}
+  function selectCell(row,col){if(!active||paused)return;selectedCell=[row,col];if(selectedNumber!==null&&!given[row][col]){if(pencilMode)toggleCandidate(row,col,selectedNumber);else placeNumber(row,col,selectedNumber);}else highlight();}
+  function selectNumber(number){if(!active||paused)return;selectedNumber=number;document.querySelectorAll('.number-btn').forEach(button=>button.classList.toggle('selected',Number(button.dataset.number)===selectedNumber));if(selectedCell&&!given[selectedCell[0]][selectedCell[1]]){if(pencilMode)toggleCandidate(selectedCell[0],selectedCell[1],number);else placeNumber(selectedCell[0],selectedCell[1],number);}else highlight();}
+  function toggleCandidate(row,col,number){if(board[row][col])return;const cellNotes=notes[row][col];if(cellNotes.has(number))cellNotes.delete(number);else cellNotes.add(number);render();}
+  function updatePencilButton(){const button=$('notes-btn');button.classList.toggle('active',pencilMode);button.setAttribute('aria-pressed',String(pencilMode));button.setAttribute('aria-label',pencilMode?'Turn pencil mode off and return to pen':'Turn pencil mode on');button.title=pencilMode?'Pencil mode is on — click to use pen':'Use pencil notes';}
+  function togglePencilMode(){if(!active||paused)return;pencilMode=!pencilMode;selectedNumber=null;document.querySelectorAll('.number-btn').forEach(button=>button.classList.remove('selected'));updatePencilButton();}
+  function erase(){if(!active||paused||!selectedCell||given[selectedCell[0]][selectedCell[1]])return;const [row,col]=selectedCell;board[row][col]=0;if(notes[row]&&notes[row][col])notes[row][col].clear();render();}
+  function placeNumber(row,col,number){if(!active||given[row][col])return;board[row][col]=number;if(notes[row]&&notes[row][col])notes[row][col].clear();if(number!==solution[row][col]){mistakes++;if(mistakes>=3){active=false;stopTimer();render();setTimeout(()=>openDialog('over-dialog'),250);return;}}render();if(hasWon()){active=false;stopTimer();$('win-time').textContent=formatTime(seconds);$('win-mistakes').textContent=mistakes;setTimeout(()=>openDialog('win-dialog'),300);}}
+  const hasWon=()=>board.every((row,rowIndex)=>row.every((value,colIndex)=>value===solution[rowIndex][colIndex]));
+  function giveHint(){if(!active||paused||hints<=0)return;const available=[];for(let row=0;row<9;row++)for(let col=0;col<9;col++)if(!given[row][col]&&board[row][col]!==solution[row][col])available.push([row,col]);if(!available.length)return;const [row,col]=available[Math.floor(Math.random()*available.length)];board[row][col]=solution[row][col];if(notes[row]&&notes[row][col])notes[row][col].clear();hints--;selectedCell=[row,col];render();if(hasWon()){active=false;stopTimer();$('win-time').textContent=formatTime(seconds);$('win-mistakes').textContent=mistakes;openDialog('win-dialog');}}
+  function togglePause(){if(!active)return;paused=!paused;if(paused){stopTimer();openDialog('pause-dialog');}else{closeDialog('pause-dialog');startTimer();}}
+  function startTimer(){stopTimer();timer=setInterval(()=>{seconds++;updateStatus();},1000);}
+  function stopTimer(){if(timer)clearInterval(timer);timer=null;}
+  $('erase-btn').addEventListener('click',erase);$('new-btn').addEventListener('click',showSetup);$('pause-btn').addEventListener('click',togglePause);$('hint-btn').addEventListener('click',giveHint);$('notes-btn').addEventListener('click',togglePencilMode);$('start-btn').addEventListener('click',startGame);
+  document.querySelectorAll('[data-action]').forEach(button=>button.addEventListener('click',()=>{const action=button.dataset.action;if(action==='play-again'||action==='restart')startGame();else if(action==='resume')togglePause();else if(action==='quit'||action==='setup')showSetup();}));
+  document.addEventListener('keydown',event=>{if(!active||paused)return;const number=Number(event.key);if(number>=1&&number<=9){selectNumber(number);return;}if(event.key==='Backspace'||event.key==='Delete'||event.key==='0'){event.preventDefault();erase();return;}const directions={ArrowUp:[-1,0],ArrowDown:[1,0],ArrowLeft:[0,-1],ArrowRight:[0,1]};if(directions[event.key]){event.preventDefault();if(!selectedCell)selectedCell=[4,4];else{const [rowStep,colStep]=directions[event.key];selectedCell=[Math.max(0,Math.min(8,selectedCell[0]+rowStep)),Math.max(0,Math.min(8,selectedCell[1]+colStep))];}highlight();document.querySelector(`.cell[data-row="${selectedCell[0]}"][data-col="${selectedCell[1]}"]`).focus();}});
+  window.addEventListener('resize',fitGameToView);
+  buildNumbers();buildDifficulty();showSetup();
+  requestAnimationFrame(fitGameToView);
+</script>
+</body>
+</html>
