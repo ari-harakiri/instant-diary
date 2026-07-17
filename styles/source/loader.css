@@ -1,4 +1,0 @@
-/* Loading-screen animation. */
-
-@keyframes dd-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
-@keyframes dd-loader-puppy-loop{from{background-position:0 0}to{background-position:100% 0}}
