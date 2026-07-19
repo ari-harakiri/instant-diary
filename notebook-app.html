@@ -118,7 +118,7 @@
   }
   #save-btn {
     position: absolute;
-    top: 8px; right: 8px;
+    top: 46px; right: 18px;
     width: 34px; height: 30px;
     border: 1px solid rgba(0,0,0,.35);
     border-radius: 4px;
@@ -138,7 +138,7 @@
     gap: 8px;
   }
   #title-input {
-    border: none !important;
+    border: 2px solid red !important;
     box-shadow: none !important;
     background: transparent !important;
     outline: none;
@@ -147,10 +147,11 @@
     font-family: Tahoma, Arial, sans-serif;
     padding: 2px 4px;
     color: #262626;
+    transform: translate(15px, 35px);
   }
   #title-input::placeholder { color: #7a7a7a; }
   #body-input {
-    border: none !important;
+    border: 2px solid red !important;
     box-shadow: none !important;
     background: transparent !important;
     outline: none;
@@ -161,6 +162,7 @@
     color: #262626;
     padding: 2px 4px;
     line-height: 1.4;
+    transform: translate(15px, 30px);
   }
   #footer {
     position: absolute;
@@ -171,19 +173,21 @@
     font-size: 13px;
     color: #3f3f3f;
   }
-  #page-label { font-size: 12px; }
+  #page-label { font-size: 12px; display: inline-block; transform: translate(-10px, 10px); }
   #nav { display: flex; gap: 14px; }
   #nav button {
     border: none; background: transparent; cursor: pointer;
     font-size: 22px; color: #3f3f3f; padding: 4px 6px; line-height: 1;
+    transform: translateY(5px);
   }
   #trash-btn {
     border: none; background: transparent; cursor: pointer;
     font-size: 15px; color: #3b3b3b; padding: 4px;
+    transform: translate(25px, 10px);
   }
   #sync-dot {
     position: absolute;
-    top: 8px; left: 8px;
+    top: 38px; left: 18px;
     width: 8px; height: 8px;
     border-radius: 50%;
     background: #999;
@@ -231,7 +235,7 @@
       <button class="font-pill active" data-font="DiaryComicSans">Comic Sans</button>
       <button class="font-pill" data-font="DiaryOldEnglish">Old English</button>
       <button class="font-pill" data-font="DiaryMinecraft">Minecraft</button>
-      <button class="font-pill" data-font="DiaryEmoji">Emoji</button>
+      <button class="font-pill" data-font="DiaryEmoji">Art</button>
     </div>
   </div>
 </div>
