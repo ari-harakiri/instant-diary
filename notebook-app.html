@@ -91,10 +91,28 @@
   }
   #app-footer {
     flex: 0 0 auto;
-    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    margin: 0 12px calc(8px + env(safe-area-inset-bottom, 0px));
+    padding: 10px 12px;
+    background: rgba(20,30,50,.35);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 14px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
+  }
+  .dock-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.65);
+    margin: 0 0 4px;
+  }
+  .dock-section { display: flex; flex-direction: column; }
+  .dock-section + .dock-section {
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,.15);
   }
   .dock-row {
     display: flex; align-items: center; gap: 8px; overflow-x: auto;
@@ -129,8 +147,8 @@
     background: rgba(255,255,255,.25);
     color: #1a3350;
     border-radius: 8px;
-    padding: 6px 12px;
-    font-size: 12px;
+    padding: 5px 10px;
+    font-size: 11px;
     cursor: pointer;
     white-space: nowrap;
   }
@@ -290,9 +308,6 @@
     gap: 8px;
     border-radius: 4px;
   }
-  #edit-area.border-solid { outline: 3px solid rgba(38,38,38,.55); outline-offset: 4px; }
-  #edit-area.border-dashed { outline: 3px dashed rgba(38,38,38,.55); outline-offset: 4px; }
-  #edit-area.border-dots { outline: 3px dotted rgba(38,38,38,.6); outline-offset: 4px; }
   #title-input {
     border: none !important;
     box-shadow: none !important;
@@ -433,37 +448,42 @@
     </div>
   </div>
   <div id="app-footer">
-    <div id="font-row" class="dock-row">
-      <button class="font-pill" data-font="inherit">Default</button>
-      <button class="font-pill active" data-font="DiaryComicSans">Comic Sans</button>
-      <button class="font-pill" data-font="DiaryOldEnglish">Old English</button>
-      <button class="font-pill" data-font="DiaryMinecraft">Minecraft</button>
-      <button class="font-pill" data-font="DiaryEmoji">Artsy Cypher</button>
+    <div class="dock-section">
+      <div class="dock-section-label">Font</div>
+      <div id="font-row" class="dock-row">
+        <button class="font-pill" data-font="inherit">Default</button>
+        <button class="font-pill active" data-font="DiaryComicSans">Comic Sans</button>
+        <button class="font-pill" data-font="DiaryOldEnglish">Old English</button>
+        <button class="font-pill" data-font="DiaryMinecraft">Minecraft</button>
+        <button class="font-pill" data-font="DiaryEmoji">Artsy Cypher</button>
+      </div>
     </div>
-    <div id="paper-size-row" class="dock-row">
-      <button class="bg-pill active" data-bg="notepad1.png">Plain</button>
-      <span class="dock-divider"></span>
-      <button class="size-pill" data-size="13">Small</button>
-      <button class="size-pill active" data-size="16">Medium</button>
-      <button class="size-pill" data-size="20">Large</button>
-      <button class="size-pill" data-size="25">X-Large</button>
+    <div class="dock-section">
+      <div class="dock-section-label">Text size &amp; color</div>
+      <div id="paper-size-row" class="dock-row">
+        <button class="size-pill" data-size="13">Small</button>
+        <button class="size-pill active" data-size="16">Medium</button>
+        <button class="size-pill" data-size="20">Large</button>
+        <button class="size-pill" data-size="25">X-Large</button>
+      </div>
+      <div id="color-dock" class="dock-row">
+        <input type="color" id="color-picker" value="#262626" title="Pick a text color" />
+        <div id="recent-colors"></div>
+      </div>
     </div>
-    <div id="hue-row" class="dock-row">
-      <span style="color:#fff;font-size:12px;text-shadow:0 1px 2px rgba(0,0,0,.4);">Paper hue</span>
-      <input type="range" id="hue-slider" min="0" max="360" value="0" />
+    <div class="dock-section">
+      <div class="dock-section-label">Paper</div>
+      <div id="hue-row" class="dock-row">
+        <button class="bg-pill active" data-bg="notepad1.png">Plain</button>
+        <span class="dock-divider"></span>
+        <span style="color:#fff;font-size:11px;">Hue</span>
+        <input type="range" id="hue-slider" min="0" max="360" value="0" />
+      </div>
     </div>
-    <div id="sticker-open-row" class="dock-row">
-      <button id="open-stickers-btn" class="sync-action-btn">🏷 Stickers</button>
-    </div>
-    <div id="border-row" class="dock-row">
-      <button class="bg-pill active" data-border="none">No border</button>
-      <button class="bg-pill" data-border="solid">Solid</button>
-      <button class="bg-pill" data-border="dashed">Dashed</button>
-      <button class="bg-pill" data-border="dots">Dotted</button>
-    </div>
-    <div id="color-dock" class="dock-row">
-      <input type="color" id="color-picker" value="#262626" title="Pick a text color" />
-      <div id="recent-colors"></div>
+    <div class="dock-section">
+      <div id="sticker-border-row" class="dock-row">
+        <button id="open-stickers-btn" class="bg-pill">🏷 Stickers</button>
+      </div>
     </div>
   </div>
 </div>
@@ -503,7 +523,7 @@
     STICKER_FILES.push('stickers/s' + (si < 10 ? '0' + si : si) + '.png');
   }
 
-  var state = { pages: freshPages(), currentPageIndex: 0, font: 'DiaryComicSans', paper: 'notepad1.png', fontSize: 16, fontColor: '#262626', recentColors: ['#262626', '#0054e3', '#1a7d1a', '#c62828', '#8e24aa'], paperHue: 0, pageBorder: 'none' };
+  var state = { pages: freshPages(), currentPageIndex: 0, font: 'DiaryComicSans', paper: 'notepad1.png', fontSize: 16, fontColor: '#262626', recentColors: ['#262626', '#0054e3', '#1a7d1a', '#c62828', '#8e24aa'], paperHue: 0 };
   var cloudUser = null;
   var db = null;
   var saveTimer = null;
@@ -529,14 +549,12 @@
   var stickerLayer = document.getElementById('sticker-layer');
   var fontRow = document.getElementById('font-row');
   var sizeRow = document.getElementById('paper-size-row');
-  var bgRow = document.getElementById('paper-size-row');
+  var bgRow = document.getElementById('hue-row');
   var colorPicker = document.getElementById('color-picker');
   var hueSlider = document.getElementById('hue-slider');
   var paperHueOverlay = document.getElementById('paper-hue-overlay');
   var hueSaveTimer = null;
   var recentColorsEl = document.getElementById('recent-colors');
-  var editAreaEl = document.getElementById('edit-area');
-  var borderRow = document.getElementById('border-row');
 
   function getCurrentPage(){
     if(!state.pages.length) state.pages = freshPages();
@@ -574,12 +592,6 @@
     var hueValue = Number.isFinite(state.paperHue) ? state.paperHue : 0;
     hueSlider.value = hueValue;
     paperHueOverlay.style.background = hueValue === 0 ? 'transparent' : 'hsl(' + hueValue + ', 65%, 55%)';
-
-    var borderValue = state.pageBorder || 'none';
-    editAreaEl.className = borderValue === 'none' ? '' : 'border-' + borderValue;
-    Array.prototype.forEach.call(borderRow.querySelectorAll('.bg-pill'), function(btn){
-      btn.classList.toggle('active', btn.getAttribute('data-border') === borderValue);
-    });
   }
 
   function renderRecentColors(){
@@ -766,7 +778,7 @@
     setSyncStatus('saving');
     var metaRef = db.collection('users').doc(cloudUser.uid).collection('diary').doc('meta');
     metaRef.set({
-      notebook: { pages: state.pages, currentPageIndex: state.currentPageIndex, font: state.font, paper: state.paper, fontSize: state.fontSize, fontColor: state.fontColor, recentColors: state.recentColors, paperHue: state.paperHue, pageBorder: state.pageBorder },
+      notebook: { pages: state.pages, currentPageIndex: state.currentPageIndex, font: state.font, paper: state.paper, fontSize: state.fontSize, fontColor: state.fontColor, recentColors: state.recentColors, paperHue: state.paperHue },
       updatedAt: Date.now()
     }, { merge: true }).then(function(){
       setSyncStatus('online');
@@ -799,7 +811,6 @@
         if(nb.fontColor) state.fontColor = nb.fontColor;
         if(Array.isArray(nb.recentColors)) state.recentColors = nb.recentColors;
         if(Number.isFinite(nb.paperHue)) state.paperHue = nb.paperHue;
-        if(nb.pageBorder) state.pageBorder = nb.pageBorder;
         renderCurrentPage();
         applyPreferences();
       }
@@ -975,15 +986,6 @@
     hueSaveTimer = setTimeout(pushToCloudIfSignedIn, 800);
   });
 
-  Array.prototype.forEach.call(borderRow.querySelectorAll('.bg-pill'), function(btn){
-    btn.addEventListener('click', function(){
-      state.pageBorder = btn.getAttribute('data-border');
-      applyPreferences();
-      persistLocal();
-      pushToCloudIfSignedIn();
-    });
-  });
-
   settingsBtn.addEventListener('click', function(){
     syncPanel.classList.toggle('open');
   });
@@ -998,7 +1000,7 @@
     syncPanelStatus.textContent = 'Pushing…';
     var metaRef = db.collection('users').doc(cloudUser.uid).collection('diary').doc('meta');
     metaRef.set({
-      notebook: { pages: state.pages, currentPageIndex: state.currentPageIndex, font: state.font, paper: state.paper, fontSize: state.fontSize, fontColor: state.fontColor, recentColors: state.recentColors, paperHue: state.paperHue, pageBorder: state.pageBorder },
+      notebook: { pages: state.pages, currentPageIndex: state.currentPageIndex, font: state.font, paper: state.paper, fontSize: state.fontSize, fontColor: state.fontColor, recentColors: state.recentColors, paperHue: state.paperHue },
       updatedAt: Date.now()
     }, { merge: true }).then(function(){
       persistLocal();
@@ -1037,7 +1039,6 @@
         if(nb.fontColor) state.fontColor = nb.fontColor;
         if(Array.isArray(nb.recentColors)) state.recentColors = nb.recentColors;
         if(Number.isFinite(nb.paperHue)) state.paperHue = nb.paperHue;
-        if(nb.pageBorder) state.pageBorder = nb.pageBorder;
         renderCurrentPage();
         applyPreferences();
         persistLocal();
