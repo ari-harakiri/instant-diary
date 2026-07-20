@@ -984,7 +984,6 @@ var runtime={
   .signon-error { color:#c0392b; font-size:11px; min-height:14px; margin-bottom:4px; }
   .forgot-row { text-align:right; margin:-4px 0 8px; }
   .forgot-link { font-size:10.5px; color:#0850d0; text-decoration:underline; cursor:pointer; }
-  .forgot-link-test { color:#a15c00; font-style:italic; }
   .signon-bottom { display:flex; align-items:center; justify-content:flex-end; margin-top:12px; }
   .icon-btn { display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9.5px; color:#333;
     border:1px solid #b0aca0; border-radius:5px; background:linear-gradient(180deg,#fefefe,#e5e1d3); padding:4px 8px; cursor:pointer; }
@@ -3400,7 +3399,7 @@ function forceLoaderInteractionRecovery(){
         <span class="icon-btn" id="btn-help" role="button" tabindex="0" title="Help" aria-label="Open Help"><b>?</b></span>
         <div class="signon-link-stack">
           <div class="forgot-row" id="forgot-row"><span class="forgot-link" id="forgot-link">Forgot Password?</span></div>
-          <div class="forgot-row" id="local-entry-row"><span class="forgot-link forgot-link-test" id="signon-local" title="Test/dev only — your diary will not sync or save to the cloud in this mode.">Continue without email (test only)</span></div>
+          <div class="forgot-row" id="local-entry-row"><span class="forgot-link" id="signon-local">Continue without email</span></div>
           <div class="forgot-row" id="account-switch-row"><span class="forgot-link" id="account-switch">Already have an account? Sign On</span></div>
         </div>
       </div>
@@ -3408,7 +3407,7 @@ function forceLoaderInteractionRecovery(){
       <div class="signon-bottom">
         <span class="signon-go" id="signon-submit"><span id="signon-go-icon"></span><span id="signon-go-label">Sign On</span></span>
       </div>
-      <div class="signon-version">Version 1.0</div>
+      <div class="signon-version">Version 1.0 · <span class="forgot-link" id="btn-privacy-signon">Privacy Notice</span></div>
     </div>
   </div>
 
@@ -3434,6 +3433,7 @@ function forceLoaderInteractionRecovery(){
         <div class="m-drop">
           <div id="menu-cloudsync">Cloud Sync</div>
           <div id="menu-account">Account Settings</div>
+          <div id="menu-privacy">Privacy Notice</div>
           <div id="menu-scrapbook" style="display:none;">Scrapbook</div>
           <div id="menu-admin" style="display:none;">Administration</div>
           <div id="menu-signoff">Sign Off</div>
@@ -3678,9 +3678,10 @@ try {
   }
   var DEFAULT_SITE_CONTENT={
     install_instructions:'iPhone / iPad (Safari)\n\n1. Open DesktopDiary in Safari (not Chrome).\n2. Tap the Share button at the bottom of the screen—the box with an arrow pointing up.\n3. Scroll down and tap “Add to Home Screen.”\n4. Give it a name and tap Add.\n5. DesktopDiary now lives on your home screen like a real app.\n\nAndroid / Samsung (Chrome)\n\n1. Open DesktopDiary in Chrome.\n2. Tap the three-dot menu in the top-right corner.\n3. Tap “Add to Home Screen” or “Install App.”\n4. Tap Add to confirm.\n5. DesktopDiary now lives on your home screen like a real app.',
-    help_instructions:'Every buddy on your Buddy List is someone—or something you can spill your thoughts to.\n\nUse messages to save birthdays, random memories, gift ideas, inside jokes, rants, shopping lists, life updates, or whatever is on your mind. Add your own categories and organize things your own way.\n\nClick a buddy to open an IM window and leave them a note. Keep a running history of thoughts, plans, and memories all in one place.\n\nBuddy icons show how recently their diary was updated:\nOnline = This week\nAway = More than 7 days\nOffline = More than 30 days\n\nUpdate your vibe anytime by setting your Status. It will be saved in the Log.\n\nHead to your Diary and choose New Entry to write and save.\n\nCustomize your profile, edit the HTML, choose a background, and turn your desktop into your personal homepage.\n\nUse File → Cloud Sync to keep a backup through Google sign-in. Local storage also auto-saves on this device, but local data can be lost if the browser cache is cleared.\n\nBasically: it is like AIM, a diary, a notepad, and a personal homepage all rolled into one.'
+    help_instructions:'Every buddy on your Buddy List is someone—or something you can spill your thoughts to.\n\nUse messages to save birthdays, random memories, gift ideas, inside jokes, rants, shopping lists, life updates, or whatever is on your mind. Add your own categories and organize things your own way.\n\nClick a buddy to open an IM window and leave them a note. Keep a running history of thoughts, plans, and memories all in one place.\n\nBuddy icons show how recently their diary was updated:\nOnline = This week\nAway = More than 7 days\nOffline = More than 30 days\n\nUpdate your vibe anytime by setting your Status. It will be saved in the Log.\n\nHead to your Diary and choose New Entry to write and save.\n\nCustomize your profile, edit the HTML, choose a background, and turn your desktop into your personal homepage.\n\nUse File → Cloud Sync to keep a backup through Google sign-in. Local storage also auto-saves on this device, but local data can be lost if the browser cache is cleared.\n\nBasically: it is like AIM, a diary, a notepad, and a personal homepage all rolled into one.',
+    privacy_notice:'Last updated: 07/19/2026\n\nThis notice explains what information DesktopDiary collects, how it is used, and the choices you have.\n\n1. WHAT WE COLLECT\nAccount info (required for cloud sync): sign in via Google or a regular email/password, handled by Firebase Authentication. If you use Google Sign-In, this shares your Google account\'s email, name, and profile ID. If you use email/password, only your email and a securely hashed password (managed by Firebase) are collected. We never see your plain-text password.\n\nLocal accounts (no cloud sync): still require an email address, so you can change your username and switch to cloud sync easily later. This stays in your browser\'s local storage and is not sent to us unless you turn on cloud sync.\n\nDiary content: entries and related metadata you write, only sent to the cloud if you enable sync.\n\n2. COOKIES\nWe do not use tracking or advertising cookies. Sign-in sessions are handled by Firebase Authentication and Supabase, which may use your browser\'s local storage or IndexedDB (not cookies) to keep you signed in.\n\n3. HOW WE USE YOUR INFORMATION\nTo authenticate you, sync and back up your diary entries if enabled, and (only with your opt-in) record which features you use so we can improve DesktopDiary. We never sell your data or use it to train AI models.\n\n4. WHERE YOUR DATA IS STORED\nAccounts and synced entries are stored using Firebase (Google Cloud) and Supabase. Data is transmitted over encrypted connections (HTTPS).\n\n5. YOUR CHOICES\nYou can use a local-only account, export or delete your entries at any time, delete your account, and opt in or out of identifiable feature-usage sharing at any time.\n\n6. CHILDREN\nDesktopDiary is not directed at children under 13, and we do not knowingly collect personal information from children under 13.\n\n7. CONTACT\nQuestions about this notice or your data: buttxcrack@yahoo.com'
   };
-  var dtdSiteContent={install_instructions:DEFAULT_SITE_CONTENT.install_instructions,help_instructions:DEFAULT_SITE_CONTENT.help_instructions};
+  var dtdSiteContent={install_instructions:DEFAULT_SITE_CONTENT.install_instructions,help_instructions:DEFAULT_SITE_CONTENT.help_instructions,privacy_notice:DEFAULT_SITE_CONTENT.privacy_notice};
   var dtdAdminAccess=false;
   function loadDtdSiteContent(){
     return supabasePublicRpc('get_dtd_site_content',{}).then(function(rows){
@@ -5940,6 +5941,13 @@ try {
     openHelpWindow();
   });
 
+  var signonPrivacyLink = document.getElementById('btn-privacy-signon');
+  if(signonPrivacyLink){
+    bindAccessibleAction(signonPrivacyLink, function(){
+      openPrivacyWindow();
+    });
+  }
+
   var startupHoldPromise = null;
   function waitForStartupSequence(){
     if(startupHoldPromise) return startupHoldPromise;
@@ -6278,6 +6286,7 @@ try {
   document.getElementById('menu-logs').addEventListener('click', function(){ openLogsWindow('status'); });
   document.getElementById('menu-cloudsync').addEventListener('click', openCloudSyncWindow);
   document.getElementById('menu-account').addEventListener('click', openAccountSettingsWindow);
+  document.getElementById('menu-privacy').addEventListener('click', openPrivacyWindow);
   document.getElementById('menu-scrapbook').addEventListener('click', openScrapbookWindow);
   document.getElementById('menu-admin').addEventListener('click', openAdminWindow);
   document.getElementById('menu-editprofile').addEventListener('click', openEditProfileWindow);
@@ -10473,6 +10482,23 @@ try {
     });
   }
 
+  // ================= PRIVACY NOTICE WINDOW =================
+  function openPrivacyWindow(){
+    var existing=openWindows.find(function(w){return w.type==='privacy';});
+    if(existing){focusWindow(existing.id);return;}
+    var body='<div class="win-body" style="font-size:12px;line-height:1.6;padding:10px;white-space:pre-wrap;">'+
+      '<div class="help-section-title">Privacy Notice</div>'+
+      '<div class="site-instruction-copy privacy-copy">'+escapeHtml(dtdSiteContent.privacy_notice)+'</div>'+
+    '</div>';
+    createWindow({title:'Privacy Notice',extraClass:'help-win',bodyHtml:body,type:'privacy'});
+    loadDtdSiteContent().then(function(){
+      var privacyWindow=openWindows.find(function(w){return w.type==='privacy';});
+      if(!privacyWindow||!privacyWindow.el)return;
+      var copy=privacyWindow.el.querySelector('.privacy-copy');
+      if(copy)copy.textContent=dtdSiteContent.privacy_notice;
+    });
+  }
+
   function openAdminWindow(){
     var existing=openWindows.find(function(w){return w.type==='admin';});
     if(existing){focusWindow(existing.id);return;}
@@ -10481,11 +10507,16 @@ try {
       return loadDtdSiteContent().then(function(){
         var body='<div class="win-body admin-panel">'+
           '<div class="admin-intro"><b>DesktopDiary Administration</b><br>Manage public Help &amp; Install wording and review privacy-limited feature feedback. Administrator access is checked by Supabase.</div>'+
-          '<div class="admin-tabs" role="tablist"><button class="admin-tab active" type="button" role="tab" aria-selected="true" data-admin-tab="content">Help &amp; Install</button><button class="admin-tab" type="button" role="tab" aria-selected="false" data-admin-tab="usage">Usage Statistics</button></div>'+
+          '<div class="admin-tabs" role="tablist"><button class="admin-tab active" type="button" role="tab" aria-selected="true" data-admin-tab="content">Help &amp; Install</button><button class="admin-tab" type="button" role="tab" aria-selected="false" data-admin-tab="privacy">Privacy Notice</button><button class="admin-tab" type="button" role="tab" aria-selected="false" data-admin-tab="usage">Usage Statistics</button></div>'+
           '<section class="admin-tab-panel active" data-admin-panel="content">'+
             '<div class="admin-field"><label for="admin-install-copy">Install Instructions</label><textarea id="admin-install-copy" maxlength="30000"></textarea></div>'+
             '<div class="admin-field"><label for="admin-help-copy">Help / How It Works</label><textarea id="admin-help-copy" maxlength="30000"></textarea></div>'+
             '<div class="admin-actions"><div class="admin-status" aria-live="polite"></div><button class="btn admin-save" type="button">Save Website Instructions</button></div>'+
+          '</section>'+
+          '<section class="admin-tab-panel" data-admin-panel="privacy">'+
+            '<div class="admin-intro">This is the Privacy Notice members see from the app. Editing it here updates it for everyone immediately.</div>'+
+            '<div class="admin-field"><label for="admin-privacy-copy">Privacy Notice</label><textarea id="admin-privacy-copy" maxlength="30000" style="min-height:320px;"></textarea></div>'+
+            '<div class="admin-actions"><div class="admin-privacy-status" aria-live="polite"></div><button class="btn admin-privacy-save" type="button">Save Privacy Notice</button></div>'+
           '</section>'+
           '<section class="admin-tab-panel" data-admin-panel="usage">'+
             '<div class="usage-toolbar"><label for="usage-period"><b>Date range</b></label><select id="usage-period"><option value="7d">Last 7 days</option><option value="30d" selected>Last 30 days</option><option value="90d">Last 90 days</option><option value="all">All available data</option></select><button class="btn usage-refresh" type="button">Refresh</button><button class="btn usage-cleanup" type="button">Clean up expired events</button><span class="usage-updated"></span></div>'+
@@ -10507,6 +10538,19 @@ try {
               openWindows.filter(function(w){return w.type==='help';}).slice().forEach(function(w){closeWindow(w.id);});
               status.style.color='#237b31';status.textContent='Saved. The Help & Install window is now updated for everyone.';
             }).catch(function(err){status.style.color='#c0392b';status.textContent=err.message;}).then(function(){save.disabled=false;});
+          };
+
+          var privacyField=el.querySelector('#admin-privacy-copy'),privacySave=el.querySelector('.admin-privacy-save'),privacyStatus=el.querySelector('.admin-privacy-status');
+          privacyField.value=dtdSiteContent.privacy_notice;
+          privacySave.onclick=function(){
+            var privacyValue=privacyField.value.trim();
+            if(!privacyValue){privacyStatus.style.color='#c0392b';privacyStatus.textContent='Privacy Notice cannot be empty.';return;}
+            privacySave.disabled=true;privacyStatus.style.color='#555';privacyStatus.textContent='Saving…';
+            supabaseRpc('update_dtd_privacy_notice',{new_privacy_notice:privacyValue}).then(function(){
+              dtdSiteContent.privacy_notice=privacyValue;
+              openWindows.filter(function(w){return w.type==='privacy';}).slice().forEach(function(w){closeWindow(w.id);});
+              privacyStatus.style.color='#237b31';privacyStatus.textContent='Saved. The Privacy Notice is now updated for everyone.';
+            }).catch(function(err){privacyStatus.style.color='#c0392b';privacyStatus.textContent=err.message;}).then(function(){privacySave.disabled=false;});
           };
 
           var usageLoaded=false,usageLoading=false,usageStatus=el.querySelector('.usage-status'),usageResults=el.querySelector('.usage-results'),periodSelect=el.querySelector('#usage-period'),refreshButton=el.querySelector('.usage-refresh'),cleanupButton=el.querySelector('.usage-cleanup'),updated=el.querySelector('.usage-updated');
