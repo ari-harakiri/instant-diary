@@ -1,7 +1,7 @@
 {
-  "name": "Notebook",
-  "short_name": "Notebook",
-  "start_url": "notebook-app.html",
+  "name": "My Notepad",
+  "short_name": "My Notepad",
+  "start_url": "MyNotepad.html",
   "display": "standalone",
   "background_color": "#5b9bf0",
   "theme_color": "#0054e3",
