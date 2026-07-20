@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-<title>Notebook</title>
+<title>My Notepad</title>
 <link rel="manifest" href="notebook-manifest.json" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Notebook" />
+<meta name="apple-mobile-web-app-title" content="My Notepad" />
 <link rel="apple-touch-icon" href="notepad1.png" />
 <meta name="theme-color" content="#0054e3" />
 <style>
@@ -162,7 +162,7 @@
   }
   #save-btn {
     position: absolute;
-    top: 38px; right: 19px;
+    top: 35px; right: 16px;
     z-index: 5;
     width: 34px; height: 30px;
     border: 1px solid rgba(0,0,0,.35);
@@ -184,7 +184,7 @@
     gap: 8px;
   }
   #title-input {
-    border: 2px solid red !important;
+    border: none !important;
     box-shadow: none !important;
     background: transparent !important;
     outline: none;
@@ -197,7 +197,7 @@
   }
   #title-input::placeholder { color: #7a7a7a; }
   #body-input {
-    border: 2px solid red !important;
+    border: none !important;
     box-shadow: none !important;
     background: transparent !important;
     outline: none;
@@ -248,7 +248,7 @@
 <body>
 <div id="stage">
   <div id="app-header">
-    <span id="app-title">Notebook</span>
+    <span id="app-title">My Notepad</span>
   </div>
   <div id="notebook-stage">
     <div id="notebook">
@@ -275,7 +275,7 @@
       <button class="font-pill active" data-font="DiaryComicSans">Comic Sans</button>
       <button class="font-pill" data-font="DiaryOldEnglish">Old English</button>
       <button class="font-pill" data-font="DiaryMinecraft">Minecraft</button>
-      <button class="font-pill" data-font="DiaryEmoji">Art</button>
+      <button class="font-pill" data-font="DiaryEmoji">Artsy Cypher</button>
     </div>
     <div id="paper-size-row" class="dock-row">
       <button class="bg-pill active" data-bg="notepad1.png">Plain</button>
