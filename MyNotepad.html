@@ -99,8 +99,8 @@
   }
   #app-footer {
     flex: 0 0 auto;
-    width: 94%;
-    max-width: 402px;
+    width: 100%;
+    max-width: none;
     margin: 0 auto;
     padding: 5px 8px calc(5px + env(safe-area-inset-bottom, 0px));
     background: rgba(20,30,50,.35);
@@ -125,7 +125,8 @@
   .dock-select {
     -webkit-appearance: none;
     appearance: none;
-    width: 100%;
+    flex: 0 0 auto;
+    width: 112px;
     border: 1px solid rgba(255,255,255,.7);
     background: rgba(255,255,255,.25) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><polygon points="0,0 10,0 5,6" fill="white"/></svg>') no-repeat right 10px center;
     color: #fff;
@@ -134,6 +135,7 @@
     font-size: 12px;
     cursor: pointer;
   }
+  #size-select { width: 82px; }
   .dock-select option { color: #1a3350; }
   .dock-section + .dock-section {
     padding-top: 2px;
@@ -143,6 +145,50 @@
     -webkit-overflow-scrolling: touch;
   }
   .dock-row::-webkit-scrollbar { display: none; }
+  #format-toolbar {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: 0;
+    min-height: 30px;
+    border: 1px solid rgba(255,255,255,.78);
+    border-radius: 9px;
+    background: rgba(255,255,255,.25);
+  }
+  #format-toolbar > * {
+    flex: 0 0 auto;
+    height: 28px;
+    margin: 0;
+    border: 0;
+    border-left: 1px solid rgba(255,255,255,.55);
+    border-radius: 0;
+    background: transparent;
+    color: #fff;
+  }
+  #format-toolbar > :first-child { border-left: 0; }
+  #format-toolbar .fmt-btn {
+    width: auto;
+    min-width: 31px;
+    padding: 0 9px;
+    font-size: 12px;
+  }
+  #format-toolbar .fmt-btn.active { background: rgba(255,255,255,.25); border-color: rgba(255,255,255,.55); }
+  .format-controls-row .dock-select {
+    flex: 0 0 auto;
+    width: 104px;
+    height: 24px;
+    margin: 0 4px;
+    padding: 4px 22px 4px 8px;
+    font-size: 11px;
+    border: 1px solid rgba(255,255,255,.78);
+    border-radius: 7px;
+    background: rgba(255,255,255,.18) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><polygon points="0,0 10,0 5,6" fill="white"/></svg>') no-repeat right 8px center;
+  }
+  .format-controls-row #size-select { width: 78px; }
+  #format-toolbar #highlight-color-picker {
+    width: 28px;
+    padding: 3px;
+  }
   .dock-divider {
     flex: 0 0 auto;
     width: 1px; height: 20px;
@@ -203,8 +249,9 @@
   }
   #notebook {
     position: relative;
-    width: 100%;
-    max-width: 428px;
+    width: auto;
+    height: min(100%, 512px);
+    max-width: 100%;
     aspect-ratio: 428 / 512;
     background: url('notepad1.png') center / cover no-repeat;
   }
@@ -248,63 +295,28 @@
   .placed-sticker.selected .sticker-remove { display: block; }
   #sticker-picker {
     display: none;
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: calc(100% - 40px);
-    max-width: 402px;
-    height: 80%;
-    max-height: 560px;
-    z-index: 50;
-    background: rgba(20,30,50,.9);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border-radius: 14px;
-    box-shadow: 0 8px 30px rgba(0,0,0,.5);
-    flex-direction: column;
-    overflow: hidden;
+    width: 100%;
+    padding-top: 3px;
   }
-  #sticker-picker.open { display: flex; }
-  #sticker-picker-backdrop {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.35);
-    z-index: 45;
-  }
-  #sticker-picker-backdrop.open { display: block; }
-  #sticker-picker-header {
-    flex: 0 0 auto;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 12px;
-    color: #fff;
-    font-size: 15px;
-    font-weight: 700;
-  }
-  #close-stickers-btn {
-    border: 1px solid rgba(255,255,255,.6);
-    background: rgba(255,255,255,.18);
-    color: #fff;
-    border-radius: 6px;
-    width: 32px; height: 32px;
-    font-size: 15px;
-    cursor: pointer;
-  }
+  #sticker-picker.open { display: block; }
   #sticker-grid {
-    flex: 1;
-    overflow-y: auto;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    padding: 0 16px calc(16px + env(safe-area-inset-bottom, 0px));
+    grid-auto-flow: column;
+    grid-template-rows: 52px;
+    grid-auto-columns: 52px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+    gap: 7px;
+    padding: 3px 1px;
   }
+  #sticker-grid::-webkit-scrollbar { display: none; }
   .sticker-grid-item {
     background: rgba(255,255,255,.9);
-    border-radius: 10px;
-    padding: 8px;
+    border-radius: 7px;
+    padding: 5px;
     display: flex; align-items: center; justify-content: center;
-    aspect-ratio: 1;
     cursor: pointer;
   }
   .sticker-grid-item img { width: 100%; height: 100%; object-fit: contain; }
@@ -358,6 +370,23 @@
     transform: translate(15px, 25px);
   }
   #title-input::placeholder { color: #7a7a7a; }
+  .menu-title-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0 0 10px;
+    color: #1a3350;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  #menu-title-input {
+    width: 100%;
+    border: 1px solid #99a;
+    border-radius: 7px;
+    padding: 7px 8px;
+    color: #1a3350;
+    font: inherit;
+  }
   #body-input {
     border: none !important;
     box-shadow: none !important;
@@ -445,6 +474,9 @@
   <div id="sync-panel-backdrop"></div>
   <div id="sync-panel">
     <div id="sync-panel-status">Not signed in — local only</div>
+    <label class="menu-title-field">Page title
+      <input id="menu-title-input" type="text" placeholder="Title" maxlength="120" autocomplete="off" />
+    </label>
     <div id="sync-panel-actions">
       <button id="export-image-btn" class="sync-action-btn">💾 Save as Image</button>
     </div>
@@ -479,32 +511,34 @@
   <div id="app-footer">
     <div class="dock-section">
       <div class="dock-section-label">Format</div>
-      <div id="format-toolbar" class="dock-row">
+      <div class="format-controls-row dock-row">
+      <div id="format-toolbar">
         <button class="fmt-btn" data-cmd="bold" title="Bold"><b>B</b></button>
         <button class="fmt-btn" data-cmd="italic" title="Italic"><i>I</i></button>
         <button class="fmt-btn" data-cmd="underline" title="Underline"><u>U</u></button>
         <button class="fmt-btn" data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
-        <button class="fmt-btn" id="fmt-highlight-btn" title="Highlight">🖍</button>
+        <button class="fmt-btn" id="fmt-highlight-btn" title="Highlight selected text">🖍</button>
         <input type="color" id="highlight-color-picker" value="#fff59d" title="Highlight color" />
         <button class="fmt-btn" id="fmt-date-btn" title="Insert date">📅</button>
       </div>
-    </div>
-    <div class="dock-section">
       <select id="font-select" class="dock-select">
         <option value="inherit">Default font</option>
+        <option value="Arial">Arial</option>
+        <option value="Times New Roman">Times</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Courier New">Courier</option>
         <option value="DiaryComicSans" selected>Comic Sans</option>
         <option value="DiaryOldEnglish">Old English</option>
         <option value="DiaryMinecraft">Minecraft</option>
         <option value="DiaryEmoji">Artsy Cypher</option>
       </select>
-    </div>
-    <div class="dock-section">
       <select id="size-select" class="dock-select">
         <option value="13">Small</option>
         <option value="16" selected>Medium</option>
         <option value="20">Large</option>
         <option value="25">X-Large</option>
       </select>
+      </div>
     </div>
     <div class="dock-section">
       <div id="color-dock" class="dock-row">
@@ -514,8 +548,6 @@
     </div>
     <div class="dock-section">
       <div id="hue-row" class="dock-row">
-        <button class="bg-pill active" data-bg="notepad1.png">Plain</button>
-        <span class="dock-divider"></span>
         <span style="color:#fff;font-size:11px;">Hue</span>
         <input type="range" id="hue-slider" min="0" max="360" value="0" />
       </div>
@@ -525,16 +557,10 @@
         <button id="open-stickers-btn" class="bg-pill">🏷 Stickers</button>
       </div>
     </div>
+    <div id="sticker-picker" aria-label="Sticker picker">
+      <div id="sticker-grid"></div>
+    </div>
   </div>
-</div>
-
-<div id="sticker-picker-backdrop"></div>
-<div id="sticker-picker">
-  <div id="sticker-picker-header">
-    <span>Pick a sticker</span>
-    <button id="close-stickers-btn">✕</button>
-  </div>
-  <div id="sticker-grid"></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
@@ -570,6 +596,7 @@
   var saveTimer = null;
 
   var titleInput = document.getElementById('title-input');
+  var menuTitleInput = document.getElementById('menu-title-input');
   var bodyInput = document.getElementById('body-input');
   var pageLabel = document.getElementById('page-label');
   var prevBtn = document.getElementById('prev-btn');
@@ -585,7 +612,6 @@
   var pullBtn = document.getElementById('pull-btn');
   var signinBtn = document.getElementById('signin-btn');
   var openStickersBtn = document.getElementById('open-stickers-btn');
-  var closeStickersBtn = document.getElementById('close-stickers-btn');
   var stickerPicker = document.getElementById('sticker-picker');
   var stickerGrid = document.getElementById('sticker-grid');
   var stickerLayer = document.getElementById('sticker-layer');
@@ -639,14 +665,14 @@
       swatch.className = 'recent-swatch';
       swatch.style.background = c;
       swatch.title = c;
-      swatch.addEventListener('mousedown', function(e){ if(hasTextSelection()) e.preventDefault(); });
+      swatch.addEventListener('mousedown', function(e){
+        cacheTextSelection();
+        e.preventDefault();
+      });
       swatch.addEventListener('click', function(){
-        if(hasTextSelection()){
-          document.execCommand('foreColor', false, c);
-          queueSave();
-        } else {
-          setColor(c);
-        }
+        restoreTextSelection();
+        document.execCommand('foreColor', false, c);
+        queueSave();
       });
       recentColorsEl.appendChild(swatch);
     });
@@ -664,7 +690,9 @@
   function renderCurrentPage(){
     var page = getCurrentPage();
     titleInput.value = page.title || '';
+    if(menuTitleInput) menuTitleInput.value = page.title || '';
     bodyInput.innerHTML = page.text || '';
+    cachedSelectionRange = null;
     pageLabel.textContent = 'pg ' + (state.currentPageIndex + 1);
     if(prevBtn) prevBtn.disabled = state.currentPageIndex === 0;
     if(nextBtn) nextBtn.disabled = false;
@@ -779,7 +807,7 @@
 
   function captureCurrentPage(){
     var page = getCurrentPage();
-    page.title = titleInput.value;
+    page.title = menuTitleInput ? menuTitleInput.value : titleInput.value;
     page.text = bodyInput.innerHTML;
   }
 
@@ -898,17 +926,45 @@
     return bodyInput.contains(sel.anchorNode);
   }
 
+  var cachedSelectionRange = null;
+  function cacheTextSelection(){
+    var sel = window.getSelection();
+    if(sel && sel.rangeCount && sel.anchorNode && bodyInput.contains(sel.anchorNode)){
+      cachedSelectionRange = sel.getRangeAt(0).cloneRange();
+    }
+  }
+  function restoreTextSelection(){
+    bodyInput.focus();
+    var sel = window.getSelection();
+    if(cachedSelectionRange){
+      sel.removeAllRanges();
+      sel.addRange(cachedSelectionRange);
+      return;
+    }
+    if(!bodyInput.firstChild){
+      var marker = document.createTextNode('\u200b');
+      bodyInput.appendChild(marker);
+      var emptyRange = document.createRange();
+      emptyRange.selectNodeContents(marker);
+      sel.removeAllRanges();
+      sel.addRange(emptyRange);
+      return;
+    }
+    var node = bodyInput;
+    while(node.lastChild) node = node.lastChild;
+    var endRange = document.createRange();
+    if(node.nodeType === 3) endRange.setStart(node, node.nodeValue.length);
+    else endRange.selectNodeContents(node);
+    endRange.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(endRange);
+  }
+
   fontSelect.addEventListener('change', function(){
     var fontValue = fontSelect.value;
-    if(restoreCachedSelection()){
-      document.execCommand('fontName', false, fontValue === 'inherit' ? 'inherit' : fontValue);
-      queueSave();
-    } else {
-      state.font = fontValue;
-      applyPreferences();
-      persistLocal();
-      pushToCloudIfSignedIn();
-    }
+    restoreTextSelection();
+    document.execCommand('fontName', false, fontValue === 'inherit' ? 'inherit' : fontValue);
+    queueSave();
   });
 
   Array.prototype.forEach.call(bgRow.querySelectorAll('.bg-pill'), function(btn){
@@ -939,41 +995,23 @@
     sel.addRange(newRange);
   }
 
-  var cachedSelectionRange = null;
-  function cacheSelectionIfAny(){
-    cachedSelectionRange = hasTextSelection() ? window.getSelection().getRangeAt(0).cloneRange() : null;
-  }
-  function restoreCachedSelection(){
-    if(!cachedSelectionRange) return false;
-    var sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(cachedSelectionRange);
-    return true;
-  }
-
-  fontSelect.addEventListener('mousedown', cacheSelectionIfAny);
-  fontSelect.addEventListener('focus', cacheSelectionIfAny);
-
-  sizeSelect.addEventListener('mousedown', cacheSelectionIfAny);
-  sizeSelect.addEventListener('focus', cacheSelectionIfAny);
+  fontSelect.addEventListener('mousedown', cacheTextSelection);
+  fontSelect.addEventListener('focus', cacheTextSelection);
+  sizeSelect.addEventListener('mousedown', cacheTextSelection);
+  sizeSelect.addEventListener('focus', cacheTextSelection);
+  colorPicker.addEventListener('mousedown', cacheTextSelection);
 
   sizeSelect.addEventListener('change', function(){
     var sizeValue = Number(sizeSelect.value);
-    if(restoreCachedSelection()){
-      wrapSelectionInSpan('fontSize', sizeValue + 'px');
-      queueSave();
-    } else {
-      state.fontSize = sizeValue;
-      applyPreferences();
-      persistLocal();
-      pushToCloudIfSignedIn();
-    }
+    restoreTextSelection();
+    wrapSelectionInSpan('fontSize', sizeValue + 'px');
+    queueSave();
   });
 
   Array.prototype.forEach.call(document.querySelectorAll('.fmt-btn[data-cmd]'), function(btn){
     btn.addEventListener('mousedown', function(e){ e.preventDefault(); });
     btn.addEventListener('click', function(){
-      bodyInput.focus();
+      restoreTextSelection();
       document.execCommand(btn.getAttribute('data-cmd'), false, null);
       updateFormatButtonStates();
       queueSave();
@@ -982,9 +1020,10 @@
 
   var highlightBtn = document.getElementById('fmt-highlight-btn');
   var highlightColorPicker = document.getElementById('highlight-color-picker');
+  highlightColorPicker.addEventListener('mousedown', cacheTextSelection);
   highlightBtn.addEventListener('mousedown', function(e){ e.preventDefault(); });
   highlightBtn.addEventListener('click', function(){
-    bodyInput.focus();
+    restoreTextSelection();
     document.execCommand('hiliteColor', false, highlightColorPicker.value);
     queueSave();
   });
@@ -997,42 +1036,33 @@
     });
   }
   document.addEventListener('selectionchange', function(){
-    if(document.activeElement === bodyInput) updateFormatButtonStates();
+    if(document.activeElement === bodyInput){
+      updateFormatButtonStates();
+      cacheTextSelection();
+    }
   });
 
   var dateBtn = document.getElementById('fmt-date-btn');
   dateBtn.addEventListener('mousedown', function(e){ e.preventDefault(); });
   dateBtn.addEventListener('click', function(){
-    bodyInput.focus();
+    restoreTextSelection();
     var dateStr = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
     document.execCommand('insertHTML', false, '<i>' + dateStr + '</i> ');
     queueSave();
   });
 
-  var stickerPickerBackdrop = document.getElementById('sticker-picker-backdrop');
   openStickersBtn.addEventListener('click', function(){
-    stickerPicker.classList.add('open');
-    stickerPickerBackdrop.classList.add('open');
-  });
-  closeStickersBtn.addEventListener('click', function(){
-    stickerPicker.classList.remove('open');
-    stickerPickerBackdrop.classList.remove('open');
-  });
-  stickerPickerBackdrop.addEventListener('click', function(){
-    stickerPicker.classList.remove('open');
-    stickerPickerBackdrop.classList.remove('open');
+    stickerPicker.classList.toggle('open');
+    openStickersBtn.classList.toggle('active', stickerPicker.classList.contains('open'));
   });
 
   colorPicker.addEventListener('input', function(){
-    if(hasTextSelection()){
-      document.execCommand('foreColor', false, colorPicker.value);
-      if(!state.recentColors) state.recentColors = [];
-      state.recentColors = [colorPicker.value].concat(state.recentColors.filter(function(x){ return x !== colorPicker.value; })).slice(0, 6);
-      renderRecentColors();
-      queueSave();
-    } else {
-      setColor(colorPicker.value);
-    }
+    restoreTextSelection();
+    document.execCommand('foreColor', false, colorPicker.value);
+    if(!state.recentColors) state.recentColors = [];
+    state.recentColors = [colorPicker.value].concat(state.recentColors.filter(function(x){ return x !== colorPicker.value; })).slice(0, 6);
+    renderRecentColors();
+    queueSave();
   });
 
   hueSlider.addEventListener('input', function(){
@@ -1119,7 +1149,16 @@
     });
   });
 
-  titleInput.addEventListener('input', queueSave);
+  titleInput.addEventListener('input', function(){
+    if(menuTitleInput) menuTitleInput.value = titleInput.value;
+    queueSave();
+  });
+  if(menuTitleInput){
+    menuTitleInput.addEventListener('input', function(){
+      titleInput.value = menuTitleInput.value;
+      queueSave();
+    });
+  }
   bodyInput.addEventListener('input', queueSave);
   titleInput.addEventListener('keydown', function(e){
     if(e.key === 'Enter'){
@@ -1137,6 +1176,7 @@
     }
   }
   titleInput.addEventListener('focus', function(){ setTimeout(scrollAboveKeyboard, 60); });
+  if(menuTitleInput) menuTitleInput.addEventListener('focus', function(){ setTimeout(scrollAboveKeyboard, 60); });
   bodyInput.addEventListener('focus', function(){ setTimeout(scrollAboveKeyboard, 60); });
 
   // --- Save as image ---
