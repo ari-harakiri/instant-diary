@@ -50,17 +50,6 @@
     text-shadow: 0 1px 2px rgba(0,0,0,.35);
   }
   #app-title { font-size: 15px; font-weight: 700; letter-spacing: .3px; }
-  #settings-btn {
-    border: 1px solid rgba(255,255,255,.6);
-    background: rgba(255,255,255,.18);
-    color: #fff;
-    border-radius: 6px;
-    width: 30px; height: 30px;
-    font-size: 15px;
-    cursor: pointer;
-    transform: translateX(-4px);
-  }
-  #settings-btn:active { background: rgba(255,255,255,.35); }
   #notebook-stage {
     flex: 1;
     display: flex; align-items: center; justify-content: center;
@@ -69,14 +58,22 @@
   }
   #app-footer {
     flex: 0 0 auto;
-    padding: 8px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
-  #font-row {
-    display: flex; gap: 8px; overflow-x: auto;
-    padding-bottom: 4px;
+  .dock-row {
+    display: flex; align-items: center; gap: 8px; overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  #font-row::-webkit-scrollbar { display: none; }
+  .dock-row::-webkit-scrollbar { display: none; }
+  .dock-divider {
+    flex: 0 0 auto;
+    width: 1px; height: 20px;
+    background: rgba(255,255,255,.5);
+    margin: 0 2px;
+  }
   .font-pill {
     flex: 0 0 auto;
     border: 1px solid rgba(255,255,255,.7);
@@ -93,38 +90,42 @@
     border-color: #fff;
     font-weight: 700;
   }
-  #settings-panel {
-    display: none;
-    margin: 0 0 10px;
-    padding: 10px 12px;
-    background: rgba(255,255,255,.9);
-    border-radius: 10px;
-    font-size: 13px;
+  .bg-pill, .size-pill {
+    flex: 0 0 auto;
+    border: 1px solid rgba(255,255,255,.7);
+    background: rgba(255,255,255,.25);
     color: #1a3350;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
   }
-  #settings-panel.open { display: block; }
-  #settings-panel label { display: block; margin-bottom: 6px; font-weight: 700; }
-  #bg-row { display: flex; gap: 8px; }
-  .bg-pill {
-    border: 1px solid #99a; background: #fff; border-radius: 8px;
-    padding: 6px 12px; font-size: 12px; cursor: pointer;
+  .bg-pill.active, .size-pill.active {
+    background: #fff; border-color: #fff; font-weight: 700;
   }
-  .bg-pill.active { background: #0054e3; color: #fff; border-color: #0054e3; }
-  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .size-pill {
-    border: 1px solid #99a; background: #fff; border-radius: 8px;
-    padding: 6px 12px; font-size: 12px; cursor: pointer;
-  }
-  .size-pill.active { background: #0054e3; color: #fff; border-color: #0054e3; }
-  .color-pill {
-    width: 26px; height: 26px;
+  #color-picker {
+    flex: 0 0 auto;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 34px; height: 34px;
     border: 2px solid #fff;
-    box-shadow: 0 0 0 1px #99a;
     border-radius: 50%;
+    padding: 0;
+    background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
+    cursor: pointer;
+  }
+  #color-picker::-webkit-color-swatch-wrapper { padding: 0; border-radius: 50%; }
+  #color-picker::-webkit-color-swatch { border: none; border-radius: 50%; }
+  #recent-colors { display: flex; align-items: center; gap: 6px; }
+  .recent-swatch {
+    flex: 0 0 auto;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.8);
     cursor: pointer;
     padding: 0;
   }
-  .color-pill.active { box-shadow: 0 0 0 2px #0054e3; }
   #notebook {
     position: relative;
     width: 100%;
@@ -134,7 +135,7 @@
   }
   #save-btn {
     position: absolute;
-    top: 40px; right: 18px;
+    top: 38px; right: 19px;
     width: 34px; height: 30px;
     border: 1px solid rgba(0,0,0,.35);
     border-radius: 4px;
@@ -148,7 +149,7 @@
   #save-btn:active { background: rgba(255,255,255,.85); }
   #edit-area {
     position: absolute;
-    inset: 12% 6% 16% 10%;
+    inset: 12% 6% 13.7% 10%;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -178,7 +179,7 @@
     color: #262626;
     padding: 2px 4px;
     line-height: 1.4;
-    transform: translate(15px, 20px);
+    transform: translate(15px, 16px);
   }
   #footer {
     position: absolute;
@@ -194,7 +195,7 @@
   #nav button {
     border: none; background: transparent; cursor: pointer;
     font-size: 22px; color: #3f3f3f; padding: 4px 6px; line-height: 1;
-    transform: translate(5px, 7px);
+    transform: translate(5px, 8px);
   }
   #trash-btn {
     border: none; background: transparent; cursor: pointer;
@@ -218,7 +219,6 @@
 <div id="stage">
   <div id="app-header">
     <span id="app-title">Notebook</span>
-    <button id="settings-btn" title="Settings">⚙</button>
   </div>
   <div id="notebook-stage">
     <div id="notebook">
@@ -239,35 +239,25 @@
     </div>
   </div>
   <div id="app-footer">
-    <div id="settings-panel">
-      <label>Paper style</label>
-      <div id="bg-row">
-        <button class="bg-pill active" data-bg="notepad1.png">Plain</button>
-        <button class="bg-pill" data-bg="notepad2.png">Curled corner</button>
-      </div>
-      <label style="margin-top:10px;">Text size</label>
-      <div id="size-row" class="pill-row">
-        <button class="size-pill" data-size="13">Small</button>
-        <button class="size-pill active" data-size="16">Medium</button>
-        <button class="size-pill" data-size="20">Large</button>
-        <button class="size-pill" data-size="25">X-Large</button>
-      </div>
-      <label style="margin-top:10px;">Text color</label>
-      <div id="color-row" class="pill-row">
-        <button class="color-pill active" data-color="#262626" style="background:#262626;"></button>
-        <button class="color-pill" data-color="#0054e3" style="background:#0054e3;"></button>
-        <button class="color-pill" data-color="#1a7d1a" style="background:#1a7d1a;"></button>
-        <button class="color-pill" data-color="#c62828" style="background:#c62828;"></button>
-        <button class="color-pill" data-color="#8e24aa" style="background:#8e24aa;"></button>
-        <button class="color-pill" data-color="#e07b00" style="background:#e07b00;"></button>
-      </div>
-    </div>
-    <div id="font-row">
+    <div id="font-row" class="dock-row">
       <button class="font-pill" data-font="inherit">Default</button>
       <button class="font-pill active" data-font="DiaryComicSans">Comic Sans</button>
       <button class="font-pill" data-font="DiaryOldEnglish">Old English</button>
       <button class="font-pill" data-font="DiaryMinecraft">Minecraft</button>
       <button class="font-pill" data-font="DiaryEmoji">Art</button>
+    </div>
+    <div id="paper-size-row" class="dock-row">
+      <button class="bg-pill active" data-bg="notepad1.png">Plain</button>
+      <button class="bg-pill" data-bg="notepad2.png">Curled corner</button>
+      <span class="dock-divider"></span>
+      <button class="size-pill" data-size="13">Small</button>
+      <button class="size-pill active" data-size="16">Medium</button>
+      <button class="size-pill" data-size="20">Large</button>
+      <button class="size-pill" data-size="25">X-Large</button>
+    </div>
+    <div id="color-dock" class="dock-row">
+      <input type="color" id="color-picker" value="#262626" title="Pick a text color" />
+      <div id="recent-colors"></div>
     </div>
   </div>
 </div>
@@ -293,7 +283,7 @@
     return [{ id: 'page-1', title: '', text: '', createdAt: Date.now() }];
   }
 
-  var state = { pages: freshPages(), currentPageIndex: 0, font: 'DiaryComicSans', paper: 'notepad1.png', fontSize: 16, fontColor: '#262626' };
+  var state = { pages: freshPages(), currentPageIndex: 0, font: 'DiaryComicSans', paper: 'notepad1.png', fontSize: 16, fontColor: '#262626', recentColors: ['#262626', '#0054e3', '#1a7d1a', '#c62828', '#8e24aa'] };
   var cloudUser = null;
   var db = null;
   var saveTimer = null;
@@ -307,12 +297,11 @@
   var saveBtn = document.getElementById('save-btn');
   var syncDot = document.getElementById('sync-dot');
   var notebookEl = document.getElementById('notebook');
-  var settingsBtn = document.getElementById('settings-btn');
-  var settingsPanel = document.getElementById('settings-panel');
   var fontRow = document.getElementById('font-row');
-  var sizeRow = document.getElementById('size-row');
-  var colorRow = document.getElementById('color-row');
-  var bgRow = document.getElementById('bg-row');
+  var sizeRow = document.getElementById('paper-size-row');
+  var bgRow = document.getElementById('paper-size-row');
+  var colorPicker = document.getElementById('color-picker');
+  var recentColorsEl = document.getElementById('recent-colors');
 
   function getCurrentPage(){
     if(!state.pages.length) state.pages = freshPages();
@@ -344,9 +333,31 @@
 
     var colorValue = state.fontColor || '#262626';
     bodyInput.style.color = colorValue;
-    Array.prototype.forEach.call(colorRow.querySelectorAll('.color-pill'), function(btn){
-      btn.classList.toggle('active', btn.getAttribute('data-color') === colorValue);
+    colorPicker.value = colorValue;
+    renderRecentColors();
+  }
+
+  function renderRecentColors(){
+    recentColorsEl.innerHTML = '';
+    (state.recentColors || []).forEach(function(c){
+      var swatch = document.createElement('button');
+      swatch.className = 'recent-swatch';
+      swatch.style.background = c;
+      swatch.title = c;
+      swatch.addEventListener('click', function(){
+        setColor(c);
+      });
+      recentColorsEl.appendChild(swatch);
     });
+  }
+
+  function setColor(c){
+    state.fontColor = c;
+    if(!state.recentColors) state.recentColors = [];
+    state.recentColors = [c].concat(state.recentColors.filter(function(x){ return x !== c; })).slice(0, 6);
+    applyPreferences();
+    persistLocal();
+    pushToCloudIfSignedIn();
   }
 
   function renderCurrentPage(){
@@ -392,7 +403,7 @@
     setSyncStatus('saving');
     var metaRef = db.collection('users').doc(cloudUser.uid).collection('diary').doc('meta');
     metaRef.set({
-      notebook: { pages: state.pages, currentPageIndex: state.currentPageIndex, font: state.font, paper: state.paper, fontSize: state.fontSize, fontColor: state.fontColor },
+      notebook: { pages: state.pages, currentPageIndex: state.currentPageIndex, font: state.font, paper: state.paper, fontSize: state.fontSize, fontColor: state.fontColor, recentColors: state.recentColors },
       updatedAt: Date.now()
     }, { merge: true }).then(function(){
       setSyncStatus('online');
@@ -423,6 +434,7 @@
         if(nb.paper) state.paper = nb.paper;
         if(Number.isFinite(nb.fontSize)) state.fontSize = nb.fontSize;
         if(nb.fontColor) state.fontColor = nb.fontColor;
+        if(Array.isArray(nb.recentColors)) state.recentColors = nb.recentColors;
         renderCurrentPage();
         applyPreferences();
       }
@@ -465,10 +477,6 @@
     pushToCloudIfSignedIn();
   });
 
-  settingsBtn.addEventListener('click', function(){
-    settingsPanel.classList.toggle('open');
-  });
-
   Array.prototype.forEach.call(fontRow.querySelectorAll('.font-pill'), function(btn){
     btn.addEventListener('click', function(){
       state.font = btn.getAttribute('data-font');
@@ -496,13 +504,8 @@
     });
   });
 
-  Array.prototype.forEach.call(colorRow.querySelectorAll('.color-pill'), function(btn){
-    btn.addEventListener('click', function(){
-      state.fontColor = btn.getAttribute('data-color');
-      applyPreferences();
-      persistLocal();
-      pushToCloudIfSignedIn();
-    });
+  colorPicker.addEventListener('input', function(){
+    setColor(colorPicker.value);
   });
 
   titleInput.addEventListener('input', queueSave);
