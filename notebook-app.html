@@ -56,8 +56,8 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: calc(100% - 32px);
-    max-width: 428px;
+    width: calc(100% - 40px);
+    max-width: 402px;
     box-sizing: border-box;
     z-index: 200;
     padding: 14px 16px;
@@ -99,18 +99,18 @@
   }
   #app-footer {
     flex: 0 0 auto;
-    width: 100%;
-    max-width: 428px;
+    width: 94%;
+    max-width: 402px;
     margin: 0 auto;
-    padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+    padding: 5px 8px calc(5px + env(safe-area-inset-bottom, 0px));
     background: rgba(20,30,50,.35);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    border-radius: 12px 12px 0 0;
+    border-radius: 10px 10px 0 0;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
   }
   .dock-section-label {
     font-size: 9px;
@@ -122,6 +122,19 @@
     text-shadow: 0 1px 2px rgba(0,0,0,.4);
   }
   .dock-section { display: flex; flex-direction: column; gap: 3px; }
+  .dock-select {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    border: 1px solid rgba(255,255,255,.7);
+    background: rgba(255,255,255,.25) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><polygon points="0,0 10,0 5,6" fill="white"/></svg>') no-repeat right 10px center;
+    color: #fff;
+    border-radius: 8px;
+    padding: 6px 26px 6px 10px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .dock-select option { color: #1a3350; }
   .dock-section + .dock-section {
     padding-top: 2px;
   }
@@ -236,12 +249,31 @@
   #sticker-picker {
     display: none;
     position: fixed;
-    inset: 0;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 40px);
+    max-width: 402px;
+    height: 80%;
+    max-height: 560px;
     z-index: 50;
-    background: rgba(0,0,0,.55);
+    background: rgba(20,30,50,.9);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 14px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.5);
     flex-direction: column;
+    overflow: hidden;
   }
   #sticker-picker.open { display: flex; }
+  #sticker-picker-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.35);
+    z-index: 45;
+  }
+  #sticker-picker-backdrop.open { display: block; }
   #sticker-picker-header {
     flex: 0 0 auto;
     display: flex; align-items: center; justify-content: space-between;
@@ -417,6 +449,9 @@
       <button id="export-image-btn" class="sync-action-btn">💾 Save as Image</button>
     </div>
     <div id="sync-panel-actions">
+      <button id="signin-btn" class="sync-action-btn">🔑 Sign in to Cloud</button>
+    </div>
+    <div id="sync-panel-actions">
       <button id="push-btn" class="sync-action-btn">⬆ Push to Cloud</button>
       <button id="pull-btn" class="sync-action-btn">⬇ Pull from Cloud</button>
     </div>
@@ -455,30 +490,29 @@
       </div>
     </div>
     <div class="dock-section">
-      <div class="dock-section-label">Font</div>
-      <div id="font-row" class="dock-row">
-        <button class="font-pill" data-font="inherit">Default</button>
-        <button class="font-pill active" data-font="DiaryComicSans">Comic Sans</button>
-        <button class="font-pill" data-font="DiaryOldEnglish">Old English</button>
-        <button class="font-pill" data-font="DiaryMinecraft">Minecraft</button>
-        <button class="font-pill" data-font="DiaryEmoji">Artsy Cypher</button>
-      </div>
+      <select id="font-select" class="dock-select">
+        <option value="inherit">Default font</option>
+        <option value="DiaryComicSans" selected>Comic Sans</option>
+        <option value="DiaryOldEnglish">Old English</option>
+        <option value="DiaryMinecraft">Minecraft</option>
+        <option value="DiaryEmoji">Artsy Cypher</option>
+      </select>
     </div>
     <div class="dock-section">
-      <div class="dock-section-label">Text size &amp; color</div>
-      <div id="paper-size-row" class="dock-row">
-        <button class="size-pill" data-size="13">Small</button>
-        <button class="size-pill active" data-size="16">Medium</button>
-        <button class="size-pill" data-size="20">Large</button>
-        <button class="size-pill" data-size="25">X-Large</button>
-      </div>
+      <select id="size-select" class="dock-select">
+        <option value="13">Small</option>
+        <option value="16" selected>Medium</option>
+        <option value="20">Large</option>
+        <option value="25">X-Large</option>
+      </select>
+    </div>
+    <div class="dock-section">
       <div id="color-dock" class="dock-row">
         <input type="color" id="color-picker" value="#262626" title="Pick a text color" />
         <div id="recent-colors"></div>
       </div>
     </div>
     <div class="dock-section">
-      <div class="dock-section-label">Paper</div>
       <div id="hue-row" class="dock-row">
         <button class="bg-pill active" data-bg="notepad1.png">Plain</button>
         <span class="dock-divider"></span>
@@ -494,6 +528,7 @@
   </div>
 </div>
 
+<div id="sticker-picker-backdrop"></div>
 <div id="sticker-picker">
   <div id="sticker-picker-header">
     <span>Pick a sticker</span>
@@ -548,13 +583,14 @@
   var syncPanelStatus = document.getElementById('sync-panel-status');
   var pushBtn = document.getElementById('push-btn');
   var pullBtn = document.getElementById('pull-btn');
+  var signinBtn = document.getElementById('signin-btn');
   var openStickersBtn = document.getElementById('open-stickers-btn');
   var closeStickersBtn = document.getElementById('close-stickers-btn');
   var stickerPicker = document.getElementById('sticker-picker');
   var stickerGrid = document.getElementById('sticker-grid');
   var stickerLayer = document.getElementById('sticker-layer');
-  var fontRow = document.getElementById('font-row');
-  var sizeRow = document.getElementById('paper-size-row');
+  var fontSelect = document.getElementById('font-select');
+  var sizeSelect = document.getElementById('size-select');
   var bgRow = document.getElementById('hue-row');
   var colorPicker = document.getElementById('color-picker');
   var hueSlider = document.getElementById('hue-slider');
@@ -574,9 +610,7 @@
     bodyInput.style.fontFamily = fontValue === 'inherit'
       ? ''
       : '"' + fontValue + '", "Comic Sans MS", "Comic Sans", cursive';
-    Array.prototype.forEach.call(fontRow.querySelectorAll('.font-pill'), function(btn){
-      btn.classList.toggle('active', btn.getAttribute('data-font') === fontValue);
-    });
+    fontSelect.value = fontValue;
 
     var paperValue = state.paper || 'notepad1.png';
     notebookEl.style.backgroundImage = "url('" + paperValue + "')";
@@ -586,9 +620,7 @@
 
     var sizeValue = state.fontSize || 16;
     bodyInput.style.fontSize = sizeValue + 'px';
-    Array.prototype.forEach.call(sizeRow.querySelectorAll('.size-pill'), function(btn){
-      btn.classList.toggle('active', Number(btn.getAttribute('data-size')) === sizeValue);
-    });
+    sizeSelect.value = String(sizeValue);
 
     var colorValue = state.fontColor || '#262626';
     bodyInput.style.color = colorValue;
@@ -777,6 +809,7 @@
       else if(mode === 'saving') syncPanelStatus.textContent = 'Saving…';
       else syncPanelStatus.textContent = cloudUser ? 'Signed in — sync issue' : 'Not signed in — local only';
     }
+    if(signinBtn) signinBtn.style.display = cloudUser ? 'none' : '';
   }
 
   function pushToCloudIfSignedIn(){
@@ -865,20 +898,17 @@
     return bodyInput.contains(sel.anchorNode);
   }
 
-  Array.prototype.forEach.call(fontRow.querySelectorAll('.font-pill'), function(btn){
-    btn.addEventListener('mousedown', function(e){ if(hasTextSelection()) e.preventDefault(); });
-    btn.addEventListener('click', function(){
-      var fontValue = btn.getAttribute('data-font');
-      if(hasTextSelection()){
-        document.execCommand('fontName', false, fontValue === 'inherit' ? 'inherit' : fontValue);
-        queueSave();
-      } else {
-        state.font = fontValue;
-        applyPreferences();
-        persistLocal();
-        pushToCloudIfSignedIn();
-      }
-    });
+  fontSelect.addEventListener('change', function(){
+    var fontValue = fontSelect.value;
+    if(restoreCachedSelection()){
+      document.execCommand('fontName', false, fontValue === 'inherit' ? 'inherit' : fontValue);
+      queueSave();
+    } else {
+      state.font = fontValue;
+      applyPreferences();
+      persistLocal();
+      pushToCloudIfSignedIn();
+    }
   });
 
   Array.prototype.forEach.call(bgRow.querySelectorAll('.bg-pill'), function(btn){
@@ -909,20 +939,35 @@
     sel.addRange(newRange);
   }
 
-  Array.prototype.forEach.call(sizeRow.querySelectorAll('.size-pill'), function(btn){
-    btn.addEventListener('mousedown', function(e){ if(hasTextSelection()) e.preventDefault(); });
-    btn.addEventListener('click', function(){
-      var sizeValue = Number(btn.getAttribute('data-size'));
-      if(hasTextSelection()){
-        wrapSelectionInSpan('fontSize', sizeValue + 'px');
-        queueSave();
-      } else {
-        state.fontSize = sizeValue;
-        applyPreferences();
-        persistLocal();
-        pushToCloudIfSignedIn();
-      }
-    });
+  var cachedSelectionRange = null;
+  function cacheSelectionIfAny(){
+    cachedSelectionRange = hasTextSelection() ? window.getSelection().getRangeAt(0).cloneRange() : null;
+  }
+  function restoreCachedSelection(){
+    if(!cachedSelectionRange) return false;
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(cachedSelectionRange);
+    return true;
+  }
+
+  fontSelect.addEventListener('mousedown', cacheSelectionIfAny);
+  fontSelect.addEventListener('focus', cacheSelectionIfAny);
+
+  sizeSelect.addEventListener('mousedown', cacheSelectionIfAny);
+  sizeSelect.addEventListener('focus', cacheSelectionIfAny);
+
+  sizeSelect.addEventListener('change', function(){
+    var sizeValue = Number(sizeSelect.value);
+    if(restoreCachedSelection()){
+      wrapSelectionInSpan('fontSize', sizeValue + 'px');
+      queueSave();
+    } else {
+      state.fontSize = sizeValue;
+      applyPreferences();
+      persistLocal();
+      pushToCloudIfSignedIn();
+    }
   });
 
   Array.prototype.forEach.call(document.querySelectorAll('.fmt-btn[data-cmd]'), function(btn){
@@ -964,11 +1009,18 @@
     queueSave();
   });
 
+  var stickerPickerBackdrop = document.getElementById('sticker-picker-backdrop');
   openStickersBtn.addEventListener('click', function(){
     stickerPicker.classList.add('open');
+    stickerPickerBackdrop.classList.add('open');
   });
   closeStickersBtn.addEventListener('click', function(){
     stickerPicker.classList.remove('open');
+    stickerPickerBackdrop.classList.remove('open');
+  });
+  stickerPickerBackdrop.addEventListener('click', function(){
+    stickerPicker.classList.remove('open');
+    stickerPickerBackdrop.classList.remove('open');
   });
 
   colorPicker.addEventListener('input', function(){
@@ -999,6 +1051,10 @@
   syncPanelBackdrop.addEventListener('click', function(){
     syncPanel.classList.remove('open');
     syncPanelBackdrop.classList.remove('open');
+  });
+
+  signinBtn.addEventListener('click', function(){
+    window.open('desktop-diary.html', '_blank');
   });
 
   pushBtn.addEventListener('click', function(){
