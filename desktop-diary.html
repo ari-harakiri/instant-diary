@@ -3979,7 +3979,7 @@ try {
 
   function applyBackground(){
     var desktop = document.getElementById('desktop');
-    var fallbackBackground = typeof DEFAULT_BG_B64 === 'string' ? DEFAULT_BG_B64 : 'assets/embedded/default-desktop-background.jpg';
+    var fallbackBackground = typeof DEFAULT_BG_B64 === 'string' ? DEFAULT_BG_B64 : 'app-background.jpg';
     if(!desktop) return;
     if(state.background && state.background.image){
       desktop.style.background = 'center / cover no-repeat url("' + state.background.image + '")';
@@ -5287,7 +5287,7 @@ try {
   }
 
   // ---------------- mascot: yellow smiley on a blue square badge ----------------
-  var DEFAULT_BG_B64 = 'assets/embedded/default-desktop-background.jpg';
+  var DEFAULT_BG_B64 = 'app-background.jpg';
   var SIGNON_ICON_B64 = 'assets/embedded/signon-icon.png';
   var SMILEY_B64 = 'assets/embedded/smiley-mascot.png';
   var DIARY_B64  = 'assets/embedded/diary-icon.jpg';
@@ -5777,6 +5777,10 @@ try {
       errEl.style.color = '#2a7d2a';
       errEl.textContent = 'Entering offline mode…';
     }
+    // Match the Sign On window's close button so it remains available in the
+    // desktop corner if the guest later wants to sign on.
+    document.getElementById('signon-wrap').style.display = 'none';
+    document.getElementById('signon-icon').style.display = 'flex';
     setSupabaseSession(null);
     state = makeFreshState();
     state.savePassword = false;
