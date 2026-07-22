@@ -11539,26 +11539,44 @@ try {
       '</div>';
     }
 
+    function wireProfileActions(el){
+      el._refreshProfile=function(){var wb=el.querySelector('.win-body');if(wb)wb.outerHTML=buildBlogBody();wireProfileActions(el);};
+      var newPostBtn = el.querySelector('#vp-newpost-btn');
+      if(newPostBtn){
+        newPostBtn.onclick = function(){
+          openBlogPostEditor(null, function(){
+            el._refreshProfile();
+            openInfoWindow('Entry saved privately. Use View Entries when you want to read it or share it to your profile.');
+          });
+        };
+      }
+      var viewEntries=el.querySelector('#vp-view-entries');if(viewEntries)viewEntries.onclick=openDiaryEntriesWindow;
+    }
+
+    if(isPreview){
+      var existingProfileWindow = null;
+      for(var i=openWindows.length-1;i>=0;i--){
+        if(openWindows[i].type === 'viewprofile'){
+          existingProfileWindow = openWindows[i];
+          break;
+        }
+      }
+      if(existingProfileWindow){
+        var existingBody = existingProfileWindow.el.querySelector('.win-body');
+        if(existingBody) existingBody.outerHTML = buildBlogBody();
+        wireProfileActions(existingProfileWindow.el);
+        focusWindow(existingProfileWindow.id);
+        return { id: existingProfileWindow.id, el: existingProfileWindow.el };
+      }
+    }
+
     createWindow({
       title: 'Profile',
       extraClass: 'profile-win',
       bodyHtml: buildBlogBody(),
       type: 'viewprofile',
       onMount: function(el, id){
-        function wireActions(){
-          el._refreshProfile=function(){var wb=el.querySelector('.win-body');if(wb)wb.outerHTML=buildBlogBody();wireActions();};
-          var newPostBtn = el.querySelector('#vp-newpost-btn');
-          if(newPostBtn){
-            newPostBtn.onclick = function(){
-              openBlogPostEditor(null, function(){
-                el._refreshProfile();
-                openInfoWindow('Entry saved privately. Use View Entries when you want to read it or share it to your profile.');
-              });
-            };
-          }
-          var viewEntries=el.querySelector('#vp-view-entries');if(viewEntries)viewEntries.onclick=openDiaryEntriesWindow;
-        }
-        wireActions();
+        wireProfileActions(el);
       }
     });
   }
