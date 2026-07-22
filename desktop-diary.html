@@ -4432,6 +4432,10 @@ try {
       var x = Number(saved.x), y = Number(saved.y);
       if(!Number.isFinite(x) || !Number.isFinite(y)) return null;
       if(icon.id==='dtd-mailbox-icon' && saved.userPlaced !== true) return null;
+      // Older automatic fish-tank coordinates can overlap the Buddy List on
+      // narrow screens. Use the current responsive default unless the person
+      // deliberately dragged the tank somewhere else.
+      if(icon.id==='fish-tank-desktop-icon' && saved.userPlaced !== true) return null;
       return {
         x: x,
         y: y,
