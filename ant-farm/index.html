@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#27150f">
+  <title>Little Colony</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="game" aria-labelledby="game-title">
+    <header class="game-header">
+      <div>
+        <p class="eyebrow">A pocket ant farm</p>
+        <h1 id="game-title">Little Colony</h1>
+      </div>
+      <div class="header-actions">
+        <button class="text-button" id="help-button" type="button">How to care</button>
+        <button class="text-button danger" id="reset-button" type="button">Start over</button>
+      </div>
+    </header>
+
+    <section class="status-strip" aria-label="Colony status">
+      <div class="colony-summary">
+        <span class="day-badge" id="day-label">Day 1</span>
+        <div>
+          <strong id="stage-label">Starter burrow</strong>
+          <span id="population-label">3 workers · 2 eggs</span>
+        </div>
+      </div>
+      <div class="meters" id="meters"></div>
+    </section>
+
+    <section class="machine-wrap" aria-label="Interactive ant habitat">
+      <div class="machine" id="machine">
+        <canvas id="habitat" width="960" height="550" aria-label="Animated ant colony habitat"></canvas>
+
+        <div class="lcd" aria-live="polite">
+          <span class="lcd-face" id="lcd-face">•ᴗ•</span>
+          <span class="lcd-message" id="lcd-message">The colony is settling in.</span>
+        </div>
+
+        <button class="machine-button food-button" data-action="feed" type="button" aria-label="Feed the ants">
+          <span>Feed</span>
+        </button>
+        <button class="machine-button water-button" data-action="water" type="button" aria-label="Give the ants water">
+          <span>Water</span>
+        </button>
+        <button class="machine-button light-button" data-action="light" type="button" aria-label="Toggle the habitat lamp" aria-pressed="false">
+          <span>Light</span>
+        </button>
+        <button class="machine-button love-button" data-action="love" type="button" aria-label="Give the colony attention">
+          <span>Love</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="care-dock" aria-label="Care controls">
+      <button class="care-card food" data-action="feed" type="button">
+        <span class="care-icon">♨</span>
+        <span><strong>Feed</strong><small>Seeds and sugar</small></span>
+      </button>
+      <button class="care-card water" data-action="water" type="button">
+        <span class="care-icon">◆</span>
+        <span><strong>Water</strong><small>Refill their droplets</small></span>
+      </button>
+      <button class="care-card light" data-action="light" type="button" aria-pressed="false">
+        <span class="care-icon">☀</span>
+        <span><strong>Light</strong><small id="light-note">Lamp is off</small></span>
+      </button>
+      <button class="care-card love" data-action="love" type="button">
+        <span class="care-icon">♥</span>
+        <span><strong>Love</strong><small>Visit and encourage</small></span>
+      </button>
+      <button class="care-card clean" data-action="clean" type="button">
+        <span class="care-icon">✦</span>
+        <span><strong>Clean</strong><small>Tidy the habitat</small></span>
+      </button>
+    </section>
+
+    <section class="journal" aria-live="polite">
+      <span class="journal-dot" aria-hidden="true"></span>
+      <p id="journal-message">Your tiny colony has arrived. Keep their needs balanced and they will build.</p>
+      <span class="save-note" id="save-note">Saved locally</span>
+    </section>
+  </main>
+
+  <dialog id="help-dialog">
+    <form method="dialog" class="dialog-card">
+      <button class="dialog-close" value="close" aria-label="Close">×</button>
+      <p class="eyebrow">Field notes</p>
+      <h2>Caring for your colony</h2>
+      <p>Keep food, water, happiness, and cleanliness balanced. Healthy ants dig new chambers, raise larvae, and grow the colony.</p>
+      <ul>
+        <li><strong>Day and night are automatic.</strong> Ants work by day and slow down to rest at night.</li>
+        <li><strong>The lamp is optional.</strong> It gives a small warmth boost at night, but leaving it on too long makes the habitat dry.</li>
+        <li><strong>Your progress saves automatically.</strong> The colony also changes gently while you are away.</li>
+        <li><strong>Watch the glass.</strong> Food carrying, eggs, larvae, tunnel growth, sleeping, and winged ants all appear inside the habitat.</li>
+      </ul>
+      <button class="primary-button" value="close">Visit the colony</button>
+    </form>
+  </dialog>
+
+  <script src="game.js"></script>
+</body>
+</html>

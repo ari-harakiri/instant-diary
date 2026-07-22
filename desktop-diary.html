@@ -863,6 +863,30 @@ var runtime={
     box-shadow:none;
     box-sizing:border-box;
   }
+  /* Lightweight previews for the standalone pet habitats. */
+  body:not(.signed-in) #ant-farm-desktop-icon,
+  body:not(.signed-in) #fish-tank-desktop-icon { display:none; }
+  #ant-farm-desktop-icon { top:71vh; left:auto; right:144px; bottom:auto; }
+  #fish-tank-desktop-icon { top:62vh; left:auto; right:44px; bottom:auto; }
+  @media (max-height:800px){
+    #ant-farm-desktop-icon { top:calc(100vh - 248px); }
+    #fish-tank-desktop-icon { top:calc(100vh - 316px); }
+  }
+  .pet-desktop-icon { width:72px; }
+  .pet-desktop-art { position:relative; width:64px; height:58px; display:grid; place-items:center; overflow:visible; pointer-events:none; }
+  .pet-desktop-art > img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; image-rendering:pixelated; filter:drop-shadow(1px 2px 2px rgba(0,0,0,.5)); }
+  .pet-mini-fish { position:absolute; z-index:2; left:18px; top:27px; width:14px; height:9px; border:1px solid #5e2515; border-radius:55% 48% 48% 55%; background:#ff8d1d; box-shadow:inset 0 2px 0 #ffbd42; animation:dtd-mini-fish-swim 4.6s ease-in-out infinite alternate; }
+  .pet-mini-fish:before { position:absolute; left:-6px; top:1px; border-top:4px solid transparent; border-bottom:4px solid transparent; border-right:7px solid #ee6f18; content:""; }
+  .pet-mini-fish:after { position:absolute; right:2px; top:2px; width:2px; height:2px; border-radius:50%; background:#261716; box-shadow:0 0 0 1px #fff5d1; content:""; }
+  .pet-mini-bubble { position:absolute; z-index:2; left:37px; top:24px; width:3px; height:3px; border:1px solid rgba(226,252,255,.9); border-radius:50%; animation:dtd-mini-bubble-rise 2.4s ease-out infinite; }
+  .pet-ant-window { position:absolute; z-index:2; left:9px; top:18px; width:46px; height:18px; overflow:hidden; }
+  .pet-mini-ant { position:absolute; left:7px; top:11px; width:4px; height:4px; border-radius:50%; background:#23150f; box-shadow:4px 0 0 #23150f,8px 0 0 #23150f; animation:dtd-mini-ant-crawl 6.8s linear infinite; }
+  .pet-mini-ant.second { top:13px; animation-delay:-3.4s; animation-duration:8.2s; }
+  @keyframes dtd-mini-fish-swim { 0%{transform:translateX(0) translateY(1px) scaleX(1)} 47%{transform:translateX(20px) translateY(-2px) scaleX(1)} 53%{transform:translateX(20px) translateY(-2px) scaleX(-1)} 100%{transform:translateX(0) translateY(2px) scaleX(-1)} }
+  @keyframes dtd-mini-bubble-rise { 0%{transform:translate(0,6px);opacity:0} 25%{opacity:.9} 100%{transform:translate(4px,-15px);opacity:0} }
+  @keyframes dtd-mini-ant-crawl { 0%{transform:translateX(0) translateY(0)} 45%{transform:translateX(26px) translateY(-2px)} 50%{transform:translateX(26px) translateY(-2px) scaleX(-1)} 95%,100%{transform:translateX(0) translateY(1px) scaleX(-1)} }
+  @media (prefers-reduced-motion:reduce){.pet-mini-fish,.pet-mini-bubble,.pet-mini-ant{animation:none}}
+
   .desktop-icon span {
     color:#fff; font-size:11px; text-align:center; text-shadow:1px 1px 2px rgba(0,0,0,.8);
     padding:1px 3px; border-radius:2px;
@@ -3435,6 +3459,28 @@ function forceLoaderInteractionRecovery(){
   </div>
 
 
+  <div id="ant-farm-desktop-icon" class="desktop-icon pet-desktop-icon" role="button" tabindex="0" title="Double-click to open Little Colony">
+    <div class="pet-desktop-art pet-ant-art" aria-hidden="true">
+      <img src="ant-farm/assets/enclosure.png" alt="">
+      <span class="pet-ant-window">
+        <i class="pet-mini-ant"></i>
+        <i class="pet-mini-ant second"></i>
+      </span>
+    </div>
+    <span>Ant Farm</span>
+  </div>
+
+  <div id="fish-tank-desktop-icon" class="desktop-icon pet-desktop-icon" role="button" tabindex="0" title="Double-click to open Little Bowl">
+    <div class="pet-desktop-art pet-fish-art" aria-hidden="true">
+      <img src="fish-tank/assets/fishbowl.png" alt="">
+      <i class="pet-mini-fish"></i>
+      <i class="pet-mini-bubble"></i>
+    </div>
+    <span>Fish Tank</span>
+  </div>
+
+
+
   <div id="desktop-companion" class="desktop-icon" role="button" tabindex="0" title="Koba the Computa Companion">
     <div id="koba-click-target" aria-hidden="true"></div>
     <div class="companion-dog-sprite" aria-hidden="true"></div>
@@ -4578,6 +4624,19 @@ try {
       suggestionIcon.addEventListener('dblclick', function(e){e.preventDefault();e.stopPropagation();openSuggestionBoxWindow();});
       suggestionIcon.addEventListener('keydown', function(e){if(e.key!=='Enter'&&e.key!==' ')return;e.preventDefault();e.stopPropagation();openSuggestionBoxWindow();});
     }
+    function wirePetDesktopIcon(id,path){
+      var icon=document.getElementById(id);
+      if(!icon)return;
+      function openPet(){window.open(path,'_blank','noopener');}
+      icon.addEventListener('dblclick',function(e){e.preventDefault();e.stopPropagation();openPet();});
+      icon.addEventListener('keydown',function(e){
+        if(e.key!=='Enter'&&e.key!==' ')return;
+        e.preventDefault();e.stopPropagation();openPet();
+      });
+    }
+    wirePetDesktopIcon('ant-farm-desktop-icon','ant-farm/index.html');
+    wirePetDesktopIcon('fish-tank-desktop-icon','fish-tank/index.html');
+
     function toggleNotebookWindow(){
       if(!document.body.classList.contains('signed-in')){
         if(typeof showSignon === 'function') showSignon();

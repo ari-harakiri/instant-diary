@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07162d">
+  <title>Little Bowl</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="game" aria-labelledby="game-title">
+    <header class="game-header">
+      <div>
+        <p class="eyebrow">A pocket aquarium</p>
+        <h1 id="game-title">Little Bowl</h1>
+      </div>
+      <div class="header-actions">
+        <button class="text-button" id="help-button" type="button">How to care</button>
+        <button class="text-button danger" id="reset-button" type="button">Start over</button>
+      </div>
+    </header>
+
+    <section class="status-strip" aria-label="Fish status">
+      <div class="fish-summary">
+        <span class="day-badge" id="day-label">Day 1</span>
+        <div>
+          <strong id="stage-label">Fresh little bowl</strong>
+          <span id="fish-label">Bubbles · young goldfish</span>
+        </div>
+      </div>
+      <div class="meters" id="meters"></div>
+    </section>
+
+    <section class="bowl-stage" aria-label="Interactive fish tank">
+      <div class="bowl" id="bowl">
+        <canvas id="aquarium" width="720" height="480" aria-label="Animated fish swimming in its bowl"></canvas>
+        <img class="food-jar-tool" id="food-jar-tool" src="assets/fish-food-jar.png" alt="">
+        <div class="cleaning-hint" id="cleaning-hint" aria-live="polite">
+          <strong>Move the net through the bowl</strong>
+          <span id="cleaning-progress">0 pieces left</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="care-dock" aria-label="Fish care controls">
+      <button class="care-card feed" data-action="feed" type="button" aria-pressed="false">
+        <span class="care-icon">◆</span>
+        <span><strong>Feed</strong><small id="feed-note">Pick up the food jar</small></span>
+      </button>
+      <button class="care-card water" data-action="water" type="button">
+        <span class="care-icon">●</span>
+        <span><strong>Fresh water</strong><small>Refresh the bowl</small></span>
+      </button>
+      <button class="care-card light" data-action="light" type="button" aria-pressed="false">
+        <span class="care-icon">☀</span>
+        <span><strong>Light</strong><small id="light-note">Lamp is off</small></span>
+      </button>
+      <button class="care-card play" data-action="play" type="button">
+        <span class="care-icon">♥</span>
+        <span><strong>Play</strong><small>Tap and make bubbles</small></span>
+      </button>
+      <button class="care-card clean" data-action="clean" type="button" aria-pressed="false">
+        <span class="care-icon">✦</span>
+        <span><strong>Clean</strong><small id="clean-note">Sweep with the net</small></span>
+      </button>
+    </section>
+
+    <section class="fish-message" aria-live="polite">
+      <div class="portrait" id="portrait">•ᴗ•</div>
+      <div>
+        <span>Bubbles says</span>
+        <p id="message">This water feels wonderful!</p>
+      </div>
+      <span class="save-note" id="save-note">Saved locally</span>
+    </section>
+  </main>
+
+  <dialog id="help-dialog">
+    <form method="dialog" class="dialog-card">
+      <button class="dialog-close" value="close" aria-label="Close">×</button>
+      <p class="eyebrow">Aquarium notes</p>
+      <h2>Caring for Bubbles</h2>
+      <p>Keep hunger, water quality, happiness, and cleanliness balanced. Bubbles will show the most urgent need in a speech bubble and the matching care button will glow.</p>
+      <ul>
+        <li><strong>Feed a little at a time.</strong> Bubbles swims to each falling flake and eats it.</li>
+        <li><strong>The food jar is interactive.</strong> Choose Feed, move the jar over the bowl, then click to shake in three small servings.</li>
+        <li><strong>Day and night are automatic.</strong> At night, Bubbles settles near the gravel to sleep.</li>
+        <li><strong>Dirt appears gradually.</strong> When you can see specks in the bowl, choose Clean and move your cursor-net through them.</li>
+        <li><strong>The lamp is optional.</strong> It wakes Bubbles at night, but leaving it on slowly lowers energy.</li>
+        <li><strong>The bowl grows through decoration.</strong> Healthy care unlocks coral, treasure, and a tiny castle.</li>
+        <li><strong>Progress saves automatically.</strong> Needs change gently while you are away.</li>
+      </ul>
+      <button class="primary-button" value="close">Visit Bubbles</button>
+    </form>
+  </dialog>
+
+  <script src="game.js"></script>
+</body>
+</html>
