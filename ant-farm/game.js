@@ -74,10 +74,23 @@
     try {
       const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
       if (!saved || saved.version !== 1) return defaultState();
-      return { ...defaultState(), ...saved, lastUpdate: Number(saved.lastUpdate) || Date.now() };
+      return {
+        ...defaultState(),
+        ...saved,
+        createdAt: Number(saved.createdAt) || Date.now(),
+        lastUpdate: Number(saved.lastUpdate) || Date.now()
+      };
     } catch (_error) {
       return defaultState();
     }
+  }
+
+  function syncCalendarDay() {
+    const now = Date.now();
+    if (!Number.isFinite(state.createdAt) || state.createdAt <= 0 || state.createdAt > now) {
+      state.createdAt = now;
+    }
+    state.day = Math.floor((now - state.createdAt) / (24 * 60 * 60 * 1000)) + 1;
   }
 
   function saveState(showNotice = false) {
@@ -95,6 +108,7 @@
   }
 
   function applyOfflineProgress() {
+    syncCalendarDay();
     const awaySeconds = Math.min(8 * 60 * 60, Math.max(0, (Date.now() - state.lastUpdate) / 1000));
     if (awaySeconds < 15) return;
     const awayMinutes = awaySeconds / 60;
@@ -106,7 +120,6 @@
     state.health = clamp(state.health + (wellbeing > 55 ? awayMinutes * .035 : -awayMinutes * .12));
     state.growth += Math.min(120, awaySeconds * (wellbeing / 100) * .05);
     state.gameMinutes += awaySeconds * 2;
-    state.day = Math.floor(state.gameMinutes / 1440) + 1;
     state.actionMessage = awaySeconds > 300
       ? `While you were away, the colony kept ${wellbeing > 55 ? "digging gently" : "waiting for care"}.`
       : state.actionMessage;
@@ -188,7 +201,7 @@
   function updateSimulation(dt) {
     const realSeconds = dt / 1000;
     state.gameMinutes += realSeconds * 2;
-    state.day = Math.floor(state.gameMinutes / 1440) + 1;
+    syncCalendarDay();
     const night = isNight();
 
     state.food = clamp(state.food - realSeconds * .018);

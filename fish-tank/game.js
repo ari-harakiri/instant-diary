@@ -92,10 +92,23 @@
     try {
       const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
       if (!saved || saved.version !== 1) return defaultState();
-      return { ...defaultState(), ...saved, lastUpdate: Number(saved.lastUpdate) || Date.now() };
+      return {
+        ...defaultState(),
+        ...saved,
+        createdAt: Number(saved.createdAt) || Date.now(),
+        lastUpdate: Number(saved.lastUpdate) || Date.now()
+      };
     } catch (_error) {
       return defaultState();
     }
+  }
+
+  function syncCalendarDay() {
+    const now = Date.now();
+    if (!Number.isFinite(state.createdAt) || state.createdAt <= 0 || state.createdAt > now) {
+      state.createdAt = now;
+    }
+    state.day = Math.floor((now - state.createdAt) / (24 * 60 * 60 * 1000)) + 1;
   }
 
   function saveState(showNotice = false) {
@@ -113,6 +126,7 @@
   }
 
   function applyOfflineProgress() {
+    syncCalendarDay();
     const awaySeconds = Math.min(8 * 60 * 60, Math.max(0, (Date.now() - state.lastUpdate) / 1000));
     if (awaySeconds < 15) return;
     const awayMinutes = awaySeconds / 60;
@@ -124,7 +138,6 @@
     state.health = clamp(state.health + (wellbeing > 55 ? awayMinutes * .035 : -awayMinutes * .13));
     state.growth += Math.min(100, awaySeconds * (wellbeing / 100) * .04);
     state.gameMinutes += awaySeconds * 2;
-    state.day = Math.floor(state.gameMinutes / 1440) + 1;
     state.actionMessage = awaySeconds > 300
       ? `Bubbles spent the time ${wellbeing > 55 ? "swimming and watching bubbles" : "waiting for a little care"}.`
       : state.actionMessage;
@@ -346,7 +359,7 @@
     const seconds = dt / 1000;
     const night = isNight();
     state.gameMinutes += seconds * 2;
-    state.day = Math.floor(state.gameMinutes / 1440) + 1;
+    syncCalendarDay();
     state.hunger = clamp(state.hunger - seconds * .019);
     state.water = clamp(state.water - seconds * .014);
     state.cleanliness = clamp(state.cleanliness - seconds * .011);
@@ -816,7 +829,10 @@
     ui.cleanNote.textContent = cleaning
       ? "Move through every speck"
       : ["Tank is spotless", "A few specks to scoop", "Tank needs cleaning", "A messy tank to clean"][dirtStage];
-    ui.bowl.classList.toggle("night", isNight() && !state.lampOn);
+    const timePhase = getLocalTimePhase();
+    ui.bowl.classList.toggle("dawn", timePhase === "dawn" && !state.lampOn);
+    ui.bowl.classList.toggle("sunset", timePhase === "sunset" && !state.lampOn);
+    ui.bowl.classList.toggle("night", timePhase === "night" && !state.lampOn);
     ui.bowl.classList.toggle("lamp", state.lampOn);
     const mood = getMood();
     ui.portrait.textContent = mood.face;
@@ -836,9 +852,16 @@
     return { face: "•‿•", message: "I am doing well. Maybe we can make bubbles later.", action: null, icon: "○", sad: false };
   }
 
+  function getLocalTimePhase(now = new Date()) {
+    const hour = now.getHours() + now.getMinutes() / 60;
+    if (hour >= 5 && hour < 7) return "dawn";
+    if (hour >= 7 && hour < 17) return "day";
+    if (hour >= 17 && hour < 20) return "sunset";
+    return "night";
+  }
+
   function isNight() {
-    const hour = (state.gameMinutes / 60) % 24;
-    return hour < 6 || hour >= 19;
+    return getLocalTimePhase() === "night";
   }
 
   function clamp(value, min = 0, max = 100) { return Math.max(min, Math.min(max, value)); }
