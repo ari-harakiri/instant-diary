@@ -1119,8 +1119,8 @@ var runtime={
   .bl-empty { padding:12px 8px; font-size:10.5px; color:#777; text-align:center; }
 
   /* ---------- IM window ---------- */
-  .im-win { width: min(380px, 94vw); height: min(340px, 70vh); }
-  .im-stats { font-size:10px; color:#666; padding:3px 8px; background:#f5f5f0; border-bottom:1px solid #ddd; text-align:right; }
+  .im-win { width: min(380px, 94vw); height: min(380px, 75vh); }
+  .im-stats { margin-left:auto; text-align:right; white-space:nowrap; }
   .im-toolbar { display:flex; gap:3px; padding:4px 5px; background:#ece9d8; border-bottom:1px solid #ccc; }
   .im-toolbar button { width:24px; height:22px; font-size:11px; border:1px solid #b0aca0; border-radius:3px; background:#fff; cursor:pointer; }
   .im-log { flex:1; overflow-y:auto; background:#fff; padding:8px; font-size:12.5px; line-height:1.4; -webkit-overflow-scrolling: touch; }
@@ -1209,7 +1209,7 @@ var runtime={
   .who.prompt-who { color:#8a6d00; font-style:italic; }
   .im-entry.prompt-entry .txt { color:#5b4900; font-style:italic; background:#fff8e1; padding:4px 6px; border-radius:4px; display:inline-block; }
   .status-tag { font-size:9px; color:#0850d0; font-weight:bold; display:inline-block; margin-bottom:2px; }
-  .pct-key { font-size:9px; color:#888; padding:3px 6px; background:#f5f5f0; border-top:1px solid #e5e2d5; }
+  .pct-key { display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:9px; color:#888; padding:3px 6px; background:#f5f5f0; border-top:1px solid #e5e2d5; }
   .im-action-row { display:flex; align-items:center; gap:4px; padding:5px 6px; background:#ece9d8; border-top:1px solid #ccc; }
   .action-btn { display:flex; flex-direction:column; align-items:center; gap:1px; font-size:9px; color:#333;
     border:1px solid #b0aca0; border-radius:4px; background:#fff; padding:3px 7px; cursor:pointer; }
@@ -7655,7 +7655,6 @@ try {
 
     var inputId = 'input-'+buddyId;
     var body =
-      '<div class="im-stats" id="stats-'+buddyId+'"></div>' +
       '<div class="im-log" id="log-'+buddyId+'"></div>' +
       '<div class="editing-banner" id="editbanner-'+buddyId+'" style="display:none;">Editing &mdash; <span class="edit-cancel">Cancel</span> &nbsp; <label class="lock-toggle"><input type="checkbox" id="edit-lock-'+buddyId+'"> 🔒 Private</label></div>' +
       '<div class="im-compose-row">' +
@@ -7668,7 +7667,7 @@ try {
         '<button class="send-btn-gold" id="send-'+buddyId+'">'+iconSVG('send')+'<span id="send-label-'+buddyId+'">Send</span></button>' +
       '</div>' +
       '<div class="draft-links" style="text-align:right;padding-right:8px;"><span class="draft-save-link-'+buddyId+'">Save Draft</span></div>' +
-      '<div class="pct-key">%t = time &nbsp; %d = date</div>';
+      '<div class="pct-key"><span>%t = time &nbsp; %d = date</span><span class="im-stats" id="stats-'+buddyId+'"></span></div>';
 
     createWindow({
       title: buddy.name,
@@ -7677,6 +7676,7 @@ try {
       bodyHtml: body,
       type: 'im',
       buddyId: buddyId,
+      constructionBar: false,
       onMount: function(el, id){
         renderLog(buddyId);
         renderStats(buddyId);
