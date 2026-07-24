@@ -634,7 +634,7 @@
   .dtd-construction span { display:inline-block; padding:3px 9px; border:1px solid #111; background:#ffd836; }
   .dtd-shell { flex:1 1 auto; min-height:0; display:grid; grid-template-columns:105px minmax(0,1fr); background:#fff; }
   .dtd-sidebar { padding:8px; background:#ece9d8; border-right:1px solid #aaa; }
-  .dtd-sidebar .btn { width:100%; padding:6px 5px; margin-bottom:6px; font-size:11px; }
+  .dtd-sidebar .btn { width:100%; padding:6px 5px; margin-bottom:6px; font-size:11px; white-space:nowrap; }
   .dtd-delivery-note { margin-top:10px; padding:7px 5px; border:1px solid #b6ad8d; background:#fffbe6; color:#5c563f; font-size:9px; line-height:1.35; text-align:center; }
   .dtd-folder.active { border-style:inset; filter:brightness(.92); }
   .dtd-main { min-width:0; min-height:0; display:flex; flex-direction:column; }
@@ -670,7 +670,7 @@
   .dtd-address-suffix { flex:none; padding:0 6px 0 2px; color:#555; font-size:10px; white-space:nowrap; user-select:none; }
   .dtd-compose textarea { height:210px; resize:none; }
   .dtd-compose-actions { display:flex; justify-content:flex-end; gap:6px; }
-  @media(max-width:500px){.dtd-win{height:min(520px,82vh)}.dtd-shell{grid-template-columns:82px minmax(0,1fr)}.dtd-row{grid-template-columns:1fr auto}.dtd-row .dtd-subject{grid-column:1/-1}.dtd-compose label{grid-template-columns:1fr}.dtd-compose textarea{height:190px}}
+  @media(max-width:500px){.dtd-win{height:min(520px,82vh)}.dtd-shell{grid-template-columns:96px minmax(0,1fr)}.dtd-row{grid-template-columns:1fr auto}.dtd-row .dtd-subject{grid-column:1/-1}.dtd-compose label{grid-template-columns:1fr}.dtd-compose textarea{height:190px}}
   @media(max-width:700px){
     /* The 68px flight/compose sheet has about 10px of transparent space below
        the pigeon's feet, so its visible perch sits lower than its image box. */

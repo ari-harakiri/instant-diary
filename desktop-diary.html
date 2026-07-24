@@ -668,7 +668,7 @@ var runtime={
     --th-item-active-1:#1a4fc4; --th-item-active-2:#0d3aa8;
     --th-clock-1:#1a4fc4; --th-clock-2:#0d3aa8; --th-clock-border:#0a2e85;
     --th-start-1:#7ed957; --th-start-2:#3a9d23; --th-start-3:#237014; --th-start-border:#1f5e10;
-    --companion-puppy:url('../assets/embedded/companion-puppy.png');
+    --companion-puppy:url('assets/embedded/companion-puppy.png');
   }
     @font-face {
     font-family: 'DiaryMinecraft';
@@ -882,19 +882,19 @@ var runtime={
   #dtd-mailbox-icon.mail-window-open { z-index:auto !important; }
   #dtd-mailbox-icon.mail-window-open .dtd-pigeon { z-index:100000 !important; }
   #dtd-mailbox-icon .dtd-mailbox-art { display:block; width:62px; height:62px; object-fit:contain; filter:drop-shadow(1px 2px 2px rgba(0,0,0,.55)); }
-  #dtd-mailbox-icon .dtd-pigeon { position:absolute; top:-58px; right:-12px; width:68px; height:68px; display:none; padding:0; border-radius:0; pointer-events:none; transform-origin:50% 100%; background:url('../companions/sprites/pigeon/pigeon-perched.png') no-repeat center / contain; image-rendering:pixelated; }
+  #dtd-mailbox-icon .dtd-pigeon { position:absolute; top:-58px; right:-12px; width:68px; height:68px; display:none; padding:0; border-radius:0; pointer-events:none; transform-origin:50% 100%; background:url('companions/sprites/pigeon/pigeon-perched.png') no-repeat center / contain; image-rendering:pixelated; }
   #dtd-mailbox-icon:active .dtd-pigeon { background-color:transparent; }
   /* The 68px flight/compose sheet also lands on the mailbox-body baseline. */
   #dtd-mailbox-icon .dtd-pigeon { top:-46px; }
   #dtd-mailbox-icon.has-new-mail .dtd-pigeon, #dtd-mailbox-icon.pigeon-departing .dtd-pigeon, #dtd-mailbox-icon.pigeon-composing .dtd-pigeon { display:block; }
-  #dtd-mailbox-icon.pigeon-click-perched:not(.has-new-mail):not(.pigeon-arriving):not(.pigeon-departing):not(.pigeon-composing):not(.pigeon-sending) .dtd-pigeon { display:block; background-image:url('../companions/sprites/pigeon/pigeon-perched.png'); background-position:center; background-size:contain; }
-  #dtd-mailbox-icon.has-new-mail:not(.pigeon-arriving):not(.pigeon-departing) .dtd-pigeon { top:-43px; right:1px; width:54px; height:54px; background-image:url('../assets/embedded/pigeon-arriving.png'); background-repeat:no-repeat; background-position:center; background-size:contain; animation:dtd-pigeon-unread-idle 7.5s ease-in-out infinite; }
-  #dtd-mailbox-icon.pigeon-composing:not(.has-new-mail):not(.pigeon-arriving):not(.pigeon-departing):not(.pigeon-sending) .dtd-pigeon { background-image:url('../companions/sprites/pigeon/pigeon-perched.png'); background-position:center; background-size:contain; }
+  #dtd-mailbox-icon.pigeon-click-perched:not(.has-new-mail):not(.pigeon-arriving):not(.pigeon-departing):not(.pigeon-composing):not(.pigeon-sending) .dtd-pigeon { display:block; background-image:url('companions/sprites/pigeon/pigeon-perched.png'); background-position:center; background-size:contain; }
+  #dtd-mailbox-icon.has-new-mail:not(.pigeon-arriving):not(.pigeon-departing) .dtd-pigeon { top:-43px; right:1px; width:54px; height:54px; background-image:url('assets/embedded/pigeon-arriving.png'); background-repeat:no-repeat; background-position:center; background-size:contain; animation:dtd-pigeon-unread-idle 7.5s ease-in-out infinite; }
+  #dtd-mailbox-icon.pigeon-composing:not(.has-new-mail):not(.pigeon-arriving):not(.pigeon-departing):not(.pigeon-sending) .dtd-pigeon { background-image:url('companions/sprites/pigeon/pigeon-perched.png'); background-position:center; background-size:contain; }
   /* Align the unread pigeon's feet with the mailbox body instead of its flag. */
   #dtd-mailbox-icon.has-new-mail:not(.pigeon-arriving):not(.pigeon-departing) .dtd-pigeon { top:-32px; }
-  #dtd-mailbox-icon.pigeon-composing.pigeon-compose-arriving:not(.has-new-mail):not(.pigeon-arriving):not(.pigeon-departing):not(.pigeon-sending) .dtd-pigeon { background-image:url('../companions/sprites/pigeon/pigeon-flying-empty.png'); background-position:center; background-size:contain; animation:dtd-pigeon-arrive-move .9s ease-out forwards; }
-  #dtd-mailbox-icon.has-new-mail.pigeon-arriving .dtd-pigeon { background-image:url('../companions/sprites/pigeon/pigeon-flying-with-mail.png'); background-position:center; background-size:contain; animation:dtd-pigeon-arrive-move 1s ease-out forwards; }
-  #dtd-mailbox-icon.pigeon-departing .dtd-pigeon { background-image:url('../companions/sprites/pigeon/pigeon-flying-empty.png'); background-position:center; background-size:contain; animation:dtd-pigeon-fly-away-move .9s ease-in forwards; }
+  #dtd-mailbox-icon.pigeon-composing.pigeon-compose-arriving:not(.has-new-mail):not(.pigeon-arriving):not(.pigeon-departing):not(.pigeon-sending) .dtd-pigeon { background-image:url('companions/sprites/pigeon/pigeon-flying-empty.png'); background-position:center; background-size:contain; animation:dtd-pigeon-arrive-move .9s ease-out forwards; }
+  #dtd-mailbox-icon.has-new-mail.pigeon-arriving .dtd-pigeon { background-image:url('companions/sprites/pigeon/pigeon-flying-with-mail.png'); background-position:center; background-size:contain; animation:dtd-pigeon-arrive-move 1s ease-out forwards; }
+  #dtd-mailbox-icon.pigeon-departing .dtd-pigeon { background-image:url('companions/sprites/pigeon/pigeon-flying-empty.png'); background-position:center; background-size:contain; animation:dtd-pigeon-fly-away-move .9s ease-in forwards; }
   #dtd-mailbox-icon.pigeon-sending { overflow:visible; }
   #dtd-mailbox-icon.pigeon-sending .dtd-mailbox-art { position:relative; z-index:1; }
   #dtd-mailbox-icon .dtd-outgoing-envelope { position:absolute; top:15px; right:18px; width:20px; height:13px; display:none; box-sizing:border-box; padding:0; border:2px solid #744724; border-radius:1px; background:#f4d9a9; box-shadow:1px 1px 0 rgba(0,0,0,.28); pointer-events:none; image-rendering:pixelated; z-index:2; }
@@ -905,14 +905,14 @@ var runtime={
   #dtd-mailbox-icon.pigeon-sending .dtd-outgoing-envelope { display:block; animation:dtd-envelope-collect 2.2s ease-in forwards; }
   @keyframes dtd-pigeon-arrive-move { 0%{transform:translate(-220px,-70px) scale(.72);opacity:0} 10%{opacity:1} 74%{transform:translate(-8px,-4px) scale(1);opacity:1} 75%,100%{transform:translate(0,0) scale(1);opacity:1} }
   @keyframes dtd-pigeon-fly-away-move { 0%,5%{transform:translate(0,0) scale(1);opacity:1} 20%{transform:translate(22px,-18px) scale(1) rotate(-8deg);opacity:1} 100%{transform:translate(240px,-130px) scale(.6) rotate(10deg);opacity:0} }
-  @keyframes dtd-pigeon-send-bg { 0%,24%{background-image:url('../companions/sprites/pigeon/pigeon-perched.png')} 25%,100%{background-image:url('../companions/sprites/pigeon/pigeon-flying-with-mail.png')} }
+  @keyframes dtd-pigeon-send-bg { 0%,24%{background-image:url('companions/sprites/pigeon/pigeon-perched.png')} 25%,100%{background-image:url('companions/sprites/pigeon/pigeon-flying-with-mail.png')} }
   @keyframes dtd-pigeon-send-move { 0%,24%{transform:translate(0,0) scale(1);opacity:1} 42%{transform:translate(22px,-18px) scale(1) rotate(-8deg);opacity:1} 100%{transform:translate(240px,-130px) scale(.6) rotate(10deg);opacity:0} }
   @keyframes dtd-pigeon-unread-idle { 0%,64%,100%{transform:translate(0,0) rotate(0)} 68%{transform:translate(0,-2px) rotate(-2deg)} 72%{transform:translate(1px,0) rotate(2deg)} 76%{transform:translate(0,-1px) rotate(-1deg)} 80%{transform:translate(0,0) rotate(0)} }
   @keyframes dtd-envelope-collect { 0%{transform:translate(0,0) rotate(0);opacity:1;z-index:2} 18%,24%{transform:translate(3px,-20px) rotate(-8deg);opacity:1;z-index:3} 25%,100%{transform:translate(3px,-20px) rotate(-8deg);opacity:0;z-index:3} }
   @media (prefers-reduced-motion:reduce){#dtd-mailbox-icon .dtd-pigeon,#dtd-mailbox-icon.has-new-mail:not(.pigeon-arriving):not(.pigeon-departing) .dtd-pigeon,#dtd-mailbox-icon.pigeon-departing .dtd-pigeon,#dtd-mailbox-icon.pigeon-composing.pigeon-compose-arriving:not(.has-new-mail):not(.pigeon-arriving):not(.pigeon-departing):not(.pigeon-sending) .dtd-pigeon,#dtd-mailbox-icon.has-new-mail.pigeon-arriving .dtd-pigeon,#dtd-mailbox-icon.pigeon-sending .dtd-pigeon{animation:none}}
   body:not(.signed-in) #desktop-companion { display:none; }
   #desktop-companion { top:auto; left:auto; right:8px; bottom:40px; width:92px; height:92px; overflow:visible; }
-  #desktop-companion .companion-dog-sprite { width:92px; height:92px; background-image:url('../assets/companion/koba-new-idle.png'); background-repeat:no-repeat; background-size:100% 100%; background-position:0 0; image-rendering:pixelated; filter:drop-shadow(1px 2px 2px rgba(0,0,0,.45)); }
+  #desktop-companion .companion-dog-sprite { width:92px; height:92px; background-image:url('assets/companion/koba-new-idle.png'); background-repeat:no-repeat; background-size:100% 100%; background-position:0 0; image-rendering:pixelated; filter:drop-shadow(1px 2px 2px rgba(0,0,0,.45)); }
   #desktop-companion.searching .companion-dog-sprite { background-image:var(--companion-puppy-bury); background-size:600% 100%; background-position:100% 0; animation:none; }
   #desktop-companion.searching.spin-burst .companion-dog-sprite { animation:companion-puppy-spin-frames 1.4s step-end forwards; }
   #desktop-companion.searching.confused-burst .companion-dog-sprite { animation:companion-puppy-confused-frames 1.2s step-end forwards; }
@@ -920,7 +920,7 @@ var runtime={
   #desktop-companion.happy .companion-dog-sprite { background-image:var(--companion-puppy-happyhop); background-size:400% 100%; animation:companion-puppy-happy-frames .9s step-end; }
   #desktop-companion.treat .companion-dog-sprite { background-image:var(--companion-puppy-treat); background-size:300% 100%; animation:companion-puppy-treat-frames 2s step-end; }
   #desktop-companion.pet .companion-dog-sprite { background-image:var(--companion-puppy-shake); background-size:600% 100%; animation:companion-puppy-pet-frames 1.6s step-end; }
-  #desktop-companion.barking .companion-dog-sprite { background-image:url('../companions/sprites/koba/koba-bark.png'); background-size:300% 100%; animation:koba-bark-frames 1.2s step-end forwards; }
+  #desktop-companion.barking .companion-dog-sprite { background-image:url('companions/sprites/koba/koba-bark.png'); background-size:300% 100%; animation:koba-bark-frames 1.2s step-end forwards; }
   #desktop-companion.barking.notification-barking .companion-dog-sprite { animation:none; background-position:50% 0; }
   #desktop-companion.barking.bark-flipped .companion-dog-sprite { transform:scaleX(-1); }
   #desktop-companion.waking .companion-dog-sprite { background-image:var(--companion-puppy-sleep); background-size:300% 100%; animation:companion-puppy-wake-frames 1.15s step-end forwards; }
@@ -932,11 +932,11 @@ var runtime={
   #desktop-companion.has-pending-notification.sleeping .companion-dog-sprite { background-image:var(--companion-puppy-bury); background-size:600% 100%; background-position:100% 0; animation:none; }
   #desktop-companion.roaming { z-index:120600; transition-property:left,top; transition-duration:var(--koba-roam-duration,3s); transition-timing-function:linear; will-change:transform; }
 #desktop-companion.roaming .companion-dog-sprite { background-size:600% 100%; background-position:0 0; }
-#desktop-companion.roaming-walk .companion-dog-sprite { background-image:url('../assets/embedded/koba-roaming-walk.png'); animation:koba-roam-frames .78s step-end infinite; }
-#desktop-companion.roaming-run .companion-dog-sprite { background-image:url('../assets/embedded/koba-roaming-run.png'); animation:koba-roam-frames .48s step-end infinite; }
-#desktop-companion.roaming-dig-bone .companion-dog-sprite { background-image:url('../assets/embedded/koba-roaming-dig-bone.png'); background-size:600% 100%; animation:koba-roam-frames 4.2s step-end forwards; }
-#desktop-companion.roaming-teddy .companion-dog-sprite { background-image:url('../assets/embedded/koba-roaming-teddy.png'); background-size:100% 100%; background-position:0 0; animation:none; }
-#desktop-companion.roaming-rest-k1 .companion-dog-sprite { background-image:url('../assets/embedded/koba-roaming-rest.png'); background-size:100% 100%; background-position:0 0; animation:none; }
+#desktop-companion.roaming-walk .companion-dog-sprite { background-image:url('assets/embedded/koba-roaming-walk.png'); animation:koba-roam-frames .78s step-end infinite; }
+#desktop-companion.roaming-run .companion-dog-sprite { background-image:url('assets/embedded/koba-roaming-run.png'); animation:koba-roam-frames .48s step-end infinite; }
+#desktop-companion.roaming-dig-bone .companion-dog-sprite { background-image:url('assets/embedded/koba-roaming-dig-bone.png'); background-size:600% 100%; animation:koba-roam-frames 4.2s step-end forwards; }
+#desktop-companion.roaming-teddy .companion-dog-sprite { background-image:url('assets/embedded/koba-roaming-teddy.png'); background-size:100% 100%; background-position:0 0; animation:none; }
+#desktop-companion.roaming-rest-k1 .companion-dog-sprite { background-image:url('assets/embedded/koba-roaming-rest.png'); background-size:100% 100%; background-position:0 0; animation:none; }
 #desktop-companion.roaming-dig-bone .companion-dog-sprite { animation-name:koba-dig-bone-frames; animation-duration:4.8s; }
 #desktop-companion.roaming-left .companion-dog-sprite { transform:scaleX(-1); }
 #suggestion-desktop-icon {
@@ -1363,7 +1363,7 @@ body:not(.signed-in) #fish-tank-desktop-icon { display:none; }
   #arinet-desktop-icon { top:8px; left:16px; }
   .arinet-desktop-icon-art {
     width:52px; height:52px;
-    background:url('../../assets/embedded/arinet-globe-word-spin-clockwise-4-frame-transparent.png') no-repeat 0 0 / 400% 100%;
+    background:url('assets/embedded/arinet-globe-word-spin-clockwise-4-frame-transparent.png') no-repeat 0 0 / 400% 100%;
     image-rendering:pixelated;
     filter:drop-shadow(1px 2px 3px rgba(0,0,0,.65));
   }
@@ -1385,7 +1385,7 @@ body:not(.signed-in) #fish-tank-desktop-icon { display:none; }
   .dtd-construction span { display:inline-block; padding:3px 9px; border:1px solid #111; background:#ffd836; }
   .dtd-shell { flex:1 1 auto; min-height:0; display:grid; grid-template-columns:105px minmax(0,1fr); background:#fff; }
   .dtd-sidebar { padding:8px; background:#ece9d8; border-right:1px solid #aaa; }
-  .dtd-sidebar .btn { width:100%; padding:6px 5px; margin-bottom:6px; font-size:11px; }
+  .dtd-sidebar .btn { width:100%; padding:6px 5px; margin-bottom:6px; font-size:11px; white-space:nowrap; }
   .dtd-delivery-note { margin-top:10px; padding:7px 5px; border:1px solid #b6ad8d; background:#fffbe6; color:#5c563f; font-size:9px; line-height:1.35; text-align:center; }
   .dtd-folder.active { border-style:inset; filter:brightness(.92); }
   .dtd-main { min-width:0; min-height:0; display:flex; flex-direction:column; }
@@ -1414,6 +1414,7 @@ body:not(.signed-in) #fish-tank-desktop-icon { display:none; }
   .dtd-profile-link { float:left; width:44px; height:44px; padding:0; margin:0 9px 2px 0; overflow:hidden; border:1px solid #888; border-radius:3px; background:#dce7f5; color:#164f91; font-weight:bold; cursor:pointer; }
   .dtd-profile-link img { width:100%; height:100%; object-fit:cover; display:block; }
   .dtd-inline-reply { flex:none; padding:9px 10px; border-top:1px solid #ccc; background:#f7f7f3; display:grid; gap:6px; }
+  .dtd-inline-reply-subject { box-sizing:border-box; width:100%; padding:6px 7px; font:12px/1.4 Tahoma,Arial,sans-serif; }
   .dtd-inline-reply textarea { box-sizing:border-box; width:100%; height:82px; resize:vertical; padding:7px; font:12px/1.4 Tahoma,Arial,sans-serif; }
   .dtd-inline-reply-actions { display:flex; align-items:center; justify-content:space-between; gap:6px; }
   .dtd-inline-reply-note { color:#666; font-size:9px; }
@@ -1424,7 +1425,7 @@ body:not(.signed-in) #fish-tank-desktop-icon { display:none; }
   .dtd-address-suffix { flex:none; padding:0 6px 0 2px; color:#555; font-size:10px; white-space:nowrap; user-select:none; }
   .dtd-compose textarea { height:210px; resize:none; }
   .dtd-compose-actions { display:flex; justify-content:flex-end; gap:6px; }
-  @media(max-width:500px){.dtd-win{height:min(520px,82vh)}.dtd-shell{grid-template-columns:82px minmax(0,1fr)}.dtd-row{grid-template-columns:1fr auto}.dtd-row .dtd-subject{grid-column:1/-1}.dtd-compose label{grid-template-columns:1fr}.dtd-compose textarea{height:190px}}
+  @media(max-width:500px){.dtd-win{height:min(520px,82vh)}.dtd-shell{grid-template-columns:96px minmax(0,1fr)}.dtd-row{grid-template-columns:1fr auto}.dtd-row .dtd-subject{grid-column:1/-1}.dtd-compose label{grid-template-columns:1fr}.dtd-compose textarea{height:190px}}
   @media(max-width:700px){
     /* The 68px flight/compose sheet has about 10px of transparent space below
        the pigeon's feet, so its visible perch sits lower than its image box. */
@@ -1609,8 +1610,14 @@ body:not(.signed-in) #fish-tank-desktop-icon { display:none; }
   .vp-status b { color:#202020; }
   .vp-header .vp-status { width:100%; margin:0; text-align:center; }
   #tb-tray { display:flex; align-items:center; gap:4px; margin-left:auto; flex:none; }
-  #tb-tray-right { width:27px; height:34px; }
+  #tb-tray-right { height:34px; display:flex; align-items:center; flex:none; }
   #tb-search-wrap { position:relative; flex:none; }
+  .tb-mini-btn { width:27px; height:27px; padding:1px; display:flex; align-items:center; justify-content:center; border:1px solid var(--th-clock-border); border-radius:3px; background:linear-gradient(180deg,var(--th-clock-1),var(--th-clock-2)); color:var(--th-font-color,#fff); font-size:15px; line-height:1; cursor:pointer; box-sizing:border-box; }
+  .tb-mini-btn:active, .tb-mini-btn[aria-expanded="true"] { filter:brightness(.88); border-style:inset; }
+  #tb-notebook-taskbar { width:27px; height:27px; padding:2px; }
+  #tb-notebook-taskbar .notebook-taskbar-icon { width:20px; height:20px; border-radius:3px; background:url('notepad2.png') center / cover no-repeat; filter:drop-shadow(0 1px 1px rgba(0,0,0,.45)); }
+  #tb-notebook-taskbar[aria-expanded="true"] { filter:brightness(.88); border-style:inset; }
+  body:not(.signed-in) #tb-notebook-taskbar { display:none; }
   #tb-search-toggle { width:27px; height:27px; padding:1px; display:flex; align-items:center; justify-content:center; border:1px solid var(--th-clock-border); border-radius:3px; background:linear-gradient(180deg,var(--th-clock-1),var(--th-clock-2)); color:var(--th-font-color,#fff); font-size:15px; line-height:1; cursor:pointer; }
   #tb-search-toggle img { display:block; width:23px; height:23px; margin:auto; object-fit:contain; }
   #tb-search-toggle > span { display:block; font-size:19px; line-height:22px; }
@@ -2093,18 +2100,18 @@ body:not(.signed-in) #fish-tank-desktop-icon { display:none; }
 /* Extracted DesktopDiary style section 2. */
 
 :root {
-    --companion-puppy-digup:url('../assets/embedded/companion-puppy-digup.png');
-    --companion-puppy-bury:url('../assets/embedded/companion-puppy-bury.png');
-    --companion-puppy-withbox:url('../assets/embedded/companion-puppy-withbox.png');
-    --companion-puppy-liedown:url('../assets/embedded/companion-puppy-liedown.png');
-    --companion-puppy-spin:url('../assets/embedded/companion-puppy-spin.png');
-    --companion-puppy-confused:url('../assets/embedded/companion-puppy-confused.png');
-    --companion-puppy-happyhop:url('../assets/embedded/companion-puppy-happyhop.png');
-    --companion-puppy-idlealt:url('../assets/embedded/companion-puppy-idlealt.png');
-    --companion-puppy-treat:url('../assets/embedded/companion-puppy-treat.png');
-    --companion-puppy-shake:url('../assets/embedded/companion-puppy-shake.png');
-    --companion-puppy-loading:url('../assets/embedded/companion-puppy-loading.png');
-    --companion-puppy-sleep:url('../assets/embedded/companion-puppy-sleep.png');
+    --companion-puppy-digup:url('assets/embedded/companion-puppy-digup.png');
+    --companion-puppy-bury:url('assets/embedded/companion-puppy-bury.png');
+    --companion-puppy-withbox:url('assets/embedded/companion-puppy-withbox.png');
+    --companion-puppy-liedown:url('assets/embedded/companion-puppy-liedown.png');
+    --companion-puppy-spin:url('assets/embedded/companion-puppy-spin.png');
+    --companion-puppy-confused:url('assets/embedded/companion-puppy-confused.png');
+    --companion-puppy-happyhop:url('assets/embedded/companion-puppy-happyhop.png');
+    --companion-puppy-idlealt:url('assets/embedded/companion-puppy-idlealt.png');
+    --companion-puppy-treat:url('assets/embedded/companion-puppy-treat.png');
+    --companion-puppy-shake:url('assets/embedded/companion-puppy-shake.png');
+    --companion-puppy-loading:url('assets/embedded/companion-puppy-loading.png');
+    --companion-puppy-sleep:url('assets/embedded/companion-puppy-sleep.png');
   }
 
 
@@ -2114,11 +2121,11 @@ body:not(.signed-in) #fish-tank-desktop-icon { display:none; }
 /* Extracted DesktopDiary style section 3. */
 
 :root {
-    --koba-custom-speech-bubble:url('../assets/embedded/koba-custom-speech-bubble.png');
-    --koba-eat-bone:url('../assets/embedded/koba-eat-bone.png');
-    --koba-eat-treat:url('../assets/embedded/koba-eat-treat.png');
-    --koba-eat-from-bowl:url('../assets/embedded/koba-eat-from-bowl.png');
-    --koba-go-to-sleep:url('../assets/embedded/koba-go-to-sleep.png');
+    --koba-custom-speech-bubble:url('assets/embedded/koba-custom-speech-bubble.png');
+    --koba-eat-bone:url('assets/embedded/koba-eat-bone.png');
+    --koba-eat-treat:url('assets/embedded/koba-eat-treat.png');
+    --koba-eat-from-bowl:url('assets/embedded/koba-eat-from-bowl.png');
+    --koba-go-to-sleep:url('assets/embedded/koba-go-to-sleep.png');
   }
   #desktop-companion.treat .companion-dog-sprite,
   #desktop-companion.bone .companion-dog-sprite {
@@ -2272,7 +2279,7 @@ body:not(.signed-in) #fish-tank-desktop-icon { display:none; }
   #koba-play-ball .koba-ball-sprite {
     position:absolute;
     inset:0;
-    background-image:url('../companions/sprites/koba/play-ball/ball-rest.png');
+    background-image:url('companions/sprites/koba/play-ball/ball-rest.png');
     background-repeat:no-repeat;
     background-position:0 0;
     background-size:100% 100%;
@@ -2281,13 +2288,13 @@ body:not(.signed-in) #fish-tank-desktop-icon { display:none; }
   }
   #koba-play-ball.ball-flying { width:28px; height:28px; pointer-events:none; }
   #koba-play-ball.ball-flying .koba-ball-sprite {
-    background-image:url('../companions/sprites/koba/play-ball/ball-flight.png');
+    background-image:url('companions/sprites/koba/play-ball/ball-flight.png');
     background-size:400% 100%;
     animation:koba-ball-flight-frames .86s step-end forwards;
   }
   #koba-play-ball.ball-bouncing { width:55px; height:88px; pointer-events:none; }
   #koba-play-ball.ball-bouncing .koba-ball-sprite {
-    background-image:url('../companions/sprites/koba/play-ball/ball-bounce.png');
+    background-image:url('companions/sprites/koba/play-ball/ball-bounce.png');
     background-size:400% 100%;
     animation:koba-ball-bounce-frames .92s step-end forwards;
   }
@@ -2307,22 +2314,22 @@ body:not(.signed-in) #fish-tank-desktop-icon { display:none; }
     75%,100%{background-position:100% 0}
   }
   #desktop-companion.roaming-walk .companion-dog-sprite {
-    background-image:url('../companions/sprites/koba/koba-new-walk.png');
+    background-image:url('companions/sprites/koba/koba-new-walk.png');
     background-size:400% 100%;
     animation:koba-new-four-frames .72s step-end infinite;
   }
   #desktop-companion.roaming-run .companion-dog-sprite {
-    background-image:url('../companions/sprites/koba/koba-new-run.png');
+    background-image:url('companions/sprites/koba/koba-new-run.png');
     background-size:300% 100%;
     animation:koba-new-three-frames .48s step-end infinite;
   }
   #desktop-companion.waking .companion-dog-sprite {
-    background-image:url('../companions/sprites/koba/koba-new-wake.png');
+    background-image:url('companions/sprites/koba/koba-new-wake.png');
     background-size:300% 100%;
     animation:koba-new-three-frames 1.15s step-end forwards;
   }
   #desktop-companion.barking .companion-dog-sprite {
-    background-image:url('../companions/sprites/koba/koba-new-speak.png');
+    background-image:url('companions/sprites/koba/koba-new-speak.png');
     background-size:300% 100%;
     animation:koba-new-three-frames 1.2s step-end forwards;
   }
@@ -2349,7 +2356,7 @@ body:not(.signed-in) #fish-tank-desktop-icon { display:none; }
     width:92px;
     height:92px;
     margin-top:0;
-    background-image:url('../companions/sprites/koba/koba-new-run.png');
+    background-image:url('companions/sprites/koba/koba-new-run.png');
     background-size:300% 100%;
     animation:koba-new-three-frames .48s step-end infinite;
   }
@@ -2357,7 +2364,7 @@ body:not(.signed-in) #fish-tank-desktop-icon { display:none; }
     width:118px;
     height:98px;
     flex:0 0 auto;
-    background-image:url('../companions/sprites/koba/play-ball/koba-clicked-idle.png');
+    background-image:url('companions/sprites/koba/play-ball/koba-clicked-idle.png');
     background-size:400% 100%;
     background-position:0 0;
     background-repeat:no-repeat;
@@ -2376,33 +2383,33 @@ body:not(.signed-in) #fish-tank-desktop-icon { display:none; }
     animation:none;
   }
   #desktop-companion.koba-ball-intrigued .companion-dog-sprite {
-    background-image:url('../companions/sprites/koba/play-ball/koba-ball-intrigue.png');
+    background-image:url('companions/sprites/koba/play-ball/koba-ball-intrigue.png');
   }
   #desktop-companion.koba-ball-excited .companion-dog-sprite {
-    background-image:url('../companions/sprites/koba/play-ball/koba-ball-excited.png');
+    background-image:url('companions/sprites/koba/play-ball/koba-ball-excited.png');
   }
   #desktop-companion.koba-fetch-pickup .companion-dog-sprite {
-    background-image:url('../companions/sprites/koba/play-ball/koba-pick-up-ball.png');
+    background-image:url('companions/sprites/koba/play-ball/koba-pick-up-ball.png');
     background-size:400% 100%;
     animation:koba-fetch-four-frames 1.28s step-end forwards;
   }
   #desktop-companion.koba-fetch-carry .companion-dog-sprite {
-    background-image:url('../companions/sprites/koba/play-ball/koba-carry-ball.png');
+    background-image:url('companions/sprites/koba/play-ball/koba-carry-ball.png');
     background-size:400% 100%;
     animation:koba-fetch-four-frames .68s step-end infinite;
   }
   #desktop-companion.koba-fetch-drop .companion-dog-sprite {
-    background-image:url('../companions/sprites/koba/play-ball/koba-drop-ball.png');
+    background-image:url('companions/sprites/koba/play-ball/koba-drop-ball.png');
     background-size:400% 100%;
     animation:koba-fetch-four-frames 1.3s step-end forwards;
   }
   #desktop-companion.koba-fetch-roll .companion-dog-sprite {
-    background-image:url('../companions/sprites/koba/play-ball/koba-roll-with-ball.png');
+    background-image:url('companions/sprites/koba/play-ball/koba-roll-with-ball.png');
     background-size:400% 100%;
     animation:koba-fetch-four-frames 1.8s step-end forwards;
   }
   #desktop-companion.koba-fetch-happy .companion-dog-sprite {
-    background-image:url('../companions/sprites/koba/play-ball/koba-happy-ball-idle.png');
+    background-image:url('companions/sprites/koba/play-ball/koba-happy-ball-idle.png');
     background-size:400% 100%;
     animation:koba-fetch-four-frames 1.4s step-end infinite;
   }
@@ -4124,6 +4131,7 @@ try {
   var SUPABASE_SESSION_KEY = 'desktop-diary-supabase-session';
 
   function getSupabaseSession(){try{return JSON.parse(localStorage.getItem(SUPABASE_SESSION_KEY)||'null');}catch(e){return null;}}
+  function supabaseSessionOwner(session){session=session||getSupabaseSession();return String(session&&session.user&&(session.user.id||session.user.email)||(typeof state!=='undefined'&&state.account&&state.account.email)||'').trim().toLowerCase();}
   function rememberAccountEmail(email){
     var normalized=String(email||'').trim().toLowerCase();
     if(!normalized)return;
@@ -7492,7 +7500,7 @@ try {
     signOffInProgress = true;
     var closePageAfterSound = closePage === true;
     var signOffStartedAt = Date.now();
-    var shouldPlayLogOffSound = options.playLogOffSound === true;
+    var shouldPlayLogOffSound = closePageAfterSound;
     var signOffSoundSequenceMs = shouldPlayLogOffSound ? 4470 : 470;
     playSiteSound('buddyOut', 0.9);
     if(closePageAfterSound){
@@ -7584,7 +7592,8 @@ try {
 
   function createWindow(opts){
     // opts: title, bodyHtml, onMount(el), onClose(), extraClass, type, buddyId,
-    //       initialLeft/initialTop (optional desktop opening position)
+    //       initialLeft/initialTop (optional desktop opening position),
+    //       hideMinimize/hideMaximize/hideClose, addToTaskbar
     var id = uid();
     var el = document.createElement('div');
     el.className = 'win ' + (opts.extraClass || '');
@@ -7592,10 +7601,14 @@ try {
     el.style.zIndex = ++zCounter;
 
     var bodyHtml=opts.bodyHtml||'',hasOwnConstruction=/dtd-construction/.test(bodyHtml),constructionHtml=(opts.constructionBar===false||hasOwnConstruction)?'':constructionBar();
+    var titlebarButtons = '';
+    if(!opts.hideMinimize) titlebarButtons += '<button class="win-btn min-btn" title="Minimize">&#8211;</button>';
+    if(!opts.hideMaximize) titlebarButtons += '<button class="win-btn max-btn" title="Maximize">&#9723;</button>';
+    if(!opts.hideClose) titlebarButtons += '<button class="win-btn close-btn">X</button>';
     el.innerHTML =
       '<div class="titlebar">' +
         '<span class="t-title">' + mascotSVG(15) + '<span>' + escapeHtml(opts.title) + '</span></span>' +
-        '<span class="t-btns"><button class="win-btn min-btn" title="Minimize">&#8211;</button><button class="win-btn max-btn" title="Maximize">&#9723;</button><button class="win-btn close-btn">X</button></span>' +
+        '<span class="t-btns">' + titlebarButtons + '</span>' +
       '</div>' +
       (opts.menuHtml || '') +
       constructionHtml +
@@ -7627,20 +7640,31 @@ try {
 
     var record = { id: id, el: el, type: opts.type, buddyId: opts.buddyId, onClose: opts.onClose, maximized: false, prevRect: null, minimized: false };
     openWindows.push(record);
-    addTaskbarItem(record, opts.title);
+    if(opts.addToTaskbar !== false){
+      addTaskbarItem(record, opts.title);
+    }
 
-    el.querySelector('.close-btn').addEventListener('click', function(){ closeWindow(id); });
-    el.querySelector('.min-btn').addEventListener('click', function(e){
-      e.stopPropagation();
-      minimizeWindow(record);
-    });
-    el.querySelector('.max-btn').addEventListener('click', function(e){
-      e.stopPropagation();
-      toggleMaximize(record);
-    });
+    var closeBtn = el.querySelector('.close-btn');
+    var minBtn = el.querySelector('.min-btn');
+    var maxBtn = el.querySelector('.max-btn');
+    if(closeBtn){
+      closeBtn.addEventListener('click', function(){ closeWindow(id); });
+    }
+    if(minBtn){
+      minBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        minimizeWindow(record);
+      });
+    }
+    if(maxBtn){
+      maxBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        toggleMaximize(record);
+      });
+    }
     el.addEventListener('mousedown', function(){ focusWindow(id); });
     el.addEventListener('touchstart', function(){ focusWindow(id); }, { passive: true });
-    makeDraggable(el, el.querySelector('.titlebar'));
+    makeDraggable(el, el.querySelector('.titlebar'), opts.onDragEnd);
     focusWindow(id);
 
     if(opts.onMount) opts.onMount(el, id);
@@ -11100,9 +11124,7 @@ try {
   var DTD_IMAGINARY_MARKER='⁣dtd-imaginary:';
   var DTD_DELIVERY_OPTIONS=[
     {id:'1d',label:'1 day',days:1},{id:'3d',label:'3 days',days:3},
-    {id:'1w',label:'1 week',days:7},{id:'2w',label:'2 weeks',days:14},
-    {id:'1m',label:'1 month',months:1},{id:'3m',label:'3 months',months:3},
-    {id:'6m',label:'6 months',months:6},{id:'9m',label:'9 months',months:9},
+    {id:'1w',label:'7 days',days:7},
     {id:'1y',label:'1 year',years:1},{id:'custom',label:'Custom date…'}
   ];
   function dtdLocalDateString(d){return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);}
@@ -11272,7 +11294,12 @@ try {
         var sourceList=state.mail&&state.mail[folder]||[];
         var list=folder==='inbox'?sortDtdIncomingMail(sourceList,function(m){return !m.read;},function(m){return m.ts;}):sourceList.slice().sort(function(a,b){return b.ts-a.ts;});
         var heading=folder==='inbox'?'Inbox':(folder==='sent'?'Sent':'Scheduled');
-        main.innerHTML='<div class="dtd-heading">'+heading+(folder==='inbox'?' ('+list.filter(function(m){return !m.read;}).length+' unread)':'')+'</div><div class="dtd-list">'+(list.length?list.map(function(m){var party=folder==='inbox'?(mailPenPalNickname(m.from)||m.from):m.to,partyHtml=mailLetterType(m)?mailDisplayPartyHtml(m,party):(folder==='inbox'?mailAgedPartyHtml(party,m.ts):escapeHtml(party));return '<div class="dtd-row'+(!m.read&&folder==='inbox'?' unread':'')+'" data-mail-id="'+escapeHtml(m.id)+'"><span>'+partyHtml+'</span><span class="dtd-subject">'+escapeHtml(m.subject||'(no subject)')+'</span><time>'+escapeHtml(fmtDateShort(folder==='scheduled'?m.deliverAt:m.ts))+'</time><button class="btn dtd-row-delete">Delete</button></div>';}).join(''):'<div class="dtd-empty">No messages here.</div>')+'</div>';
+        var rows = list.map(function(m){
+          var party = folder==='inbox'?(mailPenPalNickname(m.from)||m.from):m.to;
+          var partyHtml = mailLetterType(m)?mailDisplayPartyHtml(m,party):(folder==='inbox'?mailAgedPartyHtml(party,m.ts):escapeHtml(party));
+          return '<div class="dtd-row'+(!m.read&&folder==='inbox'?' unread':'')+'" data-mail-id="'+escapeHtml(m.id)+'"><span>'+partyHtml+'</span><span class="dtd-subject">'+escapeHtml(m.subject||'(no subject)')+'</span><time>'+escapeHtml(fmtDateShort(folder==='scheduled'?m.deliverAt:m.ts))+'</time><button class="dtd-row-delete" type="button" title="Delete message" aria-label="Delete message">🗑</button></div>';
+        }).join('');
+        main.innerHTML='<div class="dtd-heading">'+heading+(folder==='inbox'?' ('+list.filter(function(m){return !m.read;}).length+' unread)':'')+'</div><div class="dtd-list">'+(list.length?rows:'<div class="dtd-empty">No messages here.</div>')+'</div>';
         main.querySelectorAll('[data-mail-id]').forEach(function(row){
           var rowId=row.dataset.mailId;
           row.onclick=function(){openMessage(rowId);};
@@ -11294,14 +11321,14 @@ try {
         var footerActions=folder==='scheduled'?'':'<button class="btn dtd-save-diary">Save to Diary</button>';
         if(!hideActions)footerActions+=(footerActions?' ':'')+'<button class="btn dtd-save-contact">Save E-Buddy</button> <button class="btn dtd-reply">Reply</button>';
         footerActions+=(footerActions?' ':'')+'<button class="btn dtd-delete-mail">Delete</button>';
-        main.innerHTML='<div class="dtd-meta"><b>'+escapeHtml(msg.subject||'(no subject)')+'</b><br>From: '+escapeHtml(metaFrom)+'<br>To: '+metaToHtml+'<br>'+(folder==='scheduled'?'Delivery: ':'')+escapeHtml(scrapbookDate(folder==='scheduled'?msg.deliverAt:msg.ts))+'</div>'+disclaimer+'<div class="dtd-message">'+escapeHtml(msg.body||'')+'</div>'+(hideActions?'':'<div class="dtd-inline-reply" style="display:none"><textarea class="dtd-inline-reply-body" placeholder="Write a fresh letter back…"></textarea><div class="dtd-inline-reply-actions"><span class="dtd-inline-reply-note">The previous letter will not be included.</span><span><button class="btn dtd-reply-cancel">Cancel</button> <button class="btn dtd-reply-send">Send Reply</button></span></div><div class="signon-error dtd-reply-error"></div></div>')+'<div style="padding:7px;border-top:1px solid #ccc;display:flex;justify-content:space-between"><button class="btn dtd-back">Back</button>'+(footerActions?'<span>'+footerActions+'</span>':'')+'</div>';
+        main.innerHTML='<div class="dtd-meta"><b>'+escapeHtml(msg.subject||'(no subject)')+'</b><br>From: '+escapeHtml(metaFrom)+'<br>To: '+metaToHtml+'<br>'+(folder==='scheduled'?'Delivery: ':'')+escapeHtml(scrapbookDate(folder==='scheduled'?msg.deliverAt:msg.ts))+'</div>'+disclaimer+'<div class="dtd-message">'+escapeHtml(msg.body||'')+'</div>'+(hideActions?'':'<div class="dtd-inline-reply" style="display:none"><input type="text" class="dtd-inline-reply-subject" placeholder="Subject" value="'+escapeHtml(msg.subject||'')+'"><textarea class="dtd-inline-reply-body" placeholder="Write a fresh letter back…"></textarea><div class="dtd-inline-reply-actions"><span class="dtd-inline-reply-note">The previous letter will not be included.</span><span><button class="btn dtd-reply-cancel">Cancel</button> <button class="btn dtd-reply-send">Send Reply</button></span></div><div class="signon-error dtd-reply-error"></div></div>')+'<div style="padding:7px;border-top:1px solid #ccc;display:flex;justify-content:space-between"><button class="btn dtd-back">Back</button>'+(footerActions?'<span>'+footerActions+'</span>':'')+'</div>';
         main.querySelector('.dtd-back').onclick=renderList;
         if(main.querySelector('.dtd-save-diary'))main.querySelector('.dtd-save-diary').onclick=function(){saveDtdMailToDiary('local:'+msg.id,msg.subject,metaFrom,metaTo,msg.body,msg.ts);};
         if(main.querySelector('.dtd-save-contact'))main.querySelector('.dtd-save-contact').onclick=function(){var contact=saveDtdContact(folder==='inbox'?msg.from:msg.to,'');openInfoWindow(contact?'Saved to E-Buddies.':'That DtD address is not valid.');};
         if(main.querySelector('.dtd-delete-mail'))main.querySelector('.dtd-delete-mail').onclick=function(){deleteLocalMailById(msg.id);};
         if(main.querySelector('.dtd-reply'))main.querySelector('.dtd-reply').onclick=function(){var box=main.querySelector('.dtd-inline-reply');box.style.display='grid';main.querySelector('.dtd-reply').style.display='none';beginPigeonComposing();box.querySelector('textarea').focus();};
         if(main.querySelector('.dtd-reply-cancel'))main.querySelector('.dtd-reply-cancel').onclick=function(){main.querySelector('.dtd-inline-reply').style.display='none';main.querySelector('.dtd-reply').style.display='';endPigeonComposing(false);};
-        if(main.querySelector('.dtd-reply-send'))main.querySelector('.dtd-reply-send').onclick=function(){var body=main.querySelector('.dtd-inline-reply-body').value,text=body.trim(),recipient=folder==='inbox'?msg.from:msg.to;if(!text){main.querySelector('.dtd-reply-error').textContent='Write your reply first.';return;}var reply={id:uid(),from:localAddress(),to:recipient,subject:msg.subject||'',body:body,ts:Date.now(),read:true};state.mail.sent.push(reply);if(recipient.toLowerCase()===localAddress()||recipient.toLowerCase()==='self')state.mail.inbox.push({id:uid(),from:reply.from,to:reply.to,subject:reply.subject,body:reply.body,ts:reply.ts,read:false});saveState();trackDtdUsage('letter_sent');endPigeonComposing(true);openInfoWindow('Your reply is sealed and will be delivered at the next 8:00am.');renderList();};
+        if(main.querySelector('.dtd-reply-send'))main.querySelector('.dtd-reply-send').onclick=function(){var body=main.querySelector('.dtd-inline-reply-body').value,text=body.trim(),recipient=folder==='inbox'?msg.from:msg.to,subjectField=main.querySelector('.dtd-inline-reply-subject'),subject=subjectField?subjectField.value.trim():(msg.subject||'');if(!text){main.querySelector('.dtd-reply-error').textContent='Write your reply first.';return;}var reply={id:uid(),from:localAddress(),to:recipient,subject:subject,body:body,ts:Date.now(),read:true};state.mail.sent.push(reply);if(recipient.toLowerCase()===localAddress()||recipient.toLowerCase()==='self')state.mail.inbox.push({id:uid(),from:reply.from,to:reply.to,subject:reply.subject,body:reply.body,ts:reply.ts,read:false});saveState();trackDtdUsage('letter_sent');endPigeonComposing(true);openInfoWindow('Your reply is sealed and will be delivered at the next 8:00am.');renderList();};
       }
       function showCompose(to,subject){
         if(!getSupabaseSession()){
@@ -11387,6 +11414,7 @@ try {
 
   // === BEGIN scripts/features/post-mail-online.js ===
   function openOnlineDtdPostWindow(){
+    var mailWindowOwner=supabaseSessionOwner();
     function bar(){return '<div class="dtd-construction"><span>ONLINE TEST PHASE · UNDER CONSTRUCTION</span></div>';}
     function shell(){return '<div class="dtd-shell"><div class="dtd-sidebar"><button class="btn" id="dtd-compose">Compose</button><button class="btn" id="dtd-future">Note to Self</button><button class="btn dtd-folder active" data-folder="inbox">Inbox</button><button class="btn dtd-folder" data-folder="sent">Sent</button><button class="btn dtd-folder" data-folder="contacts">E-Buddies</button><div class="dtd-delivery-note"><b>Daily delivery · 8:00 AM</b></div></div><div class="dtd-main"><div class="dtd-heading">Connecting…</div></div></div>';}
     createWindow({title:'DtD Post Mail',extraClass:'dtd-win',initialLeft:74,initialTop:72,bodyHtml:'<div class="win-body">'+bar()+'<div style="padding:28px;text-align:center">Connecting to DtD Post Mail…</div></div>',type:'dtdmail',onClose:function(){detachPigeonFromMailWindow();pigeonIcon().classList.remove('mail-window-open');if(pigeonComposingActive)endPigeonComposing(false);},onMount:function(el){
@@ -11398,7 +11426,7 @@ try {
       function todayString(){return localDateString(new Date());}
       function nextDeliveryDate(){var d=new Date(),cutoff=new Date(d);cutoff.setHours(8,0,0,0);if(d>=cutoff)d.setDate(d.getDate()+1);return localDateString(d);}
       function showError(message){el.querySelector('.win-body').innerHTML=bar()+'<div style="padding:22px;text-align:center;color:#9b1c1c;line-height:1.5">'+escapeHtml(message)+'</div>';}
-      function loadProfile(){return ensureSupabaseSession().then(function(session){return supabaseRestRequest('dtd_profiles?select=handle,display_name&user_id=eq.'+encodeURIComponent(session.user.id)+'&limit=1');}).then(function(rows){return rows&&rows[0]||null;});}
+      function loadProfile(){return ensureSupabaseSession().then(function(session){return supabaseRestRequest('dtd_profiles?select=handle,display_name&user_id=eq.'+encodeURIComponent(session.user.id)+'&limit=1');}).then(function(rows){if(supabaseSessionOwner()!==mailWindowOwner)throw new Error('Account changed. Reopen Post Mail.');return rows&&rows[0]||null;});}
       function showAddressSetup(){
         var suggestion=((state.mail.address||'').split('@')[0]||((state.account&&state.account.screenName)||'user')).toLowerCase().replace(/[^a-z0-9._-]+/g,'.').replace(/^[._-]+|[._-]+$/g,'').slice(0,20)||'user';
         el.querySelector('.win-body').innerHTML=bar()+'<div style="padding:18px;text-align:center"><div class="dtd-heading">Reserve your online DtD address</div><p style="font-size:11px;color:#555;line-height:1.45">This address will be unique across every connected DesktopDiary.</p><div style="display:flex;justify-content:center;align-items:center;gap:4px;margin:16px 0"><input id="dtd-online-handle" maxlength="20" value="'+escapeHtml(suggestion)+'" style="width:130px;padding:6px;text-align:right"><b style="font-size:11px">@desktopdiary.local</b></div><div class="signon-error" id="dtd-online-status"></div><button class="btn" id="dtd-online-reserve" style="padding:7px 16px">Check &amp; Reserve</button><div style="font-size:9px;color:#777;border-top:1px solid #ccc;margin-top:17px;padding-top:9px">Your private login email is never shown with your DtD address.</div></div>';
@@ -11424,7 +11452,7 @@ try {
           var beforeDelivery=new Date().getHours()<8,alreadyDelivered=state.mail.lastOnlineDeliveryDate===todayString();
           if(beforeDelivery||alreadyDelivered){currentRows=Array.isArray(state.mail.onlineInboxCache)?state.mail.onlineInboxCache.slice():[];renderRows();if(beforeDelivery){var h=main.querySelector('.dtd-heading');if(h)h.insertAdjacentHTML('beforeend','<div style="font-size:9px;font-weight:normal;color:#666;margin-top:3px">Today’s delivery arrives at 8:00 AM.</div>');}return;}
         }
-        supabaseRpc('get_dtd_mailbox',{box_name:serverBox,client_timezone:dtdClientTimezone()}).then(function(rows){var today=todayString();rows=rows||[];if(folder==='inbox')rows=updatePigeonOnlineInbox(rows,today);else if(folder==='sent')rows=rows.filter(function(m){return !(m.from_handle===profile.handle&&m.to_handle===profile.handle&&m.deliver_on>String(m.created_at).slice(0,10));});currentRows=rows;renderRows();}).catch(function(err){main.innerHTML='<div class="dtd-empty">'+escapeHtml(err.message)+'</div>';});
+        supabaseRpc('get_dtd_mailbox',{box_name:serverBox,client_timezone:dtdClientTimezone()}).then(function(rows){if(supabaseSessionOwner()!==mailWindowOwner)return;var today=todayString();rows=rows||[];if(folder==='inbox')rows=updatePigeonOnlineInbox(rows,today,mailWindowOwner);else if(folder==='sent')rows=rows.filter(function(m){return !(m.from_handle===profile.handle&&m.to_handle===profile.handle&&m.deliver_on>String(m.created_at).slice(0,10));});currentRows=rows;renderRows();}).catch(function(err){if(supabaseSessionOwner()===mailWindowOwner)main.innerHTML='<div class="dtd-empty">'+escapeHtml(err.message)+'</div>';});
       }
       function deleteOnlineMailById(messageId){
         var before=currentRows.length;
@@ -11458,7 +11486,7 @@ try {
         refreshMailPigeonFromCache();
         if(folder==='inbox')currentRows=sortDtdIncomingMail(currentRows,function(m){return !m.read_at;},function(m){return new Date(m.created_at||0).getTime();});
         var heading=folder==='inbox'?'Inbox':'Sent',unread=folder==='inbox'?currentRows.filter(function(m){return !m.read_at;}).length:0;
-        main.innerHTML='<div class="dtd-heading">'+heading+(folder==='inbox'?' ('+unread+' unread)':'')+' <span style="float:right;font-weight:normal;font-size:9px">'+escapeHtml(address(profile.handle))+'</span></div><div class="dtd-list">'+(currentRows.length?currentRows.map(function(m){var who=folder==='inbox'?(m.from_handle||''):(m.to_handle||''),isDated=folder==='sent'&&m.deliver_on>String(m.created_at).slice(0,10),date=isDated?m.deliver_on:m.created_at,displayedDate=folder==='inbox'?(m.deliver_on||m.created_at):date,priv=decodeOnlinePrivateLetter(m,profile.handle),profileHandle=priv?profile.handle:who,whoLabel=priv?priv.displayRecipient:(mailPenPalNickname(who)||address(who)),writtenAt=m.created_at?new Date(m.created_at).getTime():0,whoHtml=priv&&priv.type==='future-self'?futureSelfLabelHtml(whoLabel,writtenAt):(priv?escapeHtml(whoLabel):(folder==='inbox'?mailAgedPartyHtml(whoLabel,writtenAt):escapeHtml(whoLabel))),subjectLabel=priv?priv.subject:m.message_subject;return '<div class="dtd-row'+(folder==='inbox'&&!m.read_at?' unread':'')+'" data-mail-id="'+escapeHtml(m.message_id)+'"><span class="dtd-mail-party" data-profile-handle="'+escapeHtml(profileHandle)+'"><button class="dtd-row-party-name" title="View profile">'+whoHtml+'</button></span><span class="dtd-subject">'+escapeHtml(subjectLabel||'(no subject)')+'</span><time>'+(isDated?'Delivers ':'')+escapeHtml(fmtDateShort(new Date(displayedDate).getTime()))+'</time><button class="btn dtd-row-delete">Delete</button></div>';}).join(''):'<div class="dtd-empty">No messages here.</div>')+'</div>';
+        main.innerHTML='<div class="dtd-heading">'+heading+(folder==='inbox'?' ('+unread+' unread)':'')+' <span style="float:right;font-weight:normal;font-size:9px">'+escapeHtml(address(profile.handle))+'</span></div><div class="dtd-list">'+(currentRows.length?currentRows.map(function(m){var who=folder==='inbox'?m.from_handle:m.to_handle,isDated=folder==='sent'&&m.deliver_on>String(m.created_at).slice(0,10),date=isDated?m.deliver_on:m.created_at,displayedDate=folder==='inbox'?(m.deliver_on||m.created_at):date,priv=decodeOnlinePrivateLetter(m,profile.handle),profileHandle=priv?profile.handle:who,whoLabel=priv?priv.displayRecipient:(mailPenPalNickname(who)||address(who)),writtenAt=m.created_at?new Date(m.created_at).getTime():0,whoHtml=priv&&priv.type==='future-self'?futureSelfLabelHtml(whoLabel,writtenAt):(priv?escapeHtml(whoLabel):(folder==='inbox'?mailAgedPartyHtml(whoLabel,writtenAt):escapeHtml(whoLabel))),subjectLabel=priv?priv.subject:m.message_subject;return '<div class="dtd-row'+(folder==='inbox'&&!m.read_at?' unread':'')+'" data-mail-id="'+escapeHtml(m.message_id)+'"><span class="dtd-mail-party" data-profile-handle="'+escapeHtml(profileHandle)+'"><button class="dtd-row-party-name" title="View profile">'+whoHtml+'</button></span><span class="dtd-subject">'+escapeHtml(subjectLabel||'(no subject)')+'</span><time>'+(isDated?'Delivers ':'')+escapeHtml(fmtDateShort(new Date(displayedDate).getTime()))+'</time><button class="dtd-row-delete" type="button" title="Delete message" aria-label="Delete message">🗑</button></div>';}).join(''):'<div class="dtd-empty">No messages here.</div>')+'</div>';
         main.querySelectorAll('[data-mail-id]').forEach(function(row){
           var rowId=row.dataset.mailId;
           row.onclick=function(){openMessage(rowId);};
@@ -11484,15 +11512,20 @@ try {
           var disclaimer=priv.type==='imaginary'?'<div style="padding:0 10px 8px;font-size:9px;font-weight:bold;color:#a3261e">This letter will never be sent to this person.</div>':'';
           var privateRecipientHtml=priv.type==='future-self'?futureSelfLabelHtml(priv.displayRecipient,new Date(m.created_at).getTime()):escapeHtml(priv.displayRecipient);
           var receivedTime=folder==='inbox'?(m.deliver_on||m.created_at):m.created_at;
-          main.innerHTML='<div class="dtd-meta"><b>'+escapeHtml(priv.subject||'(no subject)')+'</b><br>From: You<br>To: '+privateRecipientHtml+'<br>'+escapeHtml(scrapbookDate(new Date(receivedTime).getTime()))+'</div>'+disclaimer+'<div class="dtd-message">'+escapeHtml(m.message_body||'')+'</div><div style="padding:7px;border-top:1px solid #ccc;display:flex;justify-content:space-between"><button class="btn dtd-back">Back</button><span><button class="btn dtd-save-diary">Save to Diary</button> <button class="btn dtd-delete-mail">Delete</button></span></div>';
+          main.innerHTML='<div class="dtd-meta">'+
+            '<b>'+escapeHtml(priv.subject||'(no subject)')+'</b><br>From: You<br>To: '+privateRecipientHtml+'<br>'+escapeHtml(scrapbookDate(new Date(receivedTime).getTime()))+'</div>'+disclaimer+
+            '<div class="dtd-message">'+escapeHtml(m.message_body||'')+'</div>'+
+            '<div style="padding:7px;border-top:1px solid #ccc;display:flex;justify-content:space-between"><button class="btn dtd-back">Back</button><span><button class="btn dtd-save-diary">Save to Diary</button> <button class="btn dtd-delete-mail">Delete</button></span></div>';
           main.querySelector('.dtd-back').onclick=renderRows;
-          main.querySelector('.dtd-save-diary').onclick=function(){saveDtdMailToDiary('online:'+m.message_id,priv.subject,'You',priv.displayRecipient,m.message_body,m.created_at);};
-          main.querySelector('.dtd-delete-mail').onclick=function(){askToDeleteOnlineMessage(m.message_id);};
+          var saveDiaryButton=main.querySelector('.dtd-save-diary');
+          var deleteMailButton=main.querySelector('.dtd-delete-mail');
+          if(saveDiaryButton)saveDiaryButton.onclick=function(){saveDtdMailToDiary('online:'+m.message_id,priv.subject,'You',priv.displayRecipient,m.message_body,m.created_at);};
+          if(deleteMailButton)deleteMailButton.onclick=function(){askToDeleteOnlineMessage(m.message_id);};
           return;
         }
         var profileHandle=folder==='inbox'?m.from_handle:m.to_handle,initials=(profileHandle||'?').slice(0,2).toUpperCase();
         var receivedTime=folder==='inbox'?(m.deliver_on||m.created_at):m.created_at;
-        main.innerHTML='<div class="dtd-meta"><button class="dtd-profile-link" title="View '+escapeHtml(profileHandle)+'\'s profile">'+escapeHtml(initials)+'</button><b>'+escapeHtml(m.message_subject||'(no subject)')+'</b><br>From: '+escapeHtml(address(m.from_handle))+'<br>To: '+escapeHtml(address(m.to_handle))+'<br>'+(folder==='scheduled'?'Delivery: ':'')+escapeHtml(scrapbookDate(new Date(receivedTime).getTime()))+'</div><div class="dtd-message">'+escapeHtml(m.message_body||'')+'</div><div style="padding:7px;border-top:1px solid #ccc;display:flex;justify-content:space-between"><button class="btn dtd-back">Back</button><span><button class="btn dtd-save-diary">Save to Diary</button> <button class="btn dtd-save-contact">Save E-Buddy</button> <button class="btn dtd-reply">Reply</button> <button class="btn dtd-delete-mail">Delete</button></span></div>';
+        main.innerHTML='<div class="dtd-meta"><button class="dtd-profile-link" title="View '+escapeHtml(profileHandle)+'\'s profile">'+escapeHtml(initials)+'</button><b>'+escapeHtml(m.message_subject||'(no subject)')+'</b><br>From: '+escapeHtml(address(m.from_handle))+'<br>To: '+escapeHtml(address(m.to_handle))+'<br>'+(folder==='scheduled'?'Delivery: ':'')+escapeHtml(scrapbookDate(new Date(receivedTime).getTime()))+'</div><div class="dtd-message">'+escapeHtml(m.message_body||'')+'</div><div class="dtd-inline-reply" style="display:none"><input type="text" class="dtd-inline-reply-subject" placeholder="Subject" value="'+escapeHtml(m.message_subject||'')+'"><textarea class="dtd-inline-reply-body" placeholder="Write a fresh letter back…"></textarea><div class="dtd-inline-reply-actions"><span class="dtd-inline-reply-note">The previous letter will not be included.</span><span><button class="btn dtd-reply-cancel">Cancel</button> <button class="btn dtd-reply-send">Send Reply</button></span></div><div class="signon-error dtd-reply-error"></div></div><div style="padding:7px;border-top:1px solid #ccc;display:flex;justify-content:space-between"><button class="btn dtd-back">Back</button><span><button class="btn dtd-save-diary">Save to Diary</button> <button class="btn dtd-save-contact">Save E-Buddy</button> <button class="btn dtd-reply">Reply</button> <button class="btn dtd-delete-mail">Delete</button></span></div>';
         var profileButton=main.querySelector('.dtd-profile-link');profileButton.onclick=function(){if(profileHandle===profile.handle)openViewProfileWindow();else openDtdPublicProfileWindow(profileHandle);};
         var contactDisplayName='';
         supabaseRpc('get_dtd_public_profile',{requested_handle:profileHandle}).then(function(p){if(!p)return;contactDisplayName=p.display_name||'';if(p.profile_picture)profileButton.innerHTML='<img src="'+escapeHtml(p.profile_picture)+'" alt="">';}).catch(function(){});
@@ -11508,7 +11541,7 @@ try {
             var replyCancel=main.querySelector('.dtd-reply-cancel'),replySend=main.querySelector('.dtd-reply-send');
             reply.onclick=function(){replyBox.style.display='grid';reply.style.display='none';beginPigeonComposing();var replyText=replyBox.querySelector('textarea');if(replyText)replyText.focus();};
             if(replyCancel)replyCancel.onclick=function(){replyBox.style.display='none';reply.style.display='';endPigeonComposing(false);};
-            if(replySend)replySend.onclick=function(){var bodyField=main.querySelector('.dtd-inline-reply-body'),body=bodyField?bodyField.value:'',text=body.trim(),sendButton=replySend,errorBox=main.querySelector('.dtd-reply-error');if(!text){if(errorBox)errorBox.textContent='Write your reply first.';return;}sendButton.disabled=true;supabaseRpc('send_dtd_message',{recipient_handle:profileHandle,message_subject:m.message_subject||'',message_body:body,delivery_date:nextDeliveryDate(),client_timezone:dtdClientTimezone()}).then(function(){trackDtdUsage('letter_sent');endPigeonComposing(true);openInfoWindow('Your reply is sealed and will be delivered at the next 8:00am.');setFolder('sent');}).catch(function(err){if(errorBox)errorBox.textContent=err.message;sendButton.disabled=false;});};
+            if(replySend)replySend.onclick=function(){var bodyField=main.querySelector('.dtd-inline-reply-body'),body=bodyField?bodyField.value:'',text=body.trim(),sendButton=replySend,errorBox=main.querySelector('.dtd-reply-error'),subjectField=main.querySelector('.dtd-inline-reply-subject'),subject=subjectField?subjectField.value.trim():(m.message_subject||'');if(!text){if(errorBox)errorBox.textContent='Write your reply first.';return;}sendButton.disabled=true;supabaseRpc('send_dtd_message',{recipient_handle:profileHandle,message_subject:subject,message_body:body,delivery_date:nextDeliveryDate(),client_timezone:dtdClientTimezone()}).then(function(){trackDtdUsage('letter_sent');endPigeonComposing(true);openInfoWindow('Your reply is sealed and will be delivered at the next 8:00am.');setFolder('sent');}).catch(function(err){if(errorBox)errorBox.textContent=err.message;sendButton.disabled=false;});};
           }
         }
       }
@@ -11516,8 +11549,9 @@ try {
       function showCompose(to,subject){
         beginPigeonComposing();
         var recipient=recipientHandle(to||'');
-        main.innerHTML='<div class="dtd-heading">New Online Message</div><div class="dtd-compose"><label><span>From</span><input value="'+escapeHtml(address(profile.handle))+'" readonly></label><label><span>To</span><span class="dtd-address-input"><input id="dtd-to" maxlength="20" value="'+escapeHtml(recipient)+'" placeholder="friend" autocomplete="off" autocapitalize="none" spellcheck="false"><span class="dtd-address-suffix">@desktopdiary.local</span></span></label><label><span>Subject</span><input id="dtd-subject" value="'+escapeHtml(subject||'')+'"></label><label><span>Delivery date</span><input id="dtd-send-date" type="date" min="'+nextDeliveryDate()+'"><small style="grid-column:2;font-size:9px;color:#666">Before 8 AM: delivered today · At or after 8 AM: delivered tomorrow</small></label><textarea id="dtd-body" placeholder="Plain text only…"></textarea><div class="dtd-compose-actions"><button class="btn dtd-compose-cancel">Cancel</button><button class="btn dtd-send">Send</button></div><div class="signon-error dtd-error"></div></div>';
-        var toEl=main.querySelector('#dtd-to'),bodyEl=main.querySelector('#dtd-body'),send=main.querySelector('.dtd-send');toEl.oninput=function(){toEl.value=toEl.value.toLowerCase().replace(/[^a-z0-9._-]/g,'');};main.querySelector('.dtd-compose-cancel').onclick=loadFolder;send.onclick=function(){var recipient=recipientHandle(toEl.value),text=bodyEl.value,date=main.querySelector('#dtd-send-date').value||nextDeliveryDate();if(!recipient){main.querySelector('.dtd-error').textContent='Enter your friend\'s username.';return;}if(!text.trim()){main.querySelector('.dtd-error').textContent='Write a message first.';return;}send.disabled=true;supabaseRpc('send_dtd_message',{recipient_handle:recipient,message_subject:main.querySelector('#dtd-subject').value.trim(),message_body:text,delivery_date:date,client_timezone:dtdClientTimezone()}).then(function(){trackDtdUsage('letter_sent');endPigeonComposing(true);setFolder('sent');}).catch(function(err){main.querySelector('.dtd-error').textContent=err.message;send.disabled=false;});};setTimeout(function(){(to?bodyEl:toEl).focus();},20);
+        main.innerHTML='<div class="dtd-heading">New Online Message</div><div class="dtd-compose"><label><span>From</span><input value="'+escapeHtml(address(profile.handle))+'" readonly></label><label><span>To</span><span class="dtd-address-input"><input id="dtd-to" maxlength="20" value="'+escapeHtml(recipient)+'" placeholder="friend" autocomplete="off" autocapitalize="none" spellcheck="false"><span class="dtd-address-suffix">@desktopdiary.local</span></span></label><label><span>Subject</span><input id="dtd-subject" value="'+escapeHtml(subject||'')+'"></label>'+dtdDeliveryMenuHtml()+'<textarea id="dtd-body" placeholder="Plain text only…"></textarea><div class="dtd-compose-actions"><button class="btn dtd-compose-cancel">Cancel</button><button class="btn dtd-send">Send</button></div><div class="signon-error dtd-error"></div></div>';
+        var resolveDeliveryDate=dtdWireDeliveryMenu(main);
+        var toEl=main.querySelector('#dtd-to'),bodyEl=main.querySelector('#dtd-body'),send=main.querySelector('.dtd-send'),composeError=main.querySelector('.dtd-error');toEl.oninput=function(){toEl.value=toEl.value.toLowerCase().replace(/[^a-z0-9._-]/g,'');};main.querySelector('.dtd-compose-cancel').onclick=loadFolder;send.onclick=function(){var recipient=recipientHandle(toEl.value),text=bodyEl.value,date=resolveDeliveryDate();if(!recipient){if(composeError)composeError.textContent='Enter your friend\'s username.';return;}if(!date){if(composeError)composeError.textContent='Choose a delivery time.';return;}if(!text.trim()){if(composeError)composeError.textContent='Write a message first.';return;}send.disabled=true;supabaseRpc('send_dtd_message',{recipient_handle:recipient,message_subject:main.querySelector('#dtd-subject').value.trim(),message_body:text,delivery_date:date,client_timezone:dtdClientTimezone()}).then(function(){trackDtdUsage('letter_sent');endPigeonComposing(true);setFolder('sent');}).catch(function(err){if(composeError&&composeError.isConnected)composeError.textContent=err.message;send.disabled=false;});};setTimeout(function(){if((to?bodyEl:toEl).isConnected)(to?bodyEl:toEl).focus();},20);
       }
       function scheduleOnlinePrivateLetter(letterType,displayRecipient,resolveDeliveryDate,send){
         var date=resolveDeliveryDate(),text=main.querySelector('#dtd-body').value;
@@ -11562,7 +11596,6 @@ try {
       loadProfile().then(function(found){profile=found;if(profile)mountMailbox();else showAddressSetup();}).catch(function(err){showError(err.message);});
     }});
   }
-
   // === END scripts/features/post-mail-online.js ===
 
   // === BEGIN scripts/features/arinet.js ===
@@ -12957,6 +12990,411 @@ try {
   }
 
   // === END scripts/features/profile-diary.js ===
+
+  // === BEGIN scripts/features/notebook.js ===
+  function normalizeNotebookBackgroundImage(value){
+    var fallback = 'notepad1.png';
+    if(typeof value !== 'string') return fallback;
+
+    var trimmed = value.trim();
+    if(!trimmed || trimmed === 'notebook1.png' || trimmed === 'notebook1' || trimmed === 'notepad1.png'){
+      return fallback;
+    }
+
+    try {
+      var currentUrl = new URL(window.location.href);
+      var candidate = new URL(trimmed, window.location.href);
+      if(candidate.protocol === 'file:' && candidate.pathname === currentUrl.pathname){
+        return fallback;
+      }
+      if(candidate.protocol === 'file:' && /\.html?$/.test(candidate.pathname)){
+        return fallback;
+      }
+      return candidate.href;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
+  function openNotebookWindow(){
+    if(!document.body.classList.contains('signed-in')){
+      if(typeof showSignon === 'function') showSignon();
+      return;
+    }
+
+    trackDtdUsage('notebook_opened');
+    var existing = openWindows.find(function(w){ return w.type === 'notebook'; });
+    if(existing){
+      focusWindow(existing.id);
+      return;
+    }
+
+    var currentPageIndex = Math.max(0, Math.min(state.notebook.pages.length - 1, Number(state.notebook.currentPageIndex) || 0));
+    var autosaveTimer = null;
+
+    function getPages(){ return Array.isArray(state.notebook.pages) ? state.notebook.pages : []; }
+    function getCurrentPage(){
+      var pages = getPages();
+      if(!pages.length) return { id: 'page-' + uid(), text: '', createdAt: Date.now(), updatedAt: Date.now(), title: '' };
+      return pages[currentPageIndex] || pages[0];
+    }
+    function clampPageIndex(index){
+      var max = Math.max(0, getPages().length - 1);
+      if(!Number.isFinite(index)) return 0;
+      if(index < 0) return 0;
+      if(index > max) return max;
+      return Math.floor(index);
+    }
+    function buildBody(){
+      var pagePhotoUrl = normalizeNotebookBackgroundImage(state.notebook.backgroundImage);
+      var pagePhotoSafe = pagePhotoUrl.replace(/"/g, '\\"');
+        return '<div class="win-body notebook-win-body">' +
+        '<div class="notebook-controls-wrap">' +
+          '<div class="notebook-page-surface" style="--notebook-page-photo:url(\'' + pagePhotoSafe + '\')">' +
+            '<a class="notebook-save-btn" id="nb-save-btn" href="https://ari-harakiri.github.io/desktop-diary/MyNotepad.html" target="_blank" rel="noopener" aria-label="Open the full version of My Notepad in a new tab"></a>' +
+            '<div class="notebook-page-edit-area">' +
+              '<input class="notebook-page-title" id="nb-page-title" type="text" maxlength="120">' +
+            '<textarea class="notebook-page-input" id="nb-page-input" placeholder=""></textarea>' +
+            '</div>' +
+            '<div class="notebook-page-footer">' +
+              '<span class="notebook-page-label" id="nb-page-label"></span>' +
+              '<div class="notebook-page-nav">' +
+                '<button class="notebook-nav-btn" id="nb-prev" title="Previous page" aria-label="Previous page">‹</button>' +
+                '<button class="notebook-nav-btn" id="nb-next" title="Next page" aria-label="Next page">›</button>' +
+              '</div>' +
+              '<button class="notebook-page-add-btn" id="nb-add" title="Delete current page" aria-label="Delete current page">🗑</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function normalizeCurrent(){
+      var pages = getPages();
+      if(!pages.length){
+        pages.push({ id: 'page-' + uid(), text: '', createdAt: Date.now(), updatedAt: Date.now(), title: '' });
+      }
+      currentPageIndex = clampPageIndex(currentPageIndex);
+      state.notebook.currentPageIndex = currentPageIndex;
+    }
+
+    var savedRect = state.notebook.windowRect || {};
+    function persistNotebookWindowRect(){
+      if(!windowRef || !windowRef.el) return;
+      var left = Math.round(windowRef.el.offsetLeft);
+      var top = Math.round(windowRef.el.offsetTop);
+      if(!Number.isFinite(left) || !Number.isFinite(top)) return;
+      state.notebook.windowRect = {
+        left: left,
+        top: top
+      };
+      saveState();
+    }
+    function clampNotebookRect(){
+      var left = Number.isFinite(Number(savedRect.left)) ? Number(savedRect.left) : NaN;
+      var top = Number.isFinite(Number(savedRect.top)) ? Number(savedRect.top) : NaN;
+      return {
+        left: left,
+        top: top
+      };
+    }
+    normalizeCurrent();
+    var restoredRect = clampNotebookRect();
+    // Always derive width/height from a single scale factor so the notebook
+    // keeps the same 340:300 proportions on every screen, instead of scaling
+    // width and height independently (which distorted the page image).
+    var NB_BASE_WIDTH = 220;
+    var NB_BASE_HEIGHT = 227;
+    var nbScale = Math.min(1, (window.innerWidth * 0.82) / NB_BASE_WIDTH, (window.innerHeight * 0.56) / NB_BASE_HEIGHT);
+    var nbWidth = Math.round(NB_BASE_WIDTH * nbScale);
+    var nbHeight = Math.round(NB_BASE_HEIGHT * nbScale);
+    // Move existing saved notepads to the far-left desktop edge once. Later
+    // drags keep their usual remembered position.
+    var moveNotepadLeft = state.notebook.positionVersion !== 2;
+    var nbPos = moveNotepadLeft
+      ? clampToViewport(8, window.innerHeight - nbHeight - 42, nbWidth, nbHeight)
+      : (Number.isFinite(restoredRect.left) && Number.isFinite(restoredRect.top)
+        ? clampToViewport(restoredRect.left, restoredRect.top, nbWidth, nbHeight)
+        : clampToViewport(8, window.innerHeight - nbHeight - 42, nbWidth, nbHeight));
+    if(moveNotepadLeft){
+      state.notebook.positionVersion = 2;
+      state.notebook.windowRect = { left: nbPos.x, top: nbPos.y };
+      saveState();
+    }
+
+    var windowRef = createWindow({
+      title: 'My Notepad',
+      extraClass: 'notebook-win notebook-toy',
+      bodyHtml: buildBody(),
+      type: 'notebook',
+      addToTaskbar: false,
+      hideMaximize: true,
+      hideClose: true,
+      constructionBar: false,
+      initialLeft: nbPos ? nbPos.x : undefined,
+      initialTop: nbPos ? nbPos.y : undefined,
+      onDragEnd: persistNotebookWindowRect,
+      onClose: function(){
+        if(autosaveTimer) clearTimeout(autosaveTimer);
+        persistNotebookWindowRect();
+        saveCurrentPage();
+      },
+      onMount: function(el, id){
+        var titlebar = el.querySelector('.titlebar');
+        var pageInput = el.querySelector('#nb-page-input');
+        var titleInput = el.querySelector('#nb-page-title');
+        var prevBtn = el.querySelector('#nb-prev');
+        var nextBtn = el.querySelector('#nb-next');
+        var addBtn = el.querySelector('#nb-add');
+        var label = el.querySelector('#nb-page-label');
+        var trashBtn = titlebar ? titlebar.querySelector('.notebook-mini-trash-btn') : null;
+
+        function saveCurrentPage(){
+          var page = getCurrentPage();
+          if(!page) return;
+          page.title = titleInput ? titleInput.value.trim() : '';
+          page.text = pageInput.value;
+          page.updatedAt = Date.now();
+          state.notebook.currentPageIndex = currentPageIndex;
+          saveState();
+        }
+        function queueSave(){
+          if(autosaveTimer) clearTimeout(autosaveTimer);
+          autosaveTimer = setTimeout(saveCurrentPage, 350);
+        }
+        function refreshLabel(){
+          label.textContent = 'pg ' + (currentPageIndex + 1);
+        }
+        function refreshPageContent(focus){
+          var page = getCurrentPage();
+          pageInput.value = page.text || '';
+          if(titleInput) titleInput.value = page.title || '';
+          refreshLabel();
+          refreshNavButtons();
+          if(focus) pageInput.focus();
+          state.notebook.currentPageIndex = currentPageIndex;
+        }
+        function refreshNavButtons(){
+          prevBtn.disabled = getPages().length < 2 || currentPageIndex <= 0;
+        }
+        function createBlankPage(){
+          return {
+            id: uid(),
+            text: '',
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+            title: ''
+          };
+        }
+        function deleteCurrentPage(){
+          var pages = getPages();
+          if(!pages.length) return;
+          appConfirm('Move this page to Trash?', function(ok){
+            if(!ok) return;
+            var removed = getCurrentPage();
+            if(removed){
+              moveToTrash('notebookPage', (removed.title || 'My Notepad Page').trim() || 'My Notepad Page', {
+                id: removed.id || ('page-' + uid()),
+                text: removed.text || '',
+                title: removed.title || '',
+                createdAt: removed.createdAt || Date.now(),
+                updatedAt: removed.updatedAt || Date.now()
+              }, {
+                index: currentPageIndex
+              });
+            }
+            if(pages.length <= 1){
+              pages[0] = createBlankPage();
+              refreshPageContent(true);
+              saveState();
+              return;
+            }
+            pages.splice(currentPageIndex, 1);
+            currentPageIndex = clampPageIndex(Math.max(0, currentPageIndex - 1));
+            state.notebook.currentPageIndex = currentPageIndex;
+            refreshPageContent(true);
+            saveState();
+          });
+        }
+        function openPage(nextIndex){
+          saveCurrentPage();
+          currentPageIndex = clampPageIndex(nextIndex);
+          refreshPageContent();
+          pageInput.focus();
+        }
+        function gotoNext(){
+          var pages = getPages();
+          if(currentPageIndex >= pages.length - 1){
+            saveCurrentPage();
+            pages.push(createBlankPage());
+            currentPageIndex = pages.length - 1;
+            state.notebook.currentPageIndex = currentPageIndex;
+            refreshPageContent();
+            pageInput.focus();
+            saveState();
+            return;
+          }
+          openPage(currentPageIndex + 1);
+        }
+        function addNewPage(){
+          saveCurrentPage();
+          var pages = getPages();
+          pages.push(createBlankPage());
+          currentPageIndex = pages.length - 1;
+          state.notebook.currentPageIndex = currentPageIndex;
+          refreshPageContent();
+          pageInput.focus();
+          saveState();
+        }
+
+        function wireToolbar(){
+          pageInput.addEventListener('input', queueSave);
+          if(titleInput) titleInput.addEventListener('input', queueSave);
+          if(titleInput) titleInput.addEventListener('keydown', function(e){
+            if(e.key === 'Enter'){
+              e.preventDefault();
+              pageInput.focus();
+            }
+          });
+          var savedTopBeforeKeyboard = null;
+          function moveAboveKeyboard(){
+            var vv = window.visualViewport;
+            var visibleHeight = vv ? vv.height : window.innerHeight;
+            var winHeight = el.offsetHeight;
+            if(savedTopBeforeKeyboard === null) savedTopBeforeKeyboard = el.offsetTop;
+            var targetTop = Math.max(8, Math.min(el.offsetTop, visibleHeight - winHeight - 8));
+            el.style.top = targetTop + 'px';
+          }
+          function restoreOriginalPosition(){
+            setTimeout(function(){
+              var stillFocused = document.activeElement === titleInput || document.activeElement === pageInput;
+              if(!stillFocused && savedTopBeforeKeyboard !== null){
+                el.style.top = savedTopBeforeKeyboard + 'px';
+                savedTopBeforeKeyboard = null;
+              }
+            }, 100);
+          }
+          if(titleInput) titleInput.addEventListener('focus', function(){ setTimeout(moveAboveKeyboard, 50); });
+          pageInput.addEventListener('focus', function(){ setTimeout(moveAboveKeyboard, 50); });
+          if(titleInput) titleInput.addEventListener('blur', restoreOriginalPosition);
+          pageInput.addEventListener('blur', restoreOriginalPosition);
+          if(window.visualViewport){
+            window.visualViewport.addEventListener('resize', function(){
+              if(document.activeElement === titleInput || document.activeElement === pageInput){
+                moveAboveKeyboard();
+              }
+            });
+          }
+          prevBtn.addEventListener('click', function(){ openPage(currentPageIndex - 1); });
+          nextBtn.addEventListener('click', gotoNext);
+          if(addBtn){
+            addBtn.addEventListener('click', deleteCurrentPage);
+          }
+          function exportPageAsImage(){
+            var bgUrl = normalizeNotebookBackgroundImage(state.notebook.backgroundImage);
+            var img = new Image();
+            img.onload = function(){
+              var canvas = document.createElement('canvas');
+              canvas.width = img.naturalWidth;
+              canvas.height = img.naturalHeight;
+              var ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0);
+
+              // Scale factor: all our positioning was tuned against a 180px-wide
+              // reference paper, so scale up to whatever the real image size is.
+              var scale = img.naturalWidth / 180;
+              var editLeft = 18 * scale;
+              var editTop = 23 * scale;
+              var editRight = canvas.width - (10 * scale);
+              var editBottom = canvas.height - (30 * scale);
+              var editWidth = editRight - editLeft;
+
+              var title = (titleInput && titleInput.value || '').trim();
+              var titleX = editLeft + (14 * scale) - (5 * scale);
+              var titleY = editTop + (7 * scale) + (3 * scale);
+              var titleFontSize = 12 * scale;
+              if(title){
+                ctx.fillStyle = '#262626';
+                ctx.font = 'bold ' + titleFontSize + 'px Tahoma, Arial, sans-serif';
+                ctx.textBaseline = 'top';
+                ctx.fillText(title, titleX, titleY, editWidth - (14 * scale));
+              }
+
+              var bodyX = editLeft + (14 * scale) - (6 * scale);
+              var bodyY = titleY + titleFontSize + (10 * scale);
+              var bodyMaxWidth = editWidth - (16 * scale);
+              var bodyFontSize = 13 * scale;
+              var lineHeight = bodyFontSize * 1.25;
+              ctx.fillStyle = '#262626';
+              ctx.font = bodyFontSize + 'px "Comic Sans MS", "Comic Sans", cursive';
+              ctx.textBaseline = 'top';
+
+              var text = (pageInput && pageInput.value || '');
+              var y = bodyY;
+              text.split('\n').forEach(function(rawLine){
+                var words = rawLine.split(' ');
+                var line = '';
+                for(var i = 0; i < words.length; i++){
+                  var test = line ? line + ' ' + words[i] : words[i];
+                  if(ctx.measureText(test).width > bodyMaxWidth && line){
+                    if(y + lineHeight <= editBottom) ctx.fillText(line, bodyX, y);
+                    y += lineHeight;
+                    line = words[i];
+                  } else {
+                    line = test;
+                  }
+                }
+                if(y + lineHeight <= editBottom) ctx.fillText(line, bodyX, y);
+                y += lineHeight;
+              });
+
+              var titleForFile = title ? title.replace(/[^a-z0-9]+/gi, '-').toLowerCase().slice(0, 40) : 'page';
+              var a = document.createElement('a');
+              a.download = 'desktopdiary-notepad-' + titleForFile + '-' + new Date().toISOString().slice(0, 10) + '.png';
+              a.href = canvas.toDataURL('image/png');
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+            };
+            img.src = bgUrl;
+          }
+          if(titlebar && trashBtn){
+            trashBtn.parentNode.removeChild(trashBtn);
+          }
+          refreshNavButtons();
+        }
+
+        el._reloadNotebookPage = function(){
+          currentPageIndex = clampPageIndex(Number.isFinite(Number(state.notebook.currentPageIndex)) ? state.notebook.currentPageIndex : 0);
+          refreshPageContent(true);
+        };
+
+        normalizeCurrent();
+        refreshPageContent(true);
+        pageInput.value = getCurrentPage().text || '';
+        if(titleInput) titleInput.value = getCurrentPage().title || '';
+        wireToolbar();
+      }
+    });
+
+    windowRef.el.style.width = nbWidth + 'px';
+    windowRef.el.style.height = nbHeight + 'px';
+
+    function saveCurrentPage(){
+      var rec = openWindows.find(function(w){ return w.el && w.el === windowRef.el; });
+      if(!rec) return;
+      var pageInput = rec.el && rec.el.querySelector ? rec.el.querySelector('#nb-page-input') : null;
+      var titleInput = rec.el && rec.el.querySelector ? rec.el.querySelector('#nb-page-title') : null;
+      if(!pageInput || !titleInput) return;
+      if(!Array.isArray(state.notebook.pages) || !state.notebook.pages[currentPageIndex]) return;
+      state.notebook.pages[currentPageIndex].title = titleInput.value.trim();
+      state.notebook.pages[currentPageIndex].text = pageInput.value;
+      state.notebook.pages[currentPageIndex].updatedAt = Date.now();
+      state.notebook.currentPageIndex = currentPageIndex;
+      saveState();
+    }
+  }
+  // === END scripts/features/notebook.js ===
 
   // === BEGIN scripts/features/diary.js ===
   // ================= DIARY ENTRY EDITOR =================
